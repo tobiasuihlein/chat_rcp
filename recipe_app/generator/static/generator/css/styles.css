@@ -177,8 +177,8 @@ main {
     justify-content: left;
     flex-direction: column;
     padding: 1.5rem;
-    background-color: whitesmoke;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    background-color: #F2F3EE;
+    box-shadow: rgba(102, 101, 95, 0.2) 0px 2px 8px 0px;
 }
 
 .card-recipe-container{
@@ -191,7 +191,7 @@ main {
 }
 
 .card:hover {
-    box-shadow: rgba(99, 99, 99, 0.3) 0px 2px 12px 0px;
+    box-shadow: rgba(107, 104, 97, 0.25) 0px 2px 12px 0px;
 }
 
 .recipe-properties-container {
@@ -370,10 +370,10 @@ main {
 .spinner {
     width: 70px;
     height: 70px;
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #333;
+    border: 5px solid #F2F3EE;
+    border-top: 5px solid indianred;
     border-radius: 100%;
-    animation: spin 1s linear infinite;
+    animation: spin 1.8s linear infinite;
     margin-bottom: 1rem;
     margin-top: 2rem;
 }

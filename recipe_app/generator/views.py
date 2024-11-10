@@ -115,14 +115,18 @@ def previews(request):
 
             Requirements:
             1. Response must be valid JSON
-            2. Use only the provided ingredients and common household staples
+            2. Use only the provided ingredients and very common household staples (salt, pepper, olive oil etc.)
             3. Each recipe must be realistic and cookable
             4. Keep descriptions under 200 characters
             5. Time should be in the format "X Min."
-            6. Difficulty should be one of: "Easy", "Medium", "Hard"
+            6. Alays create one "Easy", one "Medium", and one "Hard" recipe, if the provided ingredients allow it
             7. List main ingredients from the provided ingredients list
             8. List additional ingredients that are common household staples
             9. Do not use all ingredients, if you feel like they don't match
+            10. If you do not find reasonable meals in all difficulties, feel free to provide less than three
+            11. Do not add ingredients that are not really common as household staples (e.g eggplant, broccoli), if not included in the provided ingredients
+            12. You don't have to use all provided ingredients
+            13. Do not use too many additional ingredients
 
             Return only the JSON, no other text."""
 

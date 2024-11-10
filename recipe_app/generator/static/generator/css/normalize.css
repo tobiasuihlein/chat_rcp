@@ -1,0 +1,198 @@
+/* Document
+* 1. Change from `box-sizing: content-box` so that `width` is not affected by `padding` or `border`
+* 2. Prevent adjustments of font size after orientation changes in iOS
+*/
+html {
+    box-sizing: border-box; /* 1 */
+    -webkit-text-size-adjust: 100%; /* 2 */
+    line-height: 1.15;
+}
+
+/* Inherit box-sizing to make it easier to change the property for components */
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+/* Sections
+* 1. Remove the margin in all browsers
+* 2. Consistent rendering for sections
+*/
+body {
+    margin: 0; /* 1 */
+}
+
+main {
+    display: block; /* 2 */
+}
+
+/* Headings
+* 1. Correct font size inheritance in all browsers
+* 2. Remove top margins from headings to avoid margin collapse
+*/
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+/* Grouping content
+* 1. Show overflow in Edge and IE
+* 2. Correct inheritance of border color in Firefox
+*/
+hr {
+    box-sizing: content-box; /* 1 */
+    height: 0; /* 1 */
+    overflow: visible; /* 1 */
+    border-top-width: 1px; /* 2 */
+}
+
+/* Text-level semantics
+* 1. Remove gray background on active links in IE 10
+* 2. Remove gaps in links underline in iOS 8+ and Safari 8+
+*/
+a {
+    background-color: transparent; /* 1 */
+    -webkit-text-decoration-skip: objects; /* 2 */
+}
+
+/* Text marking
+* 1. Correct text decoration in Chrome, Edge, IE, Opera, and Safari
+*/
+abbr[title] {
+    text-decoration: underline;
+    text-decoration: underline dotted; /* 1 */
+}
+
+/* Typography improvements
+* 1. Prevent `sub` and `sup` elements affecting line-height
+* 2. Improve consistency of fonts in all browsers
+*/
+pre, code, kbd, samp {
+    font-family: monospace, monospace; /* 2 */
+    font-size: 1em; /* 2 */
+}
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+sup {
+    top: -0.5em;
+}
+
+/* Embedded content
+* 1. Remove border on images inside links in IE 10-
+* 2. Hide overflow in IE
+*/
+img {
+    border-style: none; /* 1 */
+    overflow: hidden; /* 2 */
+    max-width: 100%;
+    height: auto;
+}
+
+/* Forms
+* 1. Change font properties to `inherit` in all browsers
+* 2. Remove margins in Firefox and Safari
+* 3. Show overflow in Edge
+* 4. Correct `font` properties not being inherited
+*/
+button,
+input,
+optgroup,
+select,
+textarea {
+    font-family: inherit; /* 1 */
+    font-size: 100%; /* 1 */
+    line-height: 1.15; /* 1 */
+    margin: 0; /* 2 */
+}
+
+button,
+input {
+    overflow: visible; /* 3 */
+}
+
+button,
+select {
+    text-transform: none; /* 4 */
+}
+
+/* Button normalization
+* 1. Remove inner border and padding in Firefox
+* 2. Correct inability to style clickable types in iOS and Safari
+*/
+/* Instead of -webkit-appearance, use standard CSS properties */
+button {
+    /* Reset all browser styles */
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    font: inherit;
+
+    /* Add your own consistent styling */
+    background-color: #007bff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    color: white;
+}
+
+/* Handle different states */
+button:hover {
+    background-color: #0056b3;
+}
+
+button:focus {
+    outline: 2px solid #0056b3;
+    outline-offset: 2px;
+}
+
+/* For accessibility */
+button:focus-visible {
+    outline: 2px solid #0056b3;
+    outline-offset: 2px;
+}
+
+/* Interactive elements
+* 1. Add correct display in Edge, IE 10+, and Firefox
+*/
+details {
+    display: block; /* 1 */
+}
+
+summary {
+    display: list-item; /* 1 */
+}
+
+/* Misc
+* 1. Add correct display in IE 10+
+* 2. Add correct display in IE
+*/
+template {
+    display: none; /* 1 */
+}
+
+[hidden] {
+    display: none; /* 2 */
+}
+
+/* Tables
+* 1. Remove text indentation from table contents in Chrome and Safari
+* 2. Correct table border color inheritance in Chrome and Safari
+*/
+table {
+    text-indent: 0; /* 1 */
+    border-color: inherit; /* 2 */
+}

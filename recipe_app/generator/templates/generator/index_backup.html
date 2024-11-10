@@ -1,0 +1,109 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Description of your website">
+    <meta name="keywords" content="your, keywords, here">
+    <meta name="author" content="Your Name">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'generator/favicon/chef-hat.svg' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'generator/css/styles.css' %}">
+    
+    <title>Recipe Generator</title>
+</head>
+<body>
+    <header>
+        <!-- Header content -->
+         <nav class="navbar">
+            <a class="navbar-logo"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chef-hat"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>RECIPES</a>
+            <div class="searchbar">
+                <div class="searchbar-placeholder">
+                    Enter your ingredients here
+                </div>
+                <div class="searchbar-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </div>
+            </div>
+            <a href="#login" class="btn login-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Login</a>
+         </nav>
+    </header>
+
+    <main>
+        <!-- Main content -->
+        <div class="row-wrapper">
+            <div class="row-content">
+                <a>
+                    <div class="widget card">
+                        <div class="card-recipe-container">
+                            <div class="recipe-properties-container">
+                                <div class="recipe-difficulty">Easy</div>
+                                <div class="recipe-time"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg> 20 Min.</div>
+                            </div>
+                            <div class="additional-ingredients"><span style="font-weight: 500">Additional ingredients:</span><br>olive oil, garlic, salt, pepper</div>
+                            <div class="title">Peppered Feta Pasta</div>
+                            <div class="description">Al dente pasta tossed with sautéed bell peppers and melted feta cheese, creating a perfect balance of fresh and savory flavors. This colorful dish combines the sweetness of peppers with the tangy richness of feta, all brought together with aromatic garlic and fresh parsley.</div>
+                        </div>
+                    </div>
+                </a>
+                <a>
+                    <div class="widget card">
+                        <div class="card-recipe-container">
+                            <div class="recipe-properties-container">
+                                <div class="recipe-difficulty">Easy</div>
+                                <div class="recipe-time">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+                                    25 Min.
+                                </div>
+                            </div>
+                            <div class="additional-ingredients">
+                                <span style="font-weight: 500">Additional ingredients:</span><br>
+                                olive oil, garlic, salt, pepper, butter
+                            </div>
+                            <div class="title">Parmesan Broccoli Pasta</div>
+                            <div class="description">
+                                Creamy pasta with tender broccoli florets and rich parmesan sauce. Fresh parsley adds a burst of color and flavor to this comforting dish that perfectly combines vegetables with indulgent cheese.
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <a>
+                    <div class="widget card">
+                        <div class="card-recipe-container">
+                            <div class="recipe-properties-container">
+                                <div class="recipe-difficulty">Easy</div>
+                                <div class="recipe-time">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+                                    30 Min.
+                                </div>
+                            </div>
+                            <div class="additional-ingredients">
+                                <span style="font-weight: 500">Additional ingredients:</span><br>
+                                olive oil, garlic, salt, pepper, vegetable stock
+                            </div>
+                            <div class="title">Red Lentil Rice Bowl</div>
+                            <div class="description">
+                                A hearty combination of fluffy rice and perfectly spiced red lentils, topped with crispy sage leaves. Bell peppers add a sweet crunch, while fresh parsley brings brightness to this nutritious meal.
+                            </div>
+                        </div>
+                    </div>
+                </a>       
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <!-- Footer content -->
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/js/script.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Description of your website">
+    <meta name="keywords" content="your, keywords, here">
+    <meta name="author" content="Your Name">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'generator/favicon/chef-hat.svg' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'generator/css/styles.css' %}">
+    
+    <title>ChatRCP</title>
+</head>
+<body>
+    <header>
+        <!-- Header content -->
+         <nav class="navbar">
+            <a class="navbar-logo"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chef-hat"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>ChatRCP</a>
+            <a href="#login" class="btn login-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Login</a>
+         </nav>
+    </header>
+
+    <main>
+        <!-- Main content -->
+        <div class="row-wrapper">
+            <div class="row-content">
+                <div class="widget">
+                    <div class="tag-list-container">
+                        {% for ingredient in ingredients %}
+                        <div class="ingredient">{{ ingredient }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row-wrapper">
+            <div class="row-content">
+                {% for preview in recipe_previews %}
+                <a>
+                    <div class="widget card">
+                        <div class="card-recipe-container">
+                            <div class="recipe-properties-container">
+                                <div class="recipe-difficulty">{{ preview.difficulty }}</div>
+                                <div class="recipe-time"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg> {{ preview.time}}</div>
+                            </div>
+                            <div class="additional-ingredients"><span style="font-weight: 500">Main ingredients:</span><br>
+                                <span>
+                                    {{ preview.main_ingredients|join:", " }}
+                                </span>
+                            </div>
+                            <div class="additional-ingredients"><span style="font-weight: 500">Additional ingredients:</span><br>
+                                <span>
+                                    {{ preview.additional_ingredients|join:", " }}
+                                </span>
+                            </div>
+                            <div class="title">{{ preview.title }}</div>
+                            <div class="description">{{ preview.description }}</div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %} 
+            </div>
+        </div>
+        <div class="row-wrapper">
+            <div class="row-content">
+                <div class="widget">
+                    <div class="searchbar">
+                        <div class="searchbar-placeholder">
+                            What you got for me, chef?
+                        </div>
+                        <div class="searchbar-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </main>
+
+    <footer>
+        <!-- Footer content -->
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/js/script.js" defer></script>
+</body>
+</html>

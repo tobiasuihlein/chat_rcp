@@ -23,6 +23,7 @@
 body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     min-height: 100vh;
+    background-color: #d5d6cf;
 }
 
 a {
@@ -46,7 +47,7 @@ a {
 .navbar-logo {
     color: var(--text-color-highlight-1);
     font-size: 1.4rem;
-    font-weight: 700;
+    font-weight: 600;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -121,9 +122,13 @@ main {
 .row-wrapper {
     display: block;
     background-color: none;
-    margin: 2rem auto;
     padding: 0;
     width: 100%;
+}
+
+.section-row {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
 }
 
 .row-content {
@@ -157,9 +162,8 @@ main {
 }
 
 .ingredient:hover {
-    border: solid 2px #333;
-    background-color: white;
     color: #333;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 0px 8px 0px;
 }
 
 .card {
@@ -173,6 +177,7 @@ main {
     justify-content: left;
     flex-direction: column;
     padding: 1.5rem;
+    background-color: whitesmoke;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
@@ -215,12 +220,29 @@ main {
     display: inline-flex;
     justify-content: center;
     align-items: center;
+    border-radius: 999px;
+    padding: 0.2rem 0.8rem;
+}
+
+.recipe-difficulty-easy {
+    background-color: rgb(220 252 231);
+    color: rgb(22 101 52);
+}
+
+.recipe-difficulty-medium {
+    background-color: rgb(254 249 195);
+    color: rgb(133 77 14);
+}
+
+.recipe-difficulty-hard {
+    background-color: rgb(254 226 226);;
+    color: rgb(153 27 27);
 }
 
 .title {
     font-size: 1.5rem;
     line-height: 2rem;
-    font-weight: 500;
+    font-weight: 400;
     margin-bottom: 1rem;
 }
 
@@ -231,32 +253,49 @@ main {
     margin-bottom: 1rem;
 }
 
-.ingredients {
-    font-size: 1rem;
+.description {
+    font-size: 1.2rem;
     font-weight: 300;
+    margin-bottom: 1rem;
 }
 
-.description {
-    font-size: 1rem;
-    font-weight: 400;
+.main-ingredients {
+    font-size: 1.2rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
 }
 
 .additional-ingredients {
     font-size: 1.2rem;
-    font-weight: 400;
+    font-weight: 300;
     margin-bottom: 1rem;
 }
 
-.card-img-container {
-    width: 100%;
-    height: 150px;
-    text-align: center;
-    align-content: center;
+.card-btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.5rem;
 }
 
-.card-image-svg {
-    height: 5rem;
-    width: auto;
+.card-btn {
+    background-color: indianred;
+    border: solid 2px indianred;
+    color: white;
+    min-height: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.card-btn:hover {
+    background-color: whitesmoke;
+    border: solid 2px indianred;
+    color: indianred;
+}
+
+.initial-prompt-heading {
+    font-size: 2rem;
+    font-weight: 500;
 }
 
 .searchbar-container {
@@ -275,7 +314,7 @@ main {
     max-width: 500px;
     border-radius: 999px;
     text-align: center;
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: var(--text-color-2);
     background-color: whitesmoke;
 }
@@ -291,16 +330,54 @@ main {
 
 .searchbar-button {
     border-radius: 999px;
-    width: 1.8rem;
-    height: 1.8rem;
-    background-color:black;
+    border: none;
+    width: 1.9rem;
+    height: 1.9rem;
+    background-color:indianred;
     color: white;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.2rem;
 }
 
 .searchbar-button:hover {
     background-color: #333;
+    cursor: pointer;
+}
+
+.searchbar-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    padding: 0.2rem 0.5rem;
+    outline: none;
+}
+
+.spinner-overlay {
+    position: fixed;
+    top: 0vh;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #d5d6cf;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.spinner {
+    width: 70px;
+    height: 70px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #333;
+    border-radius: 100%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
 }

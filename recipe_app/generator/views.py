@@ -1,11 +1,14 @@
 from django.shortcuts import render
+from dotenv import load_dotenv
+import anthropic
+import os
 
-def generator(request):
+def previews_mockup(request):
     recipe_previews = {
         "recipes": [
             {
                 "title": "Peppered Feta Pasta",
-                "difficulty": "Easy",
+                "difficulty": "Hard",
                 "time": "20 Min.",
                 "additional_ingredients": [
                     "olive oil",
@@ -23,7 +26,7 @@ def generator(request):
             },
             {
                 "title": "Parmesan Broccoli Pasta",
-                "difficulty": "Easy",
+                "difficulty": "Medium",
                 "time": "25 Min.",
                 "additional_ingredients": [
                     "olive oil",
@@ -63,6 +66,122 @@ def generator(request):
             }
         ]
     }
+
+    def sort_previews(previews: dict) -> dict:
+
+        difficulty_order = {"Easy": 1, "Medium": 2, "Hard": 3}
+
+        sorted_previews = sorted(
+            previews,
+            key = lambda x: difficulty_order.get(x["difficulty"], 999) # 999 is default value in case of error
+        )
+
+        return sorted_previews
+    
+    recipe_previews["recipes"] = sort_previews(recipe_previews["recipes"])
+
     ingredients = ["bell pepper", "feta cheese", "pasta", "rice", "parseley", "sage", "broccoli", "cream", "parmesan", "old bread", "red lentils"]
     context = {"recipe_previews": recipe_previews["recipes"], "ingredients": ingredients}
-    return render(request, 'generator/index.html', context = context)
+    return render(request, 'generator/previews.html', context = context)
+
+def previews(request):
+
+    if request.method == "POST":
+
+        def create_previews_prompt(ingredients: list, staples: list) -> str:
+            prompt = f"""Given these available ingredients: {', '.join(ingredients)}
+            And these staple ingredients: {', '.join(staples)}
+
+            Please generate 3 recipe previews in the following exact JSON format, nothing else:
+
+            {{
+                "recipes": [
+                    {{
+                        "title": "string",
+                        "difficulty": "Easy|Medium|Hard",
+                        "time": "X Min.",
+                        "additional_ingredients": [
+                            "ingredient1",
+                            "ingredient2"
+                        ],
+                        "description": "A brief, appealing description of the dish.",
+                        "main_ingredients": [
+                            "ingredient1",
+                            "ingredient2"
+                        ]
+                    }}
+                ]
+            }}
+
+            Requirements:
+            1. Response must be valid JSON
+            2. Use only the provided ingredients and common household staples
+            3. Each recipe must be realistic and cookable
+            4. Keep descriptions under 200 characters
+            5. Time should be in the format "X Min."
+            6. Difficulty should be one of: "Easy", "Medium", "Hard"
+            7. List main ingredients from the provided ingredients list
+            8. List additional ingredients that are common household staples
+            9. Do not use all ingredients, if you feel like they don't match
+
+            Return only the JSON, no other text."""
+
+            return prompt
+
+        def get_previews_from_claude(prompt: str) -> dict:
+
+            load_dotenv()
+
+            api_key = os.getenv("ANTHROPIC_API_KEY")
+
+            client = anthropic.Anthropic(api_key=api_key)
+            message = client.messages.create(
+                model="claude-3-haiku-20240307",
+                max_tokens=1024,
+                system="You are a helpful chef assistant that returns only valid JSON responses in the exact format requested.",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            )
+
+            import json
+            try:
+                answer = json.loads(message.content[0].text)
+                return answer
+            except json.JSONDecodeError:
+                raise ValueError("Sorry, something went wrong, chef.")
+        
+    
+        #ingredients = ["bell pepper", "feta cheese", "pasta", "rice", "parsley", "sage", "broccoli", "cream", "parmesan", "old bread", "red lentils"]
+        ingredients = request.POST.get("ingredients-input").split(',')
+        staples = [""]
+    
+        prompt = create_previews_prompt(ingredients, staples)
+        previews = get_previews_from_claude(prompt)
+
+        def sort_previews(previews: dict) -> dict:
+
+            difficulty_order = {"Easy": 1, "Medium": 2, "Hard": 3}
+
+            sorted_previews = sorted(
+                previews,
+                key = lambda x: difficulty_order.get(x["difficulty"], 999) # 999 is default value in case of error
+            )
+
+            return sorted_previews
+    
+        previews["recipes"] = sort_previews(previews["recipes"])
+
+        context = {"recipe_previews": previews["recipes"], "ingredients": ingredients}
+        return render(request, 'generator/previews.html', context=context)
+    
+    return render(request, 'generator/index.html')
+
+
+
+def home(request):
+
+    return render(request, 'generator/index.html')

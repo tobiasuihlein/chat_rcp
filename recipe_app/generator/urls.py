@@ -4,5 +4,7 @@ from . import views
 app_name = 'generator'
 
 urlpatterns = [
-    path('', views.generator, name= "generator"),
+    path('previews_mockup', views.previews_mockup, name="previews_mockup"),
+    path('previews', views.previews, name="previews"),
+    path('', views.home, name="home")
 ]

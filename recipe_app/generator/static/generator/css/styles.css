@@ -97,15 +97,15 @@ main {
 }
 
 .login-btn {
-    background-color: var(--text-color-highlight-1);
+    background-color: indianred;
     color: white;
-    border: solid 2px var(--text-color-highlight-1);
+    border: solid 2px indianred;
     transition: all var(--transition-speed) ease;
 }
 
 .login-btn:hover {
-    color: var(--text-color-highlight-1);
-    border: solid 2px var(--text-color-highlight-1);
+    color:  indianred;
+    border: solid 2px  indianred;
     background-color: transparent;
 }
 
@@ -375,6 +375,7 @@ main {
     border-radius: 100%;
     animation: spin 1s linear infinite;
     margin-bottom: 1rem;
+    margin-top: 2rem;
 }
 
 

@@ -1,5 +1,6 @@
 {% extends "./layout.html" %}
 
+{% load static %}
 
 {% block header-middle %}
 
@@ -11,8 +12,23 @@
 <div style="height: 70vh; display: flex; align-items: center; justify-content: center; flex-direction: column;">
 
     <div id="loading-spinner" class="spinner-overlay" style="display: none;">
+        <div class="row-wrapper section-row">
+            <div class="row-content">
+                <div class="widget">
+                    <img src="{% static 'generator/img/carmy-writing.png' %}" style="width: 600px; height: auto"/>
+                </div>
+            </div>
+        </div>
+        <p style="font-weight: 600; font-size: 2rem;">Ok I got this!</p>
         <div class="spinner"></div>
-        <p style="font-size: 1.2rem; font-weight: 500;">Brainstorming recipes ...</p>
+    </div>
+
+    <div class="row-wrapper section-row">
+        <div class="row-content">
+            <div class="widget">
+                <img src="{% static 'generator/img/carmy-waiting.png' %}" style="width: 600px; height: auto"/>
+            </div>
+        </div>
     </div>
 
     <div class="row-wrapper">

@@ -3,12 +3,18 @@
 
 {% block header-middle %}
 
-<span style="font-weight: 600; color: indianred; font-size: 2rem;">Something you like?</span>
-
 {% endblock header-middle %}
 
 
 {% block main-content %}
+
+<div class="row-wrapper section-row" style="margin-top: 0;">
+    <div class="row-content">
+        <div class="widget">
+            <span style="font-weight: 600; font-size: 2rem;">What you think?</span>
+        </div>
+    </div>
+</div>
 
 <div class="row-wrapper section-row">
     <div class="row-content">
@@ -45,6 +51,9 @@
     </div>
 </div>
 
+
+{% endblock main-content %}
+
 <div class="row-wrapper section-row">
     <div class="row-content">
         <div class="widget">
@@ -56,5 +65,3 @@
         </div>
     </div>
 </div>
-
-{% endblock main-content %}

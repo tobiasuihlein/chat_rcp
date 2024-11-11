@@ -1,7 +1,6 @@
 from django.shortcuts import render
-from dotenv import load_dotenv
-import anthropic
-import os
+from .utils.claude import *
+from .utils.helpers import sort_previews
 
 def previews_mockup(request):
     recipe_previews = {
@@ -66,98 +65,16 @@ def previews_mockup(request):
             }
         ]
     }
-
-    def sort_previews(previews: dict) -> dict:
-
-        difficulty_order = {"Easy": 1, "Medium": 2, "Hard": 3}
-
-        sorted_previews = sorted(
-            previews,
-            key = lambda x: difficulty_order.get(x["difficulty"], 999) # 999 is default value in case of error
-        )
-
-        return sorted_previews
     
     recipe_previews["recipes"] = sort_previews(recipe_previews["recipes"])
 
     ingredients = ["bell pepper", "feta cheese", "pasta", "rice", "parseley", "sage", "broccoli", "cream", "parmesan", "old bread", "red lentils"]
     context = {"recipe_previews": recipe_previews["recipes"], "ingredients": ingredients}
-    return render(request, 'generator/previews.html', context = context)
+    return render(request, 'generator/previews.html', context=context)
 
 def previews(request):
 
     if request.method == "POST":
-
-        def create_previews_prompt(ingredients: list, staples: list) -> str:
-            prompt = f"""Given these available ingredients: {', '.join(ingredients)}
-            And these staple ingredients: {', '.join(staples)}
-
-            Please generate 3 recipe previews in the following exact JSON format, nothing else:
-
-            {{
-                "recipes": [
-                    {{
-                        "title": "string",
-                        "difficulty": "Easy|Medium|Hard",
-                        "time": "X Min.",
-                        "additional_ingredients": [
-                            "ingredient1",
-                            "ingredient2"
-                        ],
-                        "description": "A brief, appealing description of the dish.",
-                        "main_ingredients": [
-                            "ingredient1",
-                            "ingredient2"
-                        ]
-                    }}
-                ]
-            }}
-
-            Requirements:
-            1. Response must be valid JSON
-            2. Use only the provided ingredients and very common household staples (salt, pepper, olive oil etc.)
-            3. Each recipe must be realistic and cookable
-            4. Keep descriptions under 200 characters
-            5. Time should be in the format "X Min."
-            6. Alays create one "Easy", one "Medium", and one "Hard" recipe, if the provided ingredients allow it
-            7. List main ingredients from the provided ingredients list
-            8. List additional ingredients that are common household staples
-            9. Do not use all ingredients, if you feel like they don't match
-            10. If you do not find reasonable meals in all difficulties, feel free to provide less than three
-            11. Do not add ingredients that are not really common as household staples (e.g eggplant, broccoli), if not included in the provided ingredients
-            12. You don't have to use all provided ingredients
-            13. Do not use too many additional ingredients
-
-            Return only the JSON, no other text."""
-
-            return prompt
-
-        def get_previews_from_claude(prompt: str) -> dict:
-
-            load_dotenv()
-
-            api_key = os.getenv("ANTHROPIC_API_KEY")
-
-            client = anthropic.Anthropic(api_key=api_key)
-            message = client.messages.create(
-                model="claude-3-haiku-20240307",
-                max_tokens=1024,
-                system="You are a helpful chef assistant that returns only valid JSON responses in the exact format requested.",
-                messages=[
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ]
-            )
-
-            import json
-            try:
-                answer = json.loads(message.content[0].text)
-                return answer
-            except json.JSONDecodeError:
-                raise ValueError("Sorry, something went wrong, chef.")
-        
     
         #ingredients = ["bell pepper", "feta cheese", "pasta", "rice", "parsley", "sage", "broccoli", "cream", "parmesan", "old bread", "red lentils"]
         ingredients = request.POST.get("ingredients-input").split(',')
@@ -165,27 +82,38 @@ def previews(request):
     
         prompt = create_previews_prompt(ingredients, staples)
         previews = get_previews_from_claude(prompt)
-
-        def sort_previews(previews: dict) -> dict:
-
-            difficulty_order = {"Easy": 1, "Medium": 2, "Hard": 3}
-
-            sorted_previews = sorted(
-                previews,
-                key = lambda x: difficulty_order.get(x["difficulty"], 999) # 999 is default value in case of error
-            )
-
-            return sorted_previews
     
         previews["recipes"] = sort_previews(previews["recipes"])
 
+        print(previews["recipes"])
+
         context = {"recipe_previews": previews["recipes"], "ingredients": ingredients}
         return render(request, 'generator/previews.html', context=context)
+
     
     return render(request, 'generator/index.html')
 
 
-
 def home(request):
-
     return render(request, 'generator/index.html')
+
+
+def recipe_mockup(request):
+
+    recipe = [
+    {'title': 'Parmesan Broccoli Pasta', 'difficulty': 'Medium', 'time': {'total': '25 Min.', 'preparation': '10 Min.', 'cooking': '15 Min.'}, 'main_ingredients': ['pasta', 'broccoli', 'parmesan', 'cream', 'parsley'], 'additional_ingredients': ['olive oil', 'garlic', 'salt', 'pepper', 'butter'], 'description': 'Creamy pasta with tender broccoli florets and rich parmesan sauce. Fresh parsley adds a burst of color and flavor to this comforting dish that perfectly combines vegetables with indulgent cheese.', 'number_of_persons': 4, 'instructions': {'step1': ['Bring a large pot of salted water to a boil. Cook the pasta according to package instructions until al dente. Drain and set aside.', 'In a large skillet, heat the olive oil over medium heat. Add the minced garlic and sauté for 1-2 minutes until fragrant.', 'Add the broccoli florets to the skillet and season with salt and pepper. Sauté for 5-7 minutes, or until the broccoli is tender.'], 'step2': ['Reduce the heat to low and add the heavy cream to the skillet. Stir in the grated parmesan cheese until the sauce is creamy and smooth.', 'Add the cooked pasta to the skillet and toss to coat everything evenly with the parmesan sauce.', 'Garnish with fresh chopped parsley before serving.']}, 'tips': ['Use freshly grated parmesan cheese for the best flavor.', 'For extra creaminess, add a tablespoon of butter to the sauce.'], 'storage': 'This dish is best served immediately, but leftovers can be stored in an airtight container in the refrigerator for up to 3 days.'}
+    ]
+    context = {"recipe": recipe[0]}
+
+    return render(request, 'generator/recipe.html', context=context)
+
+def recipe(request):
+
+    prompt = create_recipe_prompt("test")
+    recipe = get_recipe_from_claude(prompt)
+
+    print(recipe["recipe"])
+
+    context = {"recipe": recipe["recipe"][0]}
+
+    return render(request, 'generator/recipe.html', context=context)

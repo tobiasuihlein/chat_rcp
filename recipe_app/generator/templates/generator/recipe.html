@@ -1,0 +1,60 @@
+{% extends "./layout.html" %}
+
+
+{% block header-middle %}
+
+{% endblock header-middle %}
+
+
+{% block main-content %}
+
+
+<div class="row-wrapper section-row" style="margin-top: 0;">
+    <div class="row-content">
+        <div class="widget recipe-pad">
+            <div class="recipe-title">
+                <span>{{ recipe.title }}</span>
+            </div>
+            <div class="recipe-pad-row">
+                <div><span style="font-size: 1.2rem; font-weight: 300; break-inside: avoid;">{{ recipe.description }}</span></div>
+                <div class="recipe-difficulty recipe-difficulty-{{ recipe.difficulty|lower }}">{{ recipe.difficulty }}</div>
+                <div class="recipe-time"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg> {{ recipe.time.total }}</div>
+                <div><span style="font-size: 1.2rem;">Persons: {{ recipe.number_of_persons }}</span></div>
+                <div style="break-inside: avoid;">
+                    <div class="main-ingredients"><span style="font-weight: 400">Main ingredients:</span><br>
+                        <span>
+                            {{ recipe.main_ingredients|join:", " }}
+                        </span>
+                    </div>
+                    <div class="additional-ingredients"><span style="font-weight: 400">Additional ingredients:</span><br>
+                        <span>
+                            {{ recipe.additional_ingredients|join:", " }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="recipe-pad-row">
+                <div class="recipe-instructions">
+                    <ol style="overflow-wrap: break-word; padding-left: 30px;">
+                        {% for step, substeps in recipe.instructions.items %}
+                            <li style="font-weight: 400; margin-bottom: 1rem;">{{ step }}</li>
+                        <ul>
+                            {% for substep in substeps %}
+                                <li style="margin-bottom: 1rem; break-inside: avoid;">{{ substep }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+            <div class="recipe-pad-row">
+                <span>{{ recipe.tips }}</span>
+                <span>{{ recipe.storage }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock main-content %}

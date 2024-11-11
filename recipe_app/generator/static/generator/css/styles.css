@@ -166,9 +166,45 @@ main {
     box-shadow: rgba(99, 99, 99, 0.2) 0px 0px 8px 0px;
 }
 
+.recipe-pad {
+    border-radius: 10px;
+    height: auto;
+    width: 800px;
+    color: var(--text-color-highlight-1);
+    padding: 3rem;
+    background-color: #F2F3EE;
+    box-shadow: rgba(102, 101, 95, 0.2) 0px 2px 8px 0px;
+}
+
+.recipe-pad-row {
+    margin-top: 1rem;;
+    column-count: 2;
+    column-gap: 20px;
+    border: solid 0px indianred;
+}
+
+@media screen and (max-width: 699px) {
+    .recipe-pad-row {
+        column-count: 1;
+    }
+}
+
+.recipe-title {
+    font-size: 2rem;
+    font-weight: 500;
+    min-width: 100%;
+    text-align: center;
+}
+
+.recipe-instructions {
+    font-size: 1.2rem;
+    font-weight: 300;
+    max-width: 400px;
+    text-align: left;
+}
+
 .card {
     border-radius: 10px;
-    border: solid 0px var(--text-color-highlight-1);
     height: auto;
     width: 360px;
     color: var(--text-color-highlight-1);
@@ -182,7 +218,7 @@ main {
 }
 
 .card-recipe-container{
-    width: 100%;
+    width: auto;
     display: block;
     border-radius: 10px;
     border: solid 0px var(--text-color-highlight-1);
@@ -296,6 +332,8 @@ main {
 .initial-prompt-heading {
     font-size: 2rem;
     font-weight: 500;
+    max-width: 90vw;
+    text-align: center;
 }
 
 .searchbar-container {
@@ -310,7 +348,7 @@ main {
     gap: 0.5rem;
     padding: 0.8rem 1rem;
     min-height: 1.5rem;
-    min-width: 400px;
+    min-width: 200px;
     max-width: 500px;
     border-radius: 999px;
     text-align: center;

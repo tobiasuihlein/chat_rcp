@@ -355,8 +355,7 @@ main {
     gap: 0.5rem;
     padding: 0.8rem 1rem;
     min-height: 1.5rem;
-    min-width: 200px;
-    max-width: 500px;
+    min-width: 320px;
     border-radius: 999px;
     text-align: center;
     font-size: 1.2rem;

@@ -114,25 +114,19 @@ def create_recipe_prompt(preview: dict) -> str:
                     "cooking": "X Min.",
                 }},
                 "main_ingredients": [
-                    "ingredient1",
-                    "ingredient2"
+                    "Xg ingredient one",
+                    "Yg ingredient two",
+                    "Zg ingredient three"
                 ],
                 "additional_ingredients": [
-                    "ingredient1",
-                    "ingredient2"
+                    "X tbsp additional ingridient 1",
+                    "Y whatever unit additional ingridient 2"
                 ],
                 "description": "A brief, appealing description of the dish.",
-                "number_of_persons": "integer",
+                "servings": "number of persons to serve with this recipe",
                 "instructions": {{
-                    "step1": [
-                        "substep1",
-                        "substep2",
-                        "substep3"
-                    ],
-                    "step2": [
-                        "substep1",
-                        "substep2
-                    ],
+                    "headline step one": "description step one",
+                    "headline step two": "description step two",
                 }}
                 "tips": [
                     "tip1",
@@ -148,6 +142,7 @@ def create_recipe_prompt(preview: dict) -> str:
     2. Use only the provided ingredients
     3. Each recipe must be realistic and cookable
     4. Time should be in the format "X Min."
+    5. For each instruction step create an appropriate headline and a short paragraph
 
     Return only the JSON, no other text."""
 

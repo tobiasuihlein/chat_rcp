@@ -41,11 +41,13 @@ def create_previews_prompt(ingredients: list, staples: list) -> str:
     7. List main ingredients from the provided ingredients list
     8. List additional ingredients that are common household staples
     9. Do not use all ingredients, if you feel like they don't match
-    10. If you have trouble to create three meals with the provided ingredients, feel free to provide only one or two options
+    10. Only combine provided ingredients that actually match
     11. Do not add ingredients that are not really common as household staples (e.g eggplant, broccoli), if not included in the provided ingredients
     12. You don't have to use all provided ingredients
     13. Do not use too many additional ingredients
-    14. Only create recipes of actual common dishes (nothing too fancy, e.g. do not combine pasta with apples)
+    14. Try to provide one very basic, one quite common, and one more extravagant dish (but also for the extravagant dish: use only the provided ingredients)
+    15. Only create recipes with the best ratings
+    16. Focus on European dishes and eating traditions
 
     Return only the JSON, no other text."""
 
@@ -60,7 +62,8 @@ def get_previews_from_claude(prompt: str) -> dict:
 
     client = anthropic.Anthropic(api_key=api_key)
     message = client.messages.create(
-        model="claude-3-haiku-20240307",
+        #model="claude-3-haiku-20240307",
+        model="claude-3-5-haiku-20241022",
         max_tokens=1024,
         system="You are a helpful chef assistant that returns only valid JSON responses in the exact format requested.",
         messages=[

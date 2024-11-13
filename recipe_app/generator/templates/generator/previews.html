@@ -1,5 +1,6 @@
 {% extends "./layout.html" %}
 
+{% load static %}
 
 {% block header-middle %}
 
@@ -11,16 +12,28 @@
 <div class="row-wrapper section-row" style="margin-top: 0;">
     <div class="row-content">
         <div class="widget">
-            <span style="font-weight: 600; font-size: 2rem;">What do you think?</span>
+            <span style="font-weight: 600; font-size: 2rem;">What about on of these?</span>
         </div>
     </div>
+</div>
+
+<div id="loading-spinner" class="spinner-overlay" style="display: none;">
+    <div class="row-wrapper section-row">
+        <div class="row-content">
+            <div class="widget">
+                <img src="{% static 'generator/img/sidney-sceptical.png' %}" style="width: 400px; height: auto"/>
+            </div>
+        </div>
+    </div>
+    <p style="font-weight: 600; font-size: 2rem;">Interesting ...</p>
+    <div class="spinner"></div>
 </div>
 
 <div class="row-wrapper section-row">
     <div class="row-content">
         {% for preview in recipe_previews %}
         
-        <form method="post" action="{% url 'generator:recipe' %}">
+        <form class="preview-card-form" method="post" action="{% url 'generator:recipe' %}">
             {% csrf_token %}
             {% for key, value in preview.items %}
                 <input type="hidden" name="{{ key }}" value="{{ value }}">
@@ -44,11 +57,6 @@
                                 {{ preview.additional_ingredients|join:", " }}
                             </span>
                         </div>
-                        <div class="card-btn-container">
-                            <div class="btn card-btn">
-                                Let's do this!
-                            </div>
-                        </div>
                     </div>
                 </div>
             </button>
@@ -57,17 +65,17 @@
     </div>
 </div>
 
+{% block javascript %}
+
+<script>
+    const forms = document.querySelectorAll('.preview-card-form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            document.getElementById('loading-spinner').style.display = 'flex';
+        });
+    });
+</script>
+
+{% endblock %}
 
 {% endblock main-content %}
-
-<div class="row-wrapper section-row">
-    <div class="row-content">
-        <div class="widget">
-            <div class="tag-list-container">
-                {% for ingredient in ingredients %}
-                <a><div class="ingredient">{{ ingredient }}</div></a>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>

@@ -376,6 +376,8 @@ main {
     padding: 0.8rem 1rem;
     min-height: 1.5rem;
     min-width: 320px;
+    max-width: 600px;
+    width: 90vw;
     border-radius: 999px;
     text-align: center;
     font-size: 1.2rem;

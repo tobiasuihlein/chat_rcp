@@ -11,8 +11,9 @@
     <meta name="author" content="Your Name">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{% static 'generator/favicon/chef-hat.svg' %}">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'generator/favicon/favicon-16x16.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'generator/favicon/favicon-32x32.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'generator/favicon/favicon-180x180.png' %}">
     
     <!-- CSS -->
     <link rel="stylesheet" href="{% static 'generator/css/styles.css' %}">
@@ -27,7 +28,9 @@
                     {% block header-middle %}
                     {% endblock header-middle %}
                 </div>
-            <a href="#login" class="btn login-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Login</a>
+            <div>
+                <button id="login-button" class="btn login-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Login</button>
+            </div>
         </nav>
     </header>
 
@@ -40,5 +43,6 @@
     <footer>
         <!-- Footer content -->
     </footer>
+
 </body>
 </html>

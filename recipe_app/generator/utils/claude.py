@@ -18,12 +18,12 @@ def create_previews_prompt(ingredients: list, staples: list) -> str:
                 "title": "string",
                 "difficulty": "Easy|Medium|Hard",
                 "time": "X Min.",
-                "additional_ingredients": [
+                "description": "A brief, appealing description of the dish.",
+                "main_ingredients": [
                     "ingredient1",
                     "ingredient2"
                 ],
-                "description": "A brief, appealing description of the dish.",
-                "main_ingredients": [
+                "additional_ingredients": [
                     "ingredient1",
                     "ingredient2"
                 ]
@@ -33,18 +33,19 @@ def create_previews_prompt(ingredients: list, staples: list) -> str:
 
     Requirements:
     1. Response must be valid JSON
-    2. Use only the provided ingredients and very common household staples (salt, pepper, olive oil etc.)
+    2. Use only the provided main ingredients and very common household staples (salt, pepper, olive oil etc.) as additional ingredients
     3. Each recipe must be realistic and cookable
     4. Keep descriptions under 200 characters
-    5. Time should be in the format "X Min."
-    6. Alays create one "Easy", one "Medium", and one "Hard" recipe, if the provided ingredients allow it
+    5. Time should be in the format "X Min." and refer to the total time necessary
+    6. Difficulties should be one of these: "Easy", "Medium", or "Hard"
     7. List main ingredients from the provided ingredients list
     8. List additional ingredients that are common household staples
     9. Do not use all ingredients, if you feel like they don't match
-    10. If you do not find reasonable meals in all difficulties, feel free to provide less than three
+    10. If you have trouble to create three meals with the provided ingredients, feel free to provide only one or two options
     11. Do not add ingredients that are not really common as household staples (e.g eggplant, broccoli), if not included in the provided ingredients
     12. You don't have to use all provided ingredients
     13. Do not use too many additional ingredients
+    14. Only create recipes of actual common dishes (nothing too fancy, e.g. do not combine pasta with apples)
 
     Return only the JSON, no other text."""
 
@@ -79,26 +80,15 @@ def get_previews_from_claude(prompt: str) -> dict:
 
 ### CREATE RECIPE ###
 
-def create_recipe_prompt(preview: dict) -> str:
+def create_recipe_prompt(recipe_dict: dict) -> str:
 
-    prompt = f"""Given this recipe preview:
-
-        "title": "Parmesan Broccoli Pasta",
-        "difficulty": "Medium",
-        "time": "25 Min.",
-        "additional_ingredients":
-            "olive oil",
-            "garlic",
-            "salt",
-            "pepper",
-            "butter"
-        "description": "Creamy pasta with tender broccoli florets and rich parmesan sauce. Fresh parsley adds a burst of color and flavor to this comforting dish that perfectly combines vegetables with indulgent cheese.",
-        "main_ingredients":
-            "pasta",
-            "broccoli",
-            "parmesan",
-            "cream",
-            "parsley"
+    prompt = f"""Given these recipe information:
+    
+    Title: {recipe_dict['title']}
+    Description: {recipe_dict['description']}
+    Total Time: {recipe_dict['time']}
+    Difficulty: {recipe_dict['difficulty']}
+    Ingredients: {recipe_dict['main_ingredients']} and {recipe_dict['additional_ingredients']}
 
     Please create the corresponding recipe in the following exact JSON format, nothing else:
 
@@ -142,7 +132,8 @@ def create_recipe_prompt(preview: dict) -> str:
     2. Use only the provided ingredients
     3. Each recipe must be realistic and cookable
     4. Time should be in the format "X Min."
-    5. For each instruction step create an appropriate headline and a short paragraph
+    5. Use the metric system and Celcius instead of Fahrenheit
+    6. For each instruction step create an appropriate headline and a short paragraph
 
     Return only the JSON, no other text."""
 

@@ -16,8 +16,15 @@
     --transition-speed: 0.3s;
     --max-width: 1400px;
     --content-padding: 1rem 2rem;
+    --content-padding-mobile: 0.5rem 1rem;
     --main-spacing: 2rem;
     --main-bg: none;
+}
+
+@media only screen and (max-width: 499px) {
+    .hide-mobile {
+        display: none;
+    }
 }
 
 body {
@@ -26,7 +33,7 @@ body {
     background-color: #d5d6cf;
 }
 
-a {
+a, button {
     all: unset;
     cursor: pointer;
 }
@@ -84,6 +91,12 @@ main {
     margin: 0 auto;
     padding: var(--content-padding);
     background: var(--main-bg);
+}
+
+@media only screen and (max-width: 499px) {
+    main {
+        padding: var(--content-padding-mobile);
+    }
 }
 
 .btn {
@@ -180,6 +193,12 @@ main {
     box-shadow: rgba(102, 101, 95, 0.2) 0px 2px 8px 0px;
 }
 
+@media only screen and (max-width: 499px) {
+    .recipe-pad {
+        padding: 1.5rem;
+    }
+}
+
 .recipe-pad-row {
     margin-top: 3rem;;
     border: solid 0px indianred;
@@ -206,8 +225,9 @@ main {
 .recipe-description {
     font-size: 1.2rem;
     font-weight: 300;
-    text-align: center;
-    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
 }
 
 .recipe-instructions {
@@ -251,7 +271,7 @@ main {
     margin-bottom: 1rem;
 }
 
-.recipe-time {
+.recipe-time, .recipe-servings {
     font-size: 1.2rem;
     display: inline-flex;
     justify-content: center;

@@ -56,7 +56,7 @@ ul {
 }
 
 .navbar-logo {
-    color: var(--text-color-highlight-1);
+    color: #191918;
     font-size: 1.4rem;
     font-weight: 600;
     display: inline-flex;
@@ -361,6 +361,7 @@ main {
     font-weight: 500;
     max-width: 90vw;
     text-align: center;
+    color: #191918;
 }
 
 .typewriter {
@@ -371,7 +372,7 @@ main {
     width: fit-content;
     white-space: nowrap;
     margin: 0 auto;
-    border-right: .1em solid black;
+    border-right: .1em solid #191918;
 }
 
 @keyframes typing {
@@ -397,7 +398,7 @@ main {
 
 @keyframes blink-caret {
     from, to { border-color: transparent }
-    50% { border-color: black }
+    50% { border-color: #191918; }
 }
 
 .searchbar-container {
@@ -444,7 +445,7 @@ main {
 }
 
 .searchbar-button:hover {
-    background-color: #333;
+    background-color: #e56767;
     cursor: pointer;
 }
 
@@ -481,7 +482,30 @@ main {
     margin-top: 2rem;
 }
 
-
 @keyframes spin {
     100% { transform: rotate(360deg); }
+}
+
+
+.body-container img {
+    width: 150px;
+    height: auto;
+}
+
+.pupils-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 150px;
+    height: auto;
+    transition: transform 0.5s ease;
+}
+
+.shadow-container img {
+    z-index: -99;
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 150px;
+    height: auto;
 }

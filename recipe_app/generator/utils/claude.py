@@ -62,8 +62,9 @@ def get_previews_from_claude(prompt: str) -> dict:
 
     client = anthropic.Anthropic(api_key=api_key)
     message = client.messages.create(
-        #model="claude-3-haiku-20240307",
-        model="claude-3-5-haiku-20241022",
+        # model="claude-3-haiku-20240307",
+        # model="claude-3-5-haiku-latest",
+        model="claude-3-5-sonnet-latest",
         max_tokens=1024,
         system="You are a helpful chef assistant that returns only valid JSON responses in the exact format requested.",
         messages=[
@@ -151,7 +152,9 @@ def get_recipe_from_claude(prompt: str) -> dict:
 
     client = anthropic.Anthropic(api_key=api_key)
     message = client.messages.create(
-        model="claude-3-haiku-20240307",
+        # model="claude-3-haiku-20240307",
+        # model="claude-3-5-haiku-latest",
+        model="claude-3-5-sonnet-latest",
         max_tokens=1024,
         system="You are a helpful chef assistant creating accurate recipes based on a provided preview.",
         messages=[

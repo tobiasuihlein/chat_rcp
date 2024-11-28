@@ -9,10 +9,10 @@
 
 {% block main-content %}
 
-<div style="height: 70vh; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+<div style="height: 80vh; display: flex; align-items: center; justify-content: center; flex-direction: column;">
 
     <div id="loading-spinner" class="spinner-overlay" style="display: none;">
-        <div class="row-wrapper section-row">
+        <div class="row-wrapper section-row" style="display: none;">
             <div class="row-content">
                 <div class="widget">
                     <img src="{% static 'generator/img/carmy-writing.png' %}" style="width: 600px; height: auto"/>
@@ -25,8 +25,16 @@
 
     <div class="row-wrapper section-row">
         <div class="row-content">
-            <div class="widget">
-                <img src="{% static 'generator/img/comic-chef-rabbit-waiting-1.png' %}" style="width: 300px; height: auto"/>
+            <div class="character-container" style="position: relative;">
+                <div class="shadow-container">
+                    <img src="{% static 'generator/img/ghibli-shadow.svg' %}"/>
+                </div>
+                <div class="body-container">
+                    <img src="{% static 'generator/img/ghibli-empty-eyes.svg' %}"/>
+                </div>
+                <div class="pupils-container">
+                    <img id="pupils" src="{% static 'generator/img/ghibli-pupils.svg' %}"/>
+                </div>
             </div>
         </div>
     </div>
@@ -60,9 +68,49 @@
 {% block javascript %}
 
 <script>
+    // activate loading spinner overlay on submit
     document.getElementById('initial-prompt-form').addEventListener('submit', function(e) {
         document.getElementById('loading-spinner').style.display = 'flex';
     });
+
+    // eye movement when searchbar focused
+    const pupils = document.getElementById('pupils');
+    const ingredientsInput = document.getElementById('ingredients-input');
+    ingredientsInput.addEventListener('focus', (event) => {
+        pupils.style.transform = `translate(0, 5px)`;
+    });
+    ingredientsInput.addEventListener('blur', (event) => {
+        pupils.style.transform = `translate(0, 0)`;
+    });
+
+    // idle eye movement animation
+    let idleTimer = null;
+    function startIdleAnimation() {
+        pupils.style.animation = 'moveEyes 60s infinite';
+    }
+    function stopIdleAnimation() {
+        pupils.style.animation = '';
+    }
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes moveEyes {
+            52% { transform: translate(0, 0); }
+            55% { transform: translate(3px, 3px); }
+            68% { transform: translate(3px, 3px); }
+            70% { transform: translate(-3px, 0); }
+            83% { transform: translate(-3px, 0); }
+            85% { transform: translate(0, -3px); }
+            100% { transform: translate(0, 0); }
+        }
+    `;
+    document.head.appendChild(style);
+    function resetIdleTimer() {
+        stopIdleAnimation();
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(startIdleAnimation, 3000);
+    }
+    document.addEventListener('mousemove', resetIdleTimer);
+    document.addEventListener('keypress', resetIdleTimer);
 </script>
 
 {% endblock %}

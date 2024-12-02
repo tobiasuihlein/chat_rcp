@@ -25,4 +25,4 @@ RUN chmod -R 755 /app/staticfiles
 RUN python recipe_app/manage.py collectstatic --noinput
 
 # Update the wsgi path (further setttings in the docker-compose file)
-CMD ["gunicorn", "music_game_app.wsgi:application"]
+CMD ["gunicorn", "recipe_app.wsgi:application"]

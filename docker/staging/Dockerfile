@@ -17,7 +17,7 @@ COPY . .
 
 # Set environment variables
 ENV PYTHONPATH=/app/recipe_app
-ENV DJANGO_SETTINGS_MODULE=recipe_app.settings.local
+ENV DJANGO_SETTINGS_MODULE=recipe_app.settings.staging
 
 # Collect static files to serve
 RUN mkdir -p /app/staticfiles

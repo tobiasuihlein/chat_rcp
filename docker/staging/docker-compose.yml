@@ -4,7 +4,7 @@ services:
       context: ../../
       dockerfile: docker/staging/Dockerfile
     command: >
-      gunicorn music_game_app.wsgi:application
+      gunicorn recipe_app.wsgi:application
       --bind 0.0.0.0:8000
       --forwarded-allow-ips="*"
     restart: always

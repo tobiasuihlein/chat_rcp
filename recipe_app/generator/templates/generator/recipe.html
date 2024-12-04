@@ -20,7 +20,7 @@
             </div>
             <div class="recipe-pad-row">
                 <div class="recipe-difficulty recipe-difficulty-{{ recipe.difficulty|lower }}">{{ recipe.difficulty }}</div>
-                <div class="recipe-time"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg> {{ recipe.time.total }}</div>
+                <div class="recipe-time"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg> {{ recipe.time.total }} Min.</div>
                 <div class="recipe-servings"> {{ recipe.servings }} Servings</div>
             </div>
             <div class="recipe-pad-row">
@@ -29,14 +29,14 @@
                         <div class="main-ingredients"><span style="font-weight: 400">Main ingredients:</span><br>
                             <ul style="overflow-wrap: break-word; padding-left: 1rem;">
                                 {% for ingredient in recipe.main_ingredients %}
-                                <li style="margin-top: 0.5rem;"> {{ ingredient }} </li>
+                                <li style="margin-top: 0.5rem;"> {{ ingredient.amount }} {{ ingredient.unit }} {{ ingredient.name }} {{ ingredient.notes }} </li>
                                 {% endfor %}
                             </ul>
                         </div>
                         <div class="additional-ingredients"><span style="font-weight: 400">Additional ingredients:</span><br>
                             <ul style="overflow-wrap: break-word; padding-left: 1rem;">
                                 {% for ingredient in recipe.additional_ingredients %}
-                                <li style="margin-top: 0.5rem;"> {{ ingredient }} </li>
+                                <li style="margin-top: 0.5rem;"> {{ ingredient.amount }} {{ ingredient.unit }} {{ ingredient.name }} {{ ingredient.notes }} </li>
                                 {% endfor %}
                             </ul>
                         </div>

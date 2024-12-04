@@ -108,9 +108,15 @@ def create_recipe_prompt(recipe_dict: dict) -> str:
                     "cooking": "X Min.",
                 }},
                 "main_ingredients": [
-                    "Xg ingredient one",
-                    "Yg ingredient two",
-                    "Zg ingredient three"
+                    {"name": "ingredient one",
+                     "amount": "amount of ingredient one",
+                     "unit": "unit for amount specification of ingredient one"},
+                    {"name": "ingredient two",
+                     "amount": "amount of ingredient two",
+                     "unit": "unit for amount specification of ingredient two"},
+                    {"name": "ingredient three",
+                     "amount": "amount of ingredient three",
+                     "unit": "unit for amount specification of ingredient three"},
                 ],
                 "additional_ingredients": [
                     "X tbsp additional ingridient 1",

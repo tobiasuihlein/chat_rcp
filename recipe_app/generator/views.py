@@ -35,6 +35,7 @@ def recipe(request):
             recipe_dict = request.POST.dict()
             prompt = generator.create_recipe_prompt(recipe_dict)
             recipe = generator.get_recipe_from_LLM(prompt)
+            generator.recipe_to_database(recipe["recipe"][0])
             print(recipe["recipe"][0])
             context = {"recipe": recipe["recipe"][0]}
             return render(request, 'generator/recipe.html', context=context)

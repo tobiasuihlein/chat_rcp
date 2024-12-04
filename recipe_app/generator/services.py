@@ -2,29 +2,41 @@ import os
 import json
 from dotenv import load_dotenv
 import anthropic
-from .models import Recipe
+from .models import *
+from django.db import transaction
 
 
 class RecipeGeneratorService:
     def __init__(self):
         load_dotenv()
         self.api_key = os.getenv("ANTHROPIC_API_KEY")
-        self.client = anthropic.Anthropic(api_key=self.api_key)
+        self.client = anthropic.Anthropic(
+            api_key=self.api_key,
+            max_retries=3,
+            timeout=20.0,
+        )
 
     def get_previews_from_LLM(self, prompt: str) -> dict:
-        message = self.client.messages.create(
-            # model="claude-3-haiku-20240307",
-            # model="claude-3-5-haiku-latest",
-            model="claude-3-5-sonnet-latest",
-            max_tokens=1024,
-            system="You are a helpful chef assistant that returns only valid JSON responses in the exact format requested.",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-        )
+        try:
+            message = self.client.messages.create(
+                # model="claude-3-haiku-20240307",
+                # model="claude-3-5-haiku-latest",
+                model="claude-3-5-sonnet-latest",
+                max_tokens=1024,
+                system="You are a helpful chef assistant that returns only valid JSON responses in the exact format requested.",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            )
+        except anthropic.APIError as e:
+            print(f"API error: {e}")
+        except anthropic.RateLimitError as e:
+            print(f"Rate limit exceeded: {e}")
+        except anthropic.APITimeoutError as e:
+            print(f"Timeout: {e}")
 
         try:
             answer = json.loads(message.content[0].text)
@@ -34,20 +46,26 @@ class RecipeGeneratorService:
         
 
     def get_recipe_from_LLM(self, prompt: str) -> dict:
-
-        message = self.client.messages.create(
-            # model="claude-3-haiku-20240307",
-            # model="claude-3-5-haiku-latest",
-            model="claude-3-5-sonnet-latest",
-            max_tokens=1024,
-            system="You are a helpful chef assistant creating accurate recipes based on a provided preview.",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-        )
+        try:
+            message = self.client.messages.create(
+                # model="claude-3-haiku-20240307",
+                # model="claude-3-5-haiku-latest",
+                model="claude-3-5-sonnet-latest",
+                max_tokens=1024,
+                system="You are a helpful chef assistant creating accurate recipes based on a provided preview.",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ]
+            )
+        except anthropic.APIError as e:
+            print(f"API error: {e}")
+        except anthropic.RateLimitError as e:
+            print(f"Rate limit exceeded: {e}")
+        except anthropic.APITimeoutError as e:
+            print(f"Timeout: {e}")
 
         try:
             answer = json.loads(message.content[0].text)
@@ -56,18 +74,45 @@ class RecipeGeneratorService:
             raise ValueError("Sorry, something went wrong, chef.")
 
 
-    def recipe_to_database(self, request):
-        print(request.POST.keys())
-        print(request.POST['main_ingredients'])
-        Recipe.objects.create(
-            title=request.POST['title'],
-            description=request.POST['description'],
-            difficulty=request.POST['difficulty'],
-            time_total=request.POST['time']['total'],
-            time_preparation=request.POST['time']['preparation'],
-            time_cooking=request.POST['time']['cooking'],
-            default_servings = int(request.POST.get('servings', 0)),
-        )
+    def recipe_to_database(self, recipe):
+        try:
+            with transaction.atomic():
+                recipe_object = Recipe.objects.create(
+                    title=recipe['title'],
+                    description=recipe['description'],
+                    difficulty=recipe['difficulty'],
+                    time_total=recipe['time']['total'],
+                    time_preparation=recipe['time']['preparation'],
+                    time_cooking=recipe['time']['cooking'],
+                    default_servings = int(recipe.get('servings', 0)),
+                )
+                for main_ingredient in recipe['main_ingredients']:
+                    ingredient_object, _ = Ingredient.objects.get_or_create(
+                        name=main_ingredient['name'],
+                        category=main_ingredient['category'],
+                    )
+                    RecipeIngredient.objects.create(
+                        ingredient=ingredient_object,
+                        amount=main_ingredient['amount'],
+                        unit=main_ingredient['unit'],
+                        type='M',
+                        recipe=recipe_object,
+                    )
+                for additional_ingredient in recipe['additional_ingredients']:
+                    ingredient_object, _ = Ingredient.objects.get_or_create(
+                        name=additional_ingredient['name'],
+                        category=additional_ingredient['category'],
+                    )
+                    RecipeIngredient.objects.create(
+                        ingredient=ingredient_object,
+                        amount=additional_ingredient['amount'],
+                        unit=additional_ingredient['unit'],
+                        type='A',
+                        recipe=recipe_object,
+                    )
+        except Exception as e:
+            print(f"Error occured; {str(e)}")
+            raise
         
 
     def create_previews_prompt(self, ingredients: list, staples: list) -> str:
@@ -145,29 +190,35 @@ class RecipeGeneratorService:
                         {{"name": "ingredient one",
                         "amount": "amount of ingredient one",
                         "unit": "unit for amount specification of ingredient one",
-                        "notes": "notes for ingredient one (e.g., 'finely chopped')}},
+                        "notes": "notes for ingredient one (e.g., 'finely chopped'),
+                        "category": "category for ingredient one (e.g. 'vegetable', 'meat')}},
                         {{"name": "ingredient two",
                         "amount": "amount of ingredient two",
                         "unit": "unit for amount specification of ingredient two",
-                        "notes": "notes for ingredient two (e.g., 'finely chopped')}},
+                        "notes": "notes for ingredient two (e.g., 'finely chopped'),
+                        "category": "category for ingredient two (e.g. 'vegetable', 'meat')}},
                         {{"name": "ingredient three",
                         "amount": "amount of ingredient three",
                         "unit": "unit for amount specification of ingredient three",
-                        "notes": "notes for ingredient three (e.g., 'finely chopped')}},
+                        "notes": "notes for ingredient three (e.g., 'finely chopped'),
+                        "category": "category for ingredient three (e.g. 'vegetable', 'meat')}},
                     ],
                     "additional_ingredients": [
                         {{"name": "ingredient one",
                         "amount": "amount of ingredient one",
                         "unit": "unit for amount specification of ingredient one",
-                        "notes": "notes for ingredient one (e.g., 'finely chopped')}},
+                        "notes": "notes for ingredient one (e.g., 'finely chopped'),
+                        "category": "category for ingredient one (e.g. 'oil', 'spice')}},
                         {{"name": "ingredient two",
                         "amount": "amount of ingredient two",
                         "unit": "unit for amount specification of ingredient two",
-                        "notes": "notes for ingredient two (e.g., 'finely chopped')}},
+                        "notes": "notes for ingredient two (e.g., 'finely chopped'),
+                        "category": "category for ingredient two (e.g. 'oil', 'spice')}},
                         {{"name": "ingredient three",
                         "amount": "amount of ingredient three",
                         "unit": "unit for amount specification of ingredient three",
-                        "notes": "notes for ingredient three (e.g., 'finely chopped')}},
+                        "notes": "notes for ingredient three (e.g., 'finely chopped'),
+                        "category": "category for ingredient thre (e.g. 'oil', 'spice')}},
                     ],
                     "description": "A brief, appealing description of the dish.",
                     "servings": "number of persons to serve with this recipe",
@@ -213,6 +264,7 @@ class RecipeGeneratorService:
         12. For the hashtags, try to use single words if possible, else user '-' to combine, always use capitalized words (e.g. Super-Sweet, Party-Food, Sharing-Plate)
         13. For the hashtags, do not repeat other properties already provided (such as cuisine type or cost)
         14. For more advanced dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
+        15. Amount field for ingredients must be a digit number with max. 2 decimal places
 
         Return only the JSON, no other text."""
 

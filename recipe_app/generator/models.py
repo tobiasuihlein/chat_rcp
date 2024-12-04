@@ -21,11 +21,20 @@ class Recipe(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=255)
-    type = models.CharField(max_length=25, choices=[('M', 'Main Ingredient'), ('A', 'Additional Ingredient')])
-    amount = models.IntegerField(null=True)
-    unit = models.CharField(max_length=25)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="ingredients")
+    category = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
+
+
+class RecipeIngredient(models.Model):
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name="recipes")
+    type = models.CharField(max_length=25, choices=[('M', 'Main Ingredient'), ('A', 'Additional Ingredient')])
+    amount = models.DecimalField(max_digits=7, decimal_places=2)
+    unit = models.CharField(max_length=25)
+    note = models.CharField(max_length=255)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="ingredients")
+
+    def __str__(self):
+        return self.ingredient.name
 

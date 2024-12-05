@@ -21,7 +21,7 @@
     <div class="row-wrapper section-row" style="display: none;">
         <div class="row-content">
             <div class="widget">
-                <img src="{% static 'generator/img/sidney-sceptical.png' %}" style="width: 400px; height: auto"/>
+                <img src="{% static 'recipes/img/sidney-sceptical.png' %}" style="width: 400px; height: auto"/>
             </div>
         </div>
     </div>
@@ -33,7 +33,7 @@
     <div class="row-content">
         {% for preview in recipe_previews %}
         
-        <form class="preview-card-form" method="post" action="{% url 'generator:recipe' %}">
+        <form class="preview-card-form" method="post" action="{% url 'recipes:recipe' %}">
             {% csrf_token %}
             {% for key, value in preview.items %}
                 <input type="hidden" name="{{ key }}" value="{{ value }}">

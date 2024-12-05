@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .utils.helpers import sort_previews
-from .services import RecipeGeneratorService
+from generator.utils.helpers import sort_previews
+from generator.services import RecipeGeneratorService
 
 def previews(request):
 
@@ -18,13 +18,13 @@ def previews(request):
         previews["recipes"] = sort_previews(previews["recipes"])
 
         context = {"recipe_previews": previews["recipes"], "ingredients": ingredients}
-        return render(request, 'generator/previews.html', context=context)
+        return render(request, 'recipes/previews.html', context=context)
     
-    return render(request, 'generator/index.html')
+    return render(request, 'recipes/index.html')
 
 
 def home(request):
-    return render(request, 'generator/index.html')
+    return render(request, 'recipes/index.html')
 
 
 def recipe_generated(request):
@@ -38,10 +38,9 @@ def recipe_generated(request):
             generator.recipe_to_database(recipe["recipe"][0])
             print(recipe["recipe"][0])
             context = {"recipe": recipe["recipe"][0]}
-            return render(request, 'generator/recipe-generated.html', context=context)
+            return render(request, 'recipes/recipe.html', context=context)
         except Exception as e:
             print(f"Error: {e}")
-            print("no recipe data provided")
-            return redirect('generator:home')
+            return redirect('recipes:home')
     
-    return redirect('generator:home')
+    return redirect('recipes:home')

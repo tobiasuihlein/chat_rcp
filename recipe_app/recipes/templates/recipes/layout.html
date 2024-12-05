@@ -11,19 +11,19 @@
     <meta name="author" content="Your Name">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'generator/favicon/favicon-16x16.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'generator/favicon/favicon-32x32.png' %}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'generator/favicon/favicon-180x180.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'recipes/favicon/favicon-16x16.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'recipes/favicon/favicon-32x32.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'recipes/favicon/favicon-180x180.png' %}">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="{% static 'generator/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'recipes/css/styles.css' %}">
     
     <title>ChatRCP</title>
 </head>
 <body>
     <header>
         <nav class="navbar">
-            <a class="navbar-logo" href="{% url 'generator:home' %}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chef-hat"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>ChatRCP</a>
+            <a class="navbar-logo" href="{% url 'recipes:home' %}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chef-hat"><path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1Z"/><path d="M6 17h12"/></svg>ChatRCP</a>
                 <div>
                     {% block header-middle %}
                     {% endblock header-middle %}

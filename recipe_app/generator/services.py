@@ -2,7 +2,7 @@ import os
 import json
 from dotenv import load_dotenv
 import anthropic
-from .models import *
+from recipes.models import *
 from django.db import transaction
 from django.utils.translation import activate
 

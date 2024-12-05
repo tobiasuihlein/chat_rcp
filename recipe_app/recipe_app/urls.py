@@ -21,7 +21,8 @@ from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
-    path('', include("generator.urls"))
+    path('', include("recipes.urls")),
+    path('generator', include("generator.urls"))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

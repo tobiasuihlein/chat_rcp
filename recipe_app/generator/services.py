@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 import anthropic
 from .models import *
 from django.db import transaction
+from django.utils.translation import activate
+
 
 
 class RecipeGeneratorService:
@@ -75,41 +77,91 @@ class RecipeGeneratorService:
 
 
     def recipe_to_database(self, recipe):
+        activate(recipe['language'])
         try:
             with transaction.atomic():
-                recipe_object = Recipe.objects.create(
-                    title=recipe['title'],
-                    description=recipe['description'],
-                    difficulty=recipe['difficulty'],
-                    time_total=recipe['time']['total'],
-                    time_preparation=recipe['time']['preparation'],
-                    time_cooking=recipe['time']['cooking'],
-                    default_servings = int(recipe.get('servings', 0)),
+                recipe_category_object, _ = RecipeCategory.objects.get_or_create(
+                    name = recipe['category']
                 )
+                recipe_object = Recipe.objects.create(
+                    title = recipe['title'],
+                    description = recipe['description'],
+                    difficulty = recipe['difficulty'],
+                    time_total = recipe['time']['total'],
+                    time_preparation = recipe['time']['preparation'],
+                    time_cooking = recipe['time']['cooking'],
+                    default_servings = int(recipe.get('servings', 0)),
+                    storage = recipe['storage'],
+                    category = recipe_category_object,
+                    cost = int(recipe.get('cost', 0)),
+                    spiciness = int(recipe.get('spiciness', 0))
+                )
+                for element in recipe['cuisine_type']:
+                    type = element['type']
+                    subtype = element['subtype']
+                    type_object, _ = CuisineType.objects.get_or_create(
+                        name = type
+                    )
+                    subtype_object, _ = CuisineSubtype.objects.get_or_create(
+                        name = subtype,
+                        cuisine_type = type_object,
+                    )
+                    recipe_object.cuisine_types.add(type_object)
+                    recipe_object.cuisine_subtypes.add(subtype_object)
+                for diet in recipe['diet']:
+                    diet_object, _ = Diet.objects.get_or_create(
+                        name = diet
+                    )
+                    recipe_object.diets.add(diet_object)
+                for cooking_method in recipe['cooking_method']:
+                    cooking_method_object, _ = CookingMethod.objects.get_or_create(
+                        name = cooking_method
+                    )
+                    recipe_object.cooking_methods.add(cooking_method_object)
+                for hashtag in recipe['hashtags']:
+                    hashtag_object, _ = Hashtag.objects.get_or_create(
+                        name = hashtag
+                    )
+                    recipe_object.hashtags.add(hashtag_object)
                 for main_ingredient in recipe['main_ingredients']:
+                    ingredient_category_object, _ = IngredientCategory.objects.get_or_create(
+                        name = main_ingredient['category'],
+                    )
                     ingredient_object, _ = Ingredient.objects.get_or_create(
-                        name=main_ingredient['name'],
-                        category=main_ingredient['category'],
+                        name = main_ingredient['name'],
+                        category = ingredient_category_object,
                     )
                     RecipeIngredient.objects.create(
-                        ingredient=ingredient_object,
-                        amount=main_ingredient['amount'],
-                        unit=main_ingredient['unit'],
-                        type='M',
-                        recipe=recipe_object,
+                        ingredient = ingredient_object,
+                        amount = main_ingredient['amount'],
+                        unit = main_ingredient['unit'],
+                        type = 'M',
+                        recipe = recipe_object,
                     )
                 for additional_ingredient in recipe['additional_ingredients']:
+                    ingredient_category_object, _ = IngredientCategory.objects.get_or_create(
+                        name = additional_ingredient['category'],
+                    )
                     ingredient_object, _ = Ingredient.objects.get_or_create(
-                        name=additional_ingredient['name'],
-                        category=additional_ingredient['category'],
+                        name = additional_ingredient['name'],
+                        category = ingredient_category_object,
                     )
                     RecipeIngredient.objects.create(
-                        ingredient=ingredient_object,
-                        amount=additional_ingredient['amount'],
-                        unit=additional_ingredient['unit'],
-                        type='A',
-                        recipe=recipe_object,
+                        ingredient = ingredient_object,
+                        amount = additional_ingredient['amount'],
+                        unit = additional_ingredient['unit'],
+                        type = 'A',
+                        recipe = recipe_object,
                     )
+                step_counter = 1
+                for instruction_headline, instruction_description in recipe['instructions'].items():
+                    RecipeInstruction.objects.create(
+                        number = step_counter,
+                        headline = instruction_headline,
+                        description = instruction_description,
+                        recipe = recipe_object,
+                    )
+                    step_counter += 1
         except Exception as e:
             print(f"Error occured; {str(e)}")
             raise
@@ -164,7 +216,7 @@ class RecipeGeneratorService:
         return prompt
     
 
-    def create_recipe_prompt(self, recipe_dict: dict) -> str:
+    def create_recipe_prompt_by_preview(self, recipe_dict: dict) -> str:
         prompt = f"""Given these recipe information:
         
         Title: {recipe_dict['title']}
@@ -178,9 +230,9 @@ class RecipeGeneratorService:
         {{
             "recipe": [
                 {{
+                    "language": "the language the recipe is written in ('en' for English, 'de' for German)",
                     "title": "string",
-                    "difficulty": "Easy|Medium|Hard",
-                    "time": "X Min.",
+                    "difficulty": "difficulty of the dish (use the numbers of the following mapping: 'beginner'->1, 'intermediate'->2, 'advanced'->3, 'expert'->4)",
                     "time": {{
                         "total": "X",
                         "preparation": "X",
@@ -242,8 +294,8 @@ class RecipeGeneratorService:
                     "category": "type of dish (e.g., 'Main course', 'Soup', or 'Dessert'),
                     "diet": ["diet restriction one (e.g. 'Vegetarian')", "diet restriction two (e.g., 'Gluten-Free')"],
                     "cooking_method": ["cooking method one (e.g. 'Grilling')", "cooking method two (e.g., 'Baking')"],
-                    "cost": "cost of the dish (e.g., 'Budget')",
-                    "spiciness": "pungency level (use the numbers of the following mapping: 'not spicy'->0, 'mild'->1, 'medium'->2, 'hot'->3, 'very hot'->4, 'extreme'->5)",
+                    "cost": "cost of the dish (use the numbers of the following mapping: 'budget'->1, 'moderate'->2, 'mid-range'->3, 'premium'->4)",
+                    "spiciness": "pungency level (use the numbers of the following mapping: 'not spicy'->1, 'mild'->2, 'medium'->3, 'hot'->4)",
                     "hashtags": ["hashtag one (e.g., 'Winter')", "hashtag two (e.g., 'Classic')", "hashtag three (e.g. Super-Sweet)", "hashtag four (e.g., Party-Food)", "hashtag five (e.g. Birthday)],
                 }}
             ]

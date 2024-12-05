@@ -33,7 +33,7 @@ def recipe(request):
         try:
             generator = RecipeGeneratorService()
             recipe_dict = request.POST.dict()
-            prompt = generator.create_recipe_prompt(recipe_dict)
+            prompt = generator.create_recipe_prompt_by_preview(recipe_dict)
             recipe = generator.get_recipe_from_LLM(prompt)
             generator.recipe_to_database(recipe["recipe"][0])
             print(recipe["recipe"][0])

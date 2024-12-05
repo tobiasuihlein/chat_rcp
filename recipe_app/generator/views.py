@@ -27,7 +27,7 @@ def home(request):
     return render(request, 'generator/index.html')
 
 
-def recipe(request):
+def recipe_generated(request):
 
     if request.method == "POST":
         try:
@@ -38,7 +38,7 @@ def recipe(request):
             generator.recipe_to_database(recipe["recipe"][0])
             print(recipe["recipe"][0])
             context = {"recipe": recipe["recipe"][0]}
-            return render(request, 'generator/recipe.html', context=context)
+            return render(request, 'generator/recipe-generated.html', context=context)
         except Exception as e:
             print(f"Error: {e}")
             print("no recipe data provided")

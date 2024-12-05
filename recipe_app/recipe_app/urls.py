@@ -21,7 +21,6 @@ from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', include("generator.urls"))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

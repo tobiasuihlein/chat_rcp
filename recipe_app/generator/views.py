@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from .utils.claude import *
 from .utils.helpers import sort_previews
+from .services import RecipeGeneratorService
 
 def previews(request):
 
@@ -9,9 +9,11 @@ def previews(request):
     
         ingredients = request.POST.get("ingredients-input").split(',')
         staples = [""]
+
+        generator = RecipeGeneratorService()
     
-        prompt = create_previews_prompt(ingredients, staples)
-        previews = get_previews_from_claude(prompt)
+        prompt = generator.create_previews_prompt(ingredients, staples)
+        previews = generator.get_previews_from_LLM(prompt)
     
         previews["recipes"] = sort_previews(previews["recipes"])
 
@@ -25,15 +27,18 @@ def home(request):
     return render(request, 'generator/index.html')
 
 
-def recipe(request):
+def recipe_generated(request):
 
     if request.method == "POST":
         try:
+            generator = RecipeGeneratorService()
             recipe_dict = request.POST.dict()
-            prompt = create_recipe_prompt(recipe_dict)
-            recipe = get_recipe_from_claude(prompt)
+            prompt = generator.create_recipe_prompt_by_preview(recipe_dict)
+            recipe = generator.get_recipe_from_LLM(prompt)
+            generator.recipe_to_database(recipe["recipe"][0])
+            print(recipe["recipe"][0])
             context = {"recipe": recipe["recipe"][0]}
-            return render(request, 'generator/recipe.html', context=context)
+            return render(request, 'generator/recipe-generated.html', context=context)
         except Exception as e:
             print(f"Error: {e}")
             print("no recipe data provided")

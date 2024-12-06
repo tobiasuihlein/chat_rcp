@@ -32,20 +32,6 @@
                         </div>
                         <div class="title">{{ preview.title }}</div>
                         <div class="description">{{ preview.description }}</div>
-                        <div class="main-ingredients"><span style="font-weight: 400">Hauptzutaten:</span><br>
-                            <span>
-                                {% for main_ingredient in preview.main_ingredients.all %}
-                                    {{ main_ingredient.ingredient.name }}{% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                            </span>
-                        </div>
-                        <div class="additional-ingredients"><span style="font-weight: 400">Weitere Zutaten:</span><br>
-                            <span>
-                                {% for additional_ingredient in preview.additional_ingredients.all %}
-                                    {{ additional_ingredient.ingredient.name }}{% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                            </span>
-                        </div>
                     </div>
                 </div>
             </button>

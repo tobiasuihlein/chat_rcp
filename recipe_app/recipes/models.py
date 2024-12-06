@@ -150,34 +150,25 @@ class Ingredient(models.Model):
         ordering = ['category']
 
 
-class RecipeMainIngredient(models.Model):
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name="recipes_main")
+class RecipeComponent(models.Model):
+    name = models.CharField(max_length=100)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="components")
+
+
+class ComponentIngredient(models.Model):
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name="commponents")
     amount = models.DecimalField(max_digits=7, decimal_places=2)
     unit = models.CharField(max_length=25)
-    note = models.CharField(max_length=255)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="main_ingredients")
+    note = models.CharField(max_length=50)
+    recipe_component = models.ForeignKey(RecipeComponent, on_delete=models.CASCADE, related_name="ingredients")
+    item = models.CharField(max_length=50)
     language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.ingredient.name
     
     class Meta:
-        ordering = ['recipe', 'ingredient']
-
-
-class RecipeAdditionalIngredient(models.Model):
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name="recipes_additional")
-    amount = models.DecimalField(max_digits=7, decimal_places=2)
-    unit = models.CharField(max_length=25)
-    note = models.CharField(max_length=255)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="additional_ingredients")
-    language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
-
-    def __str__(self):
-        return self.ingredient.name
-    
-    class Meta:
-        ordering = ['recipe', 'ingredient']
+        ordering = ['recipe_component', 'ingredient']
 
 
 class RecipeInstruction(models.Model):

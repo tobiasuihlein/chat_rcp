@@ -7,6 +7,13 @@ class RecipeAdmin(admin.ModelAdmin):
 
     def get_cuisine_types(self, obj):
         return ", ".join([cuisine_type.name for cuisine_type in obj.cuisine_types.all()])
+    
+@admin.register(RecipeComponent)
+class RecipeComponentAdmin(admin.ModelAdmin):
+    list_display = ('name', 'recipe', 'get_ingredients')
+
+    def get_ingredients(self, obj):
+        return ", ".join([ingredient.ingredient.name for ingredient in obj.ingredients.all()])
 
 @admin.register(IngredientCategory)
 class IngredientCategoryAdmin(admin.ModelAdmin):

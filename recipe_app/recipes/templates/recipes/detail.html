@@ -27,20 +27,15 @@
             <div class="recipe-pad-row">
                 <div class="recipe-pad-content">
                     <div>
-                        <div class="main-ingredients"><span style="font-weight: 400">Hauptzutaten:</span><br>
-                            <ul style="overflow-wrap: break-word; padding-left: 1rem;">
-                                {% for ingredient in recipe.main_ingredients.all %}
-                                <li style="margin-top: 0.5rem;"> {{ ingredient.amount|to_fraction }} {{ ingredient.unit }} <span style="font-weight: 400;">{{ ingredient.ingredient.name }}</span> {{ ingredient.note }} </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="additional-ingredients"><span style="font-weight: 400">Weitere Zutaten:</span><br>
-                            <ul style="overflow-wrap: break-word; padding-left: 1rem;">
-                                {% for ingredient in recipe.additional_ingredients.all %}
-                                <li style="margin-top: 0.5rem;"> {{ ingredient.amount|to_fraction }} {{ ingredient.unit }} <span style="font-weight: 400;">{{ ingredient.ingredient.name }}</span> {{ ingredient.note }} </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+                        {% for component in recipe.components.all %}
+                            <div class="main-ingredients"><span style="font-weight: 400">{{ component.name }}</span><br>
+                                <ul style="overflow-wrap: break-word; padding-left: 1rem;">
+                                    {% for ingredient in component.ingredients.all %}
+                                        <li style="margin-top: 0.5rem;"> {{ ingredient.amount|to_fraction }} {{ ingredient.unit }} <span style="font-weight: 400;">{{ ingredient.ingredient.name }}</span> {{ ingredient.note }} </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endfor %}
                     </div>
                     <div class="tips-container hide-mobile"><span style="font-weight: 400">Tipps:</span>
                         <ul style="overflow-wrap: break-word; padding-left: 2rem; list-style-type: disc">

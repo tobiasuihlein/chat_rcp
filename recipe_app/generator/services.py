@@ -79,22 +79,27 @@ class RecipeGeneratorService:
     def recipe_to_database(self, recipe):
         try:
             with transaction.atomic():
+
                 language_object, _ = Language.objects.get_or_create(
                     code = recipe['language']
                 )
+
                 recipe_category_object, _ = RecipeCategory.objects.get_or_create(
                     name = recipe['category'],
                     language = language_object
                 )
+
                 beverage_type_object, _ = BeverageType.objects.get_or_create(
                     name = recipe['beverage_recommendation']['type'],
                     language = language_object
                 )
+
                 beverage_object, _ = Beverage.objects.get_or_create(
                     name = recipe['beverage_recommendation']['name'],
                     type = beverage_type_object,
                     language = language_object
                 )
+
                 recipe_object = Recipe.objects.create(
                     title = recipe['title'],
                     description = recipe['description'],
@@ -109,6 +114,7 @@ class RecipeGeneratorService:
                     beverage_recommendation = beverage_object,
                     language = language_object
                 )
+
                 for element in recipe['cuisine_type']:
                     type = element['type']
                     subtype = element['subtype']
@@ -123,60 +129,53 @@ class RecipeGeneratorService:
                     )
                     recipe_object.cuisine_types.add(type_object)
                     recipe_object.cuisine_subtypes.add(subtype_object)
+                
                 for diet in recipe['diet']:
                     diet_object, _ = Diet.objects.get_or_create(
                         name = diet,
                         language = language_object
                     )
                     recipe_object.diets.add(diet_object)
+                
                 for cooking_method in recipe['cooking_method']:
                     cooking_method_object, _ = CookingMethod.objects.get_or_create(
                         name = cooking_method,
                         language = language_object
                     )
                     recipe_object.cooking_methods.add(cooking_method_object)
+
                 for hashtag in recipe['hashtags']:
                     hashtag_object, _ = Hashtag.objects.get_or_create(
                         name = hashtag,
                         language = language_object
                     )
                     recipe_object.hashtags.add(hashtag_object)
-                for main_ingredient in recipe['main_ingredients']:
-                    ingredient_category_object, _ = IngredientCategory.objects.get_or_create(
-                        name = main_ingredient['category'],
-                        language = language_object
-                    )
-                    ingredient_object, _ = Ingredient.objects.get_or_create(
-                        name = main_ingredient['name'],
-                        category = ingredient_category_object,
-                        language = language_object
-                    )
-                    RecipeMainIngredient.objects.create(
-                        ingredient = ingredient_object,
-                        amount = main_ingredient['amount'],
-                        unit = main_ingredient['unit'],
-                        note = main_ingredient['notes'],
+
+                for component in recipe['components']:
+                    component_object = RecipeComponent.objects.create(
+                        name = component['name'],
                         recipe = recipe_object,
-                        language = language_object
                     )
-                for additional_ingredient in recipe['additional_ingredients']:
-                    ingredient_category_object, _ = IngredientCategory.objects.get_or_create(
-                        name = additional_ingredient['category'],
-                        language = language_object
-                    )
-                    ingredient_object, _ = Ingredient.objects.get_or_create(
-                        name = additional_ingredient['name'],
-                        category = ingredient_category_object,
-                        language = language_object
-                    )
-                    RecipeAdditionalIngredient.objects.create(
-                        ingredient = ingredient_object,
-                        amount = additional_ingredient['amount'],
-                        unit = additional_ingredient['unit'],
-                        note = additional_ingredient['notes'],
-                        recipe = recipe_object,
-                        language = language_object
-                    )
+                
+                    for component_ingredient in component['ingredients']:
+                        ingredient_category_object, _ = IngredientCategory.objects.get_or_create(
+                            name = component_ingredient['category'],
+                            language = language_object
+                        )
+                        ingredient_object, _ = Ingredient.objects.get_or_create(
+                            name = component_ingredient['name'],
+                            category = ingredient_category_object,
+                            language = language_object
+                        )
+                        ComponentIngredient.objects.create(
+                            ingredient = ingredient_object,
+                            amount = component_ingredient['amount'],
+                            unit = component_ingredient['unit'],
+                            note = component_ingredient['notes'],
+                            recipe_component = component_object,
+                            language = language_object
+                        )
+
                 step_counter = 1
                 for instruction_headline, instruction_description in recipe['instructions'].items():
                     RecipeInstruction.objects.create(
@@ -187,13 +186,16 @@ class RecipeGeneratorService:
                         language = language_object
                     )
                     step_counter += 1
+
                 for tip in recipe['tips']:
                     RecipeTip.objects.create(
                         tip = tip,
                         recipe = recipe_object,
                         language = language_object
                     )
+
             return recipe_object
+        
         except Exception as e:
             print(f"Error occured; {str(e)}")
             raise
@@ -266,39 +268,37 @@ class RecipeGeneratorService:
                         "active": number,   // time the chef is active (preparation, cooking, ...)
                         "inactive": number, // time the chef is inactive (cooling, proofing, ...)
                     }},
-                    "main_ingredients": [
-                        {{"name": "ingredient one",
-                        "amount": "amount of ingredient one",
-                        "unit": "unit for amount specification of ingredient one",
-                        "notes": "notes for ingredient one (e.g., 'finely chopped'),
-                        "category": "category for ingredient one (e.g. 'vegetable', 'meat')}},
-                        {{"name": "ingredient two",
-                        "amount": "amount of ingredient two",
-                        "unit": "unit for amount specification of ingredient two",
-                        "notes": "notes for ingredient two (e.g., 'finely chopped'),
-                        "category": "category for ingredient two (e.g. 'vegetable', 'meat')}},
-                        {{"name": "ingredient three",
-                        "amount": "amount of ingredient three",
-                        "unit": "unit for amount specification of ingredient three",
-                        "notes": "notes for ingredient three (e.g., 'finely chopped'),
-                        "category": "category for ingredient three (e.g. 'vegetable', 'meat')}},
-                    ],
-                    "additional_ingredients": [
-                        {{"name": "ingredient one",
-                        "amount": "amount of ingredient one",
-                        "unit": "unit for amount specification of ingredient one",
-                        "notes": "notes for ingredient one (e.g., 'finely chopped'),
-                        "category": "category for ingredient one (e.g. 'oil', 'spice')}},
-                        {{"name": "ingredient two",
-                        "amount": "amount of ingredient two",
-                        "unit": "unit for amount specification of ingredient two",
-                        "notes": "notes for ingredient two (e.g., 'finely chopped'),
-                        "category": "category for ingredient two (e.g. 'oil', 'spice')}},
-                        {{"name": "ingredient three",
-                        "amount": "amount of ingredient three",
-                        "unit": "unit for amount specification of ingredient three",
-                        "notes": "notes for ingredient three (e.g., 'finely chopped'),
-                        "category": "category for ingredient thre (e.g. 'oil', 'spice')}},
+                    "components": [
+                        {{
+                            "name": string, // name of the first component (e.g., 'Steak')
+                            "ingredients": [
+                                {{"name": "ingredient one",
+                                "amount": "amount of ingredient one",
+                                "unit": "unit for amount specification of ingredient one",
+                                "notes": "notes for ingredient one (e.g., 'finely chopped'),
+                                "category": "category for ingredient one (e.g. 'vegetable', 'meat')}},
+                                {{"name": "ingredient two",
+                                "amount": "amount of ingredient two",
+                                "unit": "unit for amount specification of ingredient two",
+                                "notes": "notes for ingredient two (e.g., 'finely chopped'),
+                                "category": "category for ingredient two (e.g. 'vegetable', 'meat')}},
+                            ] // list of the ingredients for the first component
+                            }},
+                        {{
+                            "name": string, // name of the second component (e.g., 'Wine Sauce')
+                            "ingredients": [
+                                {{"name": "ingredient one",
+                                "amount": "amount of ingredient one",
+                                "unit": "unit for amount specification of ingredient one",
+                                "notes": "notes for ingredient one (e.g., 'finely chopped'),
+                                "category": "category for ingredient one (e.g. 'vegetable', 'meat')}},
+                                {{"name": "ingredient two",
+                                "amount": "amount of ingredient two",
+                                "unit": "unit for amount specification of ingredient two",
+                                "notes": "notes for ingredient two (e.g., 'finely chopped'),
+                                "category": "category for ingredient two (e.g. 'vegetable', 'meat')}},
+                            ] // list of the ingredients for the first component
+                            }}
                     ],
                     "description": "A brief, appealing description of the dish.",
                     "servings": "number of persons to serve with this recipe",
@@ -350,6 +350,9 @@ class RecipeGeneratorService:
         14. For more advanced dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
         15. Amount field for ingredients must be a digit number with max. 2 decimal places
         16. Use the same language for all output including ingredient category, hashtags, category, diet, cuisine_types, and cooking_method
+        17. Divide the dish in a reasonable number of components (e.g., 'Steak', 'Sauce', 'Roasted Potatoes')
+        18. Provide ingredients for all components (e.g. 'Pasta' --> 250 g pasta, 1 tsp salt)
+        19. Make sure to include all igredients for each component (i.e. including salt, spices, herbs etc.)
 
         Language: Use the same language as the recipe information is written in.
 

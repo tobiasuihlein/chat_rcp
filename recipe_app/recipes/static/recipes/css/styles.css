@@ -65,18 +65,17 @@ ul {
     gap: 0.5rem;
 }
 
-.navbar-list li:hover {
-    color: var(--text-color);
+.navlink:hover {
+    color: indianred;
 }
 
-.navbar-list li {
-    color: var(--text-color-highlight-1);
-    transition: all var(--transition-speed) ease;
+.navlink {
+    color: #191918;;
 }
 
 .navbar-list {
-    display: flex;
-    gap: 6rem;
+    display: inline-flex;
+    gap: clamp(1rem, 5vw, 5rem);
     list-style: none;
     font-weight: 500;
 }
@@ -293,17 +292,17 @@ main {
     padding: 0.2rem 0.8rem;
 }
 
-.recipe-difficulty-easy {
+.recipe-difficulty-1 {
     background-color: rgb(220 252 231);
     color: rgb(22 101 52);
 }
 
-.recipe-difficulty-medium {
+.recipe-difficulty-2 {
     background-color: rgb(254 249 195);
     color: rgb(133 77 14);
 }
 
-.recipe-difficulty-hard {
+.recipe-difficulty-3 {
     background-color: rgb(254 226 226);;
     color: rgb(153 27 27);
 }

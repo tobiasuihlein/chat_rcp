@@ -1,0 +1,74 @@
+{% extends "./layout.html" %}
+
+{% load number_converter %}
+
+{% block main-content %}
+
+
+<div class="row-wrapper section-row" style="margin-top: 0;">
+    <div class="row-content">
+        <div class="widget recipe-pad">
+            <div class="recipe-title">
+                <span>{{ recipe.title }}</span>
+            </div>
+            <div class="recipe-description">
+                <div style="max-width: 500px; text-align: center"><span>{{ recipe.description }}</span></div>
+            </div>
+            <div class="recipe-pad-row">
+                <div class="recipe-difficulty recipe-difficulty-{{ recipe.difficulty }}">
+                    {{ recipe.get_difficulty_display }}
+                </div>
+                <div class="recipe-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
+                    {{ recipe.time_total|time_converter }}
+                </div>
+                <div class="recipe-servings"> {{ recipe.default_servings }} Portionen</div>
+            </div>
+            <div class="recipe-pad-row">
+                <div class="recipe-pad-content">
+                    <div>
+                        <div class="main-ingredients"><span style="font-weight: 400">Hauptzutaten:</span><br>
+                            <ul style="overflow-wrap: break-word; padding-left: 1rem;">
+                                {% for ingredient in recipe.main_ingredients.all %}
+                                <li style="margin-top: 0.5rem;"> {{ ingredient.amount|to_fraction }} {{ ingredient.unit }} <span style="font-weight: 400;">{{ ingredient.ingredient.name }}</span> {{ ingredient.note }} </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="additional-ingredients"><span style="font-weight: 400">Weitere Zutaten:</span><br>
+                            <ul style="overflow-wrap: break-word; padding-left: 1rem;">
+                                {% for ingredient in recipe.additional_ingredients.all %}
+                                <li style="margin-top: 0.5rem;"> {{ ingredient.amount|to_fraction }} {{ ingredient.unit }} <span style="font-weight: 400;">{{ ingredient.ingredient.name }}</span> {{ ingredient.note }} </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tips-container hide-mobile"><span style="font-weight: 400">Tipps:</span>
+                        <ul style="overflow-wrap: break-word; padding-left: 2rem; list-style-type: disc">
+                            {% for tip in recipe.tips.all %}
+                                <li style="margin-top: 0.5rem;">{{ tip.tip }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="storage-container hide-mobile"><span style="font-weight: 400">Aufbewahrung:</span>
+                        <p style="margin-top: 0.5rem;">{{ recipe.storage }}</p>
+                    </div>
+                </div>
+                <div class="recipe-pad-content">
+                    <div class="recipe-instructions">
+                        <ol style="overflow-wrap: break-word; padding-left: 1.2rem;">
+                            {% for instruction_step in recipe.instruction_steps.all %}
+                                <div style="break-inside: avoid">
+                                    <li style="font-weight: 400; margin-bottom: 0.3rem;">{{ instruction_step.headline }}</li>
+                                    <p style="margin-bottom: 1.2rem;">{{ instruction_step.description }}</p>
+                                </div>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock main-content %}

@@ -4,9 +4,6 @@ from dotenv import load_dotenv
 import anthropic
 from recipes.models import *
 from django.db import transaction
-from django.utils.translation import activate
-
-
 
 class RecipeGeneratorService:
     def __init__(self):
@@ -15,7 +12,7 @@ class RecipeGeneratorService:
         self.client = anthropic.Anthropic(
             api_key=self.api_key,
             max_retries=3,
-            timeout=20.0,
+            timeout=20,
         )
 
     def get_previews_from_LLM(self, prompt: str) -> dict:
@@ -25,6 +22,7 @@ class RecipeGeneratorService:
                 # model="claude-3-5-haiku-latest",
                 model="claude-3-5-sonnet-latest",
                 max_tokens=1024,
+                temperature=1.0,
                 system="You are a helpful chef assistant that returns only valid JSON responses in the exact format requested.",
                 messages=[
                     {
@@ -53,8 +51,9 @@ class RecipeGeneratorService:
                 # model="claude-3-haiku-20240307",
                 # model="claude-3-5-haiku-latest",
                 model="claude-3-5-sonnet-latest",
-                max_tokens=1024,
-                system="You are a helpful chef assistant creating accurate recipes based on a provided preview.",
+                max_tokens=2048,
+                temperature=0.3,
+                system="You are a helpful chef assistant creating accurate recipes based on a provided preview that returns only valid JSON responses in the exact format requested.",
                 messages=[
                     {
                         "role": "user",
@@ -73,85 +72,110 @@ class RecipeGeneratorService:
             answer = json.loads(message.content[0].text)
             return answer
         except json.JSONDecodeError:
-            raise ValueError("Sorry, something went wrong, chef.")
+            print(message.content[0].text)
+            raise ValueError("JSON could not be decoded properly.")
 
 
     def recipe_to_database(self, recipe):
-        activate(recipe['language'])
         try:
             with transaction.atomic():
+                language_object, _ = Language.objects.get_or_create(
+                    code = recipe['language']
+                )
                 recipe_category_object, _ = RecipeCategory.objects.get_or_create(
-                    name = recipe['category']
+                    name = recipe['category'],
+                    language = language_object
+                )
+                beverage_type_object, _ = BeverageType.objects.get_or_create(
+                    name = recipe['beverage_recommendation']['type'],
+                    language = language_object
+                )
+                beverage_object, _ = Beverage.objects.get_or_create(
+                    name = recipe['beverage_recommendation']['name'],
+                    type = beverage_type_object,
+                    language = language_object
                 )
                 recipe_object = Recipe.objects.create(
                     title = recipe['title'],
                     description = recipe['description'],
                     difficulty = recipe['difficulty'],
-                    time_total = recipe['time']['total'],
-                    time_preparation = recipe['time']['preparation'],
-                    time_cooking = recipe['time']['cooking'],
+                    time_active = recipe['time']['active'],
+                    time_inactive = recipe['time']['inactive'],
                     default_servings = int(recipe.get('servings', 0)),
                     storage = recipe['storage'],
                     category = recipe_category_object,
                     cost = int(recipe.get('cost', 0)),
-                    spiciness = int(recipe.get('spiciness', 0))
+                    spiciness = int(recipe.get('spiciness', 0)),
+                    beverage_recommendation = beverage_object,
+                    language = language_object
                 )
                 for element in recipe['cuisine_type']:
                     type = element['type']
                     subtype = element['subtype']
                     type_object, _ = CuisineType.objects.get_or_create(
-                        name = type
+                        name = type,
+                        language = language_object
                     )
                     subtype_object, _ = CuisineSubtype.objects.get_or_create(
                         name = subtype,
                         cuisine_type = type_object,
+                        language = language_object
                     )
                     recipe_object.cuisine_types.add(type_object)
                     recipe_object.cuisine_subtypes.add(subtype_object)
                 for diet in recipe['diet']:
                     diet_object, _ = Diet.objects.get_or_create(
-                        name = diet
+                        name = diet,
+                        language = language_object
                     )
                     recipe_object.diets.add(diet_object)
                 for cooking_method in recipe['cooking_method']:
                     cooking_method_object, _ = CookingMethod.objects.get_or_create(
-                        name = cooking_method
+                        name = cooking_method,
+                        language = language_object
                     )
                     recipe_object.cooking_methods.add(cooking_method_object)
                 for hashtag in recipe['hashtags']:
                     hashtag_object, _ = Hashtag.objects.get_or_create(
-                        name = hashtag
+                        name = hashtag,
+                        language = language_object
                     )
                     recipe_object.hashtags.add(hashtag_object)
                 for main_ingredient in recipe['main_ingredients']:
                     ingredient_category_object, _ = IngredientCategory.objects.get_or_create(
                         name = main_ingredient['category'],
+                        language = language_object
                     )
                     ingredient_object, _ = Ingredient.objects.get_or_create(
                         name = main_ingredient['name'],
                         category = ingredient_category_object,
+                        language = language_object
                     )
-                    RecipeIngredient.objects.create(
+                    RecipeMainIngredient.objects.create(
                         ingredient = ingredient_object,
                         amount = main_ingredient['amount'],
                         unit = main_ingredient['unit'],
-                        type = 'M',
+                        note = main_ingredient['notes'],
                         recipe = recipe_object,
+                        language = language_object
                     )
                 for additional_ingredient in recipe['additional_ingredients']:
                     ingredient_category_object, _ = IngredientCategory.objects.get_or_create(
                         name = additional_ingredient['category'],
+                        language = language_object
                     )
                     ingredient_object, _ = Ingredient.objects.get_or_create(
                         name = additional_ingredient['name'],
                         category = ingredient_category_object,
+                        language = language_object
                     )
-                    RecipeIngredient.objects.create(
+                    RecipeAdditionalIngredient.objects.create(
                         ingredient = ingredient_object,
                         amount = additional_ingredient['amount'],
                         unit = additional_ingredient['unit'],
-                        type = 'A',
+                        note = additional_ingredient['notes'],
                         recipe = recipe_object,
+                        language = language_object
                     )
                 step_counter = 1
                 for instruction_headline, instruction_description in recipe['instructions'].items():
@@ -160,25 +184,32 @@ class RecipeGeneratorService:
                         headline = instruction_headline,
                         description = instruction_description,
                         recipe = recipe_object,
+                        language = language_object
                     )
                     step_counter += 1
+                for tip in recipe['tips']:
+                    RecipeTip.objects.create(
+                        tip = tip,
+                        recipe = recipe_object,
+                        language = language_object
+                    )
+            return recipe_object
         except Exception as e:
             print(f"Error occured; {str(e)}")
             raise
-        
 
-    def create_previews_prompt(self, ingredients: list, staples: list) -> str:
-        prompt = f"""Given these available ingredients: {', '.join(ingredients)}
-        And these staple ingredients: {', '.join(staples)}
+
+    def create_previews_prompt(self, user_input) -> str:
+        prompt = f"""Given this user input: {user_input}
 
         Please generate 3 recipe previews in the following exact JSON format, nothing else:
 
         {{
             "recipes": [
                 {{
-                    "title": "string",
-                    "difficulty": "Easy|Medium|Hard",
-                    "time": "X Min.",
+                    "title": "string",    // Title of the recipe
+                    "difficulty": number, // 1=beginner, 2=advanced, 3=expert
+                    "time": "X Min.",     // sum of both active (preparation, cooking, ...) and inactive time (cooling, proofing, ...)
                     "description": "A brief, appealing description of the dish.",
                     "main_ingredients": [
                         "ingredient1",
@@ -194,26 +225,24 @@ class RecipeGeneratorService:
 
         Requirements:
         1. Response must be valid JSON
-        2. Use only the provided main ingredients and very common household staples (salt, pepper, olive oil etc.) as additional ingredients
-        3. Each recipe must be realistic, cookable, and tasty (use proven cooking techniques and flavor combinations)
-        4. Keep descriptions under 200 characters
-        5. Time should be in the format "X Min." and refer to the total time necessary
-        6. Difficulties should be one of these: "Easy", "Medium", or "Hard"
-        7. List main ingredients from the provided ingredients list
-        8. List additional ingredients that are common household staples
-        9. Do not use all ingredients, if you feel like they don't match
-        10. Only combine provided ingredients that actually match
-        11. Do not add ingredients that are not really common as household staples (e.g eggplant, broccoli), if not included in the provided ingredients
-        12. You don't have to use all provided ingredients
-        13. Do not use too many additional ingredients
-        14. Try to provide one very basic, one quite common, and one more extravagant dish (but also for the extravagant dish: use only the provided ingredients)
-        15. Only create recipes that you would expect to receive the best ratings
-        16. For more advanced dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
-        17. If you use dashes, make sure to use them properly (not '-', but '–')
+        2. Each recipe must be realistic, cookable, and tasty (use proven cooking techniques and flavor combinations)
+        3. Keep descriptions under 200 characters
+        4. Time should be in the format "X Min." and refer to the total time necessary
+        5. Difficulties should be one of these: "Easy", "Medium", or "Hard"
+        6. Try to provide one very basic, one relatively common, and one more extravagant dish
+        7. Only create recipes that you would expect to receive the best ratings
+        8. For more advanced dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
+        9. If you use dashes, make sure to use them properly (not '-', but '–')
+        10. Make sure to include also spices and seasoning in the ingredients lists
+        11. Explain complex steps in more detail than easier ones
+        12. For difficulty, provide a number
+
+        Language: Use the same language as the user input is written in.
 
         Return only the JSON, no other text."""
 
         return prompt
+
     
 
     def create_recipe_prompt_by_preview(self, recipe_dict: dict) -> str:
@@ -230,13 +259,12 @@ class RecipeGeneratorService:
         {{
             "recipe": [
                 {{
-                    "language": "the language the recipe is written in ('en' for English, 'de' for German)",
-                    "title": "string",
-                    "difficulty": "difficulty of the dish (use the numbers of the following mapping: 'beginner'->1, 'intermediate'->2, 'advanced'->3, 'expert'->4)",
+                    "language": "en|de",  // Language code
+                    "title": string,      // Recipe title
+                    "difficulty": number, // 1=beginner, 2=advanced, 3=expert
                     "time": {{
-                        "total": "X",
-                        "preparation": "X",
-                        "cooking": "X",
+                        "active": number,   // time the chef is active (preparation, cooking, ...)
+                        "inactive": number, // time the chef is inactive (cooling, proofing, ...)
                     }},
                     "main_ingredients": [
                         {{"name": "ingredient one",
@@ -296,6 +324,10 @@ class RecipeGeneratorService:
                     "cooking_method": ["cooking method one (e.g. 'Grilling')", "cooking method two (e.g., 'Baking')"],
                     "cost": "cost of the dish (use the numbers of the following mapping: 'budget'->1, 'moderate'->2, 'mid-range'->3, 'premium'->4)",
                     "spiciness": "pungency level (use the numbers of the following mapping: 'not spicy'->1, 'mild'->2, 'medium'->3, 'hot'->4)",
+                    "beverage_recommendation": {{
+                        "name": string // name of the beverage (e.g., Chardonnay)
+                        "type": string // type of beverage (e.g., White Wine)
+                    }}
                     "hashtags": ["hashtag one (e.g., 'Winter')", "hashtag two (e.g., 'Classic')", "hashtag three (e.g. Super-Sweet)", "hashtag four (e.g., Party-Food)", "hashtag five (e.g. Birthday)],
                 }}
             ]
@@ -317,6 +349,24 @@ class RecipeGeneratorService:
         13. For the hashtags, do not repeat other properties already provided (such as cuisine type or cost)
         14. For more advanced dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
         15. Amount field for ingredients must be a digit number with max. 2 decimal places
+        16. Use the same language for all output including ingredient category, hashtags, category, diet, cuisine_types, and cooking_method
+
+        Language: Use the same language as the recipe information is written in.
+
+        VALIDATION REQUIREMENTS:
+        1. Response MUST be complete, valid JSON
+        2. ALL fields are required
+        3. ALL arrays must have proper closing brackets
+        4. ALL objects must have proper closing braces
+        5. Response must end with proper closing brackets: {{}}]}}
+
+        Example End Structure:
+                            "hashtags": ["Tag1", "Tag2"]
+                        }}
+                    ]
+                }}
+
+        Ensure the response includes these exact closing characters: {{}}]}}
 
         Return only the JSON, no other text."""
 

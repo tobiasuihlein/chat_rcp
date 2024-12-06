@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'modeltranslation',
     'generator',
     'recipes'
 ]
@@ -115,7 +114,7 @@ USE_L10N = False
 USE_TZ = True
 
 # Default language
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'de'
 
 # Available languages
 LANGUAGES = (

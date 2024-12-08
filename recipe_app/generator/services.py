@@ -2,8 +2,46 @@ import os
 import json
 from dotenv import load_dotenv
 import anthropic
+import openai
 from recipes.models import *
 from django.db import transaction
+
+
+class ImageGeneratorService:
+    def __init__(self):
+        load_dotenv()
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.client = openai.OpenAI()
+        openai.api_key = self.api_key
+
+    def get_image(self, recipe_dict: str):
+        prompt = f"""
+        
+        Create an appealing realistic high-quality photograph of the following dish:
+
+        Title: {recipe_dict['title']}
+        Description: {recipe_dict['description']}
+        Ingredients: {recipe_dict['main_ingredients']} and {recipe_dict['additional_ingredients']}
+
+        Show the dish, not the individual ingredients.
+
+        """
+
+        try:
+            message = prompt
+            response = self.client.images.generate(
+                model = "dall-e-3",
+                prompt = message,
+                n = 1,
+                size = "1024x1024",
+                quality = "hd",
+            )
+            image_url = response.data[0].url
+            print(image_url)
+            return image_url
+        except openai.OpenAIError as e:
+            print(f"OpenAI Error: {e}")
+
 
 class RecipeGeneratorService:
     def __init__(self):
@@ -32,7 +70,7 @@ class RecipeGeneratorService:
                 ]
             )
         except anthropic.APIError as e:
-            print(f"API error: {e}")
+            print(f"Anthropic API error: {e}")
         except anthropic.RateLimitError as e:
             print(f"Rate limit exceeded: {e}")
         except anthropic.APITimeoutError as e:
@@ -62,7 +100,7 @@ class RecipeGeneratorService:
                 ]
             )
         except anthropic.APIError as e:
-            print(f"API error: {e}")
+            print(f"Anthropic API error: {e}")
         except anthropic.RateLimitError as e:
             print(f"Rate limit exceeded: {e}")
         except anthropic.APITimeoutError as e:

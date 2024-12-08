@@ -24,6 +24,7 @@ from django.conf.urls.i18n import i18n_patterns
 urlpatterns = [
     path('api/', include("api.urls")),
     path('recipes/', include("recipes.urls")),
+    path('', include("recipes.urls")),
     path('generator', include("generator.urls")),
     path('admin/', admin.site.urls)
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

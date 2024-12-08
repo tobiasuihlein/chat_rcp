@@ -3,13 +3,12 @@
 {% load static %}
 
 {% block header-middle %}
-
 {% endblock header-middle %}
 
 
 {% block main-content %}
 
-<div style="height: 80vh; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+<div style="height: 70vh; display: flex; align-items: center; justify-content: center; flex-direction: column;">
 
     <div id="loading-spinner" class="spinner-overlay" style="display: none;">
         <p style="font-weight: 600; font-size: 2rem;">Erstelle Rezeptvorschläge ...</p>
@@ -31,7 +30,7 @@
             <div class="widget">
                 <form id="initial-prompt-form" class="searchbar" method="post" action="{% url 'recipes:previews' %}">
                     {% csrf_token %}
-                    <input class="searchbar-input" style="border: 0;" type="text" id="ingredients-input" name="ingredients-input" placeholder="Gerichtbeschreibung, Zutaten, Vegetarisch, ...">
+                    <input class="searchbar-input" style="border: 0;" type="text" id="ingredients-input" name="ingredients-input" placeholder="Gericht, Zutaten, Vegetarisch, ...">
                     <button type="submit" class="searchbar-button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </button>

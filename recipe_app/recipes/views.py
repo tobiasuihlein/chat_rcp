@@ -9,6 +9,11 @@ import requests
 from concurrent.futures import ThreadPoolExecutor
 from django.core.files.base import ContentFile
 
+def login(request):
+
+    return render(request, 'recipes/login.html')
+
+
 def previews(request):
 
     if request.method == "POST":

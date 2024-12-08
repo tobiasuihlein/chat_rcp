@@ -10,4 +10,5 @@ urlpatterns = [
     path('', views.recipe_list, name='list'),
     path('generate', views.home, name="generate"),
     path('generate', views.home, name="home"),
+    path('login', views.login, name='login')
 ]

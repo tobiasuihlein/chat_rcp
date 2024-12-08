@@ -8,6 +8,22 @@
 <div class="row-wrapper section-row" style="margin-top: 0;">
     <div class="row-content">
         <div class="widget recipe-pad">
+            <div class="recipe-image-container">
+                {% if recipe.image %}
+                    <img class="recipe-image" src="{{ recipe.image.image.url }}" alt="{{ recipe.image.alt_text }}">
+                {% else %}
+                    <svg class="recipe-image" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                        <rect width="100" height="100" fill="#F2F3EE"/>
+                        <g transform="translate(25, 30)" fill="none" stroke="#D5D6CF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="0" y="8" width="50" height="35" rx="4"/>
+                            <rect x="15" y="3" width="20" height="5" rx="1"/>
+                            <circle cx="25" cy="25" r="10"/>
+                            <circle cx="25" cy="25" r="6"/>
+                            <circle cx="42" cy="16" r="2" fill="#D5D6CF"/>
+                        </g>
+                    </svg>
+                {% endif %}
+            </div>
             <div class="recipe-title">
                 <span>{{ recipe.title }}</span>
             </div>

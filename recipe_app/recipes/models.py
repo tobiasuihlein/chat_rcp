@@ -120,7 +120,7 @@ class Recipe(models.Model):
     beverage_recommendation = models.ForeignKey(Beverage, on_delete=models.SET_NULL, blank=True, null=True)
     hashtags = models.ManyToManyField(Hashtag, related_name="recipes", blank=True)
     language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
-    author = models.CharField(max_length=255, default="Claude")
+    author = models.CharField(max_length=255, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     @property

@@ -1,16 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404 
 from django.urls import reverse
 from generator.utils.helpers import sort_previews
-from generator.services import RecipeGeneratorService, ImageGeneratorService
+from generator.services import *
 from .models import *
 
 
 import requests
-import asyncio
-import aiohttp
 from concurrent.futures import ThreadPoolExecutor
 from django.core.files.base import ContentFile
-from asgiref.sync import sync_to_async
 
 def previews(request):
 
@@ -18,10 +15,10 @@ def previews(request):
     
         user_input = request.POST.get("ingredients-input")
 
-        recipe_generator = RecipeGeneratorService()
+        recipe_generator = ClaudeRecipeGeneratorService()
     
-        prompt = recipe_generator.create_previews_prompt(user_input)
-        previews = recipe_generator.get_previews_from_LLM(prompt)
+        prompt = create_previews_prompt(user_input)
+        previews = recipe_generator.get_previews_from_Claude(prompt)
     
         previews["recipes"] = sort_previews(previews["recipes"])
 
@@ -41,29 +38,32 @@ def home(request):
 def recipe_generated(request):
     if request.method == "POST":
         try:
-            recipe_generator = RecipeGeneratorService()
+            # recipe_generator = ClaudeRecipeGeneratorService()
+            recipe_generator = MistralRecipeGeneratorService()
+            author = "Mistral AI"
             image_generator = ImageGeneratorService()
             recipe_dict = request.POST.dict()
             
             # Create prompt first since it's needed for recipe generation
-            prompt = recipe_generator.create_recipe_prompt_by_preview(recipe_dict)
+            prompt = create_recipe_prompt_by_preview(recipe_dict)
             
             # Use ThreadPoolExecutor to run API calls concurrently
             with ThreadPoolExecutor() as executor:
-                # Start both tasks
-                recipe_future = executor.submit(recipe_generator.get_recipe_from_LLM, prompt)
+                # recipe_future = executor.submit(recipe_generator.get_recipe_from_Claude, prompt)
+                recipe_future = executor.submit(recipe_generator.get_recipe_from_Mistral, prompt)
                 image_future = executor.submit(image_generator.get_image, recipe_dict)
                 
-                # Get results (this will wait for both to complete)
                 recipe = recipe_future.result()
                 image_url = image_future.result()
 
-            # Download the DALL-E image
+            # Download image
             response = requests.get(image_url)
             image_content = response.content
             
             # Save recipe to database
-            recipe_object = recipe_generator.recipe_to_database(recipe["recipe"][0])
+            recipe_object = recipe_to_database(recipe["recipe"][0])
+            recipe_object.author = author
+            recipe_object.save()
             
             # Save image
             recipe_image = RecipeImage(

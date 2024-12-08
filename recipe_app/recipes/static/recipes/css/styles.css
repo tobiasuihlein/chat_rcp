@@ -267,7 +267,7 @@ main {
 .card {
     border-radius: 10px;
     height: auto;
-    width: 360px;
+    width: 400px;
     color: var(--text-color-highlight-1);
     display: inline-flex;
     align-items: center;
@@ -285,7 +285,7 @@ main {
 }
 
 .card-recipe-container{
-    width: auto;
+    width: 100%;
     display: block;
     border-radius: 10px;
     border: solid 0px var(--text-color-highlight-1);
@@ -561,4 +561,13 @@ main {
     left: 0;
     width: 150px;
     height: auto;
+}
+
+.recipe-image-container {
+    margin-bottom: 1.5rem;
+}
+
+.recipe-image {
+    width: 100%;
+    border-radius: 6px;
 }

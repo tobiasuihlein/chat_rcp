@@ -1,4 +1,7 @@
 from django.db import models
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+import os
 
 
 class Language(models.Model):
@@ -198,3 +201,30 @@ class RecipeTip(models.Model):
         ordering = ['recipe']
 
 
+class ImageStorage(FileSystemStorage):
+    def get_valid_name(self, name):
+        basename, ext = os.path.splitext(name)
+        return f"{basename}_{hash(name)}{ext}"
+
+
+class RecipeImage(models.Model):
+    image = models.ImageField(upload_to='recipe_images/', storage = ImageStorage(), max_length=500, blank=True, null=True)
+    alt_text = models.CharField(max_length=100, blank=True, default="recipe image")
+    upload_datetime = models.DateTimeField(auto_now_add=True)
+    recipe = models.OneToOneField(Recipe, on_delete=models.CASCADE, related_name="image")
+
+    class Meta:
+        ordering = ['-upload_datetime']
+
+
+    def __str__(self):
+        return f"Image for {self.recipe.title}"
+    
+    def save(self, *args, **kwargs):
+        if self.recipe:
+            RecipeImage.objects.filter(recipe=self.recipe).delete()
+        super().save(*args, **kwargs)
+
+    @property
+    def filename(self):
+        return os.path.basename(self.image.name)

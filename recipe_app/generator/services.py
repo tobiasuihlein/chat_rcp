@@ -22,7 +22,6 @@ class ImageGeneratorService:
 
         Title: {recipe_dict['title']}
         Description: {recipe_dict['description']}
-        Ingredients: {recipe_dict['main_ingredients']} and {recipe_dict['additional_ingredients']}
 
         Show the dish, not the individual ingredients.
 

@@ -59,7 +59,7 @@ a, button {
 }
 
 ul {
-    list-style-type: none;
+    list-style-type: None;
 }
 
 .navbar {
@@ -91,6 +91,9 @@ ul {
 
 .navlink {
     color: #191918;
+}
+
+.navlink a{
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -243,7 +246,7 @@ main {
 }
 
 .recipe-title {
-    font-size: 2rem;
+    font-size: 1.6rem;
     font-weight: 500;
     min-width: 100%;
     text-align: center;

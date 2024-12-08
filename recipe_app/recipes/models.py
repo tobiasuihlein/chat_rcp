@@ -80,9 +80,10 @@ class Recipe(models.Model):
 
     class Difficulty(models.IntegerChoices):
         UNKNOWN = 0, 'Not Specified'
-        BEGINNER = 1, 'Easy'
-        ADVANCED = 2, 'Advanced'
-        EXPERT = 3, 'Expert'
+        BEGINNER = 1, 'Einfach'
+        INTERMEDIATE = 2, 'Fortgeschritten'
+        ADVANCED = 3, 'Profi'
+        EXPERT = 4, 'Michelin'
 
     class Spiciness(models.IntegerChoices):
         UNKNOWN = 0, 'Not Specified'
@@ -100,23 +101,23 @@ class Recipe(models.Model):
 
 
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     difficulty = models.IntegerField(choices=Difficulty.choices, default=Difficulty.UNKNOWN)
     time_active = models.IntegerField()
-    time_inactive = models.IntegerField()
+    time_inactive = models.IntegerField(blank=True, default=0)
     default_servings = models.IntegerField()
-    storage = models.TextField()
-    cuisine_types = models.ManyToManyField(CuisineType, related_name="recipes")
-    cuisine_subtypes = models.ManyToManyField(CuisineSubtype, related_name="recipes")
+    storage = models.TextField(blank=True, null=True)
+    cuisine_types = models.ManyToManyField(CuisineType, related_name="recipes", blank=True)
+    cuisine_subtypes = models.ManyToManyField(CuisineSubtype, related_name="recipes", blank=True)
     category = models.ForeignKey(RecipeCategory, on_delete=models.SET_NULL, related_name="recipes", null=True)
-    diets = models.ManyToManyField(Diet, related_name="recipes")
-    cooking_methods = models.ManyToManyField(CookingMethod, related_name="recipes")
+    diets = models.ManyToManyField(Diet, related_name="recipes", blank=True)
+    cooking_methods = models.ManyToManyField(CookingMethod, related_name="recipes", blank=True)
     cost = models.IntegerField(choices=Cost.choices, default=Cost.UNKNOWN)
     spiciness = models.IntegerField(choices=Spiciness.choices, default=Spiciness.UNKNOWN)
-    beverage_recommendation = models.ForeignKey(Beverage, on_delete=models.SET_NULL, null=True)
-    hashtags = models.ManyToManyField(Hashtag, related_name="recipes")
+    beverage_recommendation = models.ForeignKey(Beverage, on_delete=models.SET_NULL, blank=True, null=True)
+    hashtags = models.ManyToManyField(Hashtag, related_name="recipes", blank=True)
     language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
-    created_by = models.CharField(max_length=255, default="Claude")
+    author = models.CharField(max_length=255, default="Claude")
     created_at = models.DateTimeField(auto_now_add=True)
     
     @property
@@ -127,7 +128,7 @@ class Recipe(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['created_at']
+        ordering = ['difficulty']
 
 
 class IngredientCategory(models.Model):

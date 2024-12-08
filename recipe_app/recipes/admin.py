@@ -3,7 +3,7 @@ from .models import *
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('title', 'difficulty', 'beverage_recommendation', 'get_cuisine_types', 'created_by')
+    list_display = ('title', 'difficulty', 'beverage_recommendation', 'get_cuisine_types', 'author')
 
     def get_cuisine_types(self, obj):
         return ", ".join([cuisine_type.name for cuisine_type in obj.cuisine_types.all()])

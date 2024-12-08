@@ -210,7 +210,7 @@ class RecipeGeneratorService:
             "recipes": [
                 {{
                     "title": "string",    // Title of the recipe
-                    "difficulty": number, // 1=beginner, 2=advanced, 3=expert
+                    "difficulty": number, // 1=beginner, 2=intermediate, 3=advanced, 4=expert
                     "time": "X Min.",     // sum of both active (preparation, cooking, ...) and inactive time (cooling, proofing, ...)
                     "description": "A brief, appealing description of the dish.",
                     "main_ingredients": [
@@ -239,7 +239,7 @@ class RecipeGeneratorService:
         11. Explain complex steps in more detail than easier ones
         12. For difficulty, provide a number
 
-        Language: Use the same language as the user input is written in.
+        Language: German
 
         Return only the JSON, no other text."""
 
@@ -263,7 +263,7 @@ class RecipeGeneratorService:
                 {{
                     "language": "en|de",  // Language code
                     "title": string,      // Recipe title
-                    "difficulty": number, // 1=beginner, 2=advanced, 3=expert
+                    "difficulty": number, // 1=beginner, 2=intermediate, 3=advanced, 4=expert
                     "time": {{
                         "active": number,   // time the chef is active (preparation, cooking, ...)
                         "inactive": number, // time the chef is inactive (cooling, proofing, ...)
@@ -354,7 +354,7 @@ class RecipeGeneratorService:
         18. Provide ingredients for all components (e.g. 'Pasta' --> 250 g pasta, 1 tsp salt)
         19. Make sure to include all igredients for each component (i.e. including salt, spices, herbs etc.)
 
-        Language: Use the same language as the recipe information is written in.
+        Language: German
 
         VALIDATION REQUIREMENTS:
         1. Response MUST be complete, valid JSON

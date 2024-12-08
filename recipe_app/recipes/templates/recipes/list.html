@@ -7,13 +7,6 @@
 
 {% block main-content %}
 
-<div class="row-wrapper section-row" style="margin-top: 0;">
-    <div class="row-content">
-        <div class="widget">
-            <span style="font-weight: 600; font-size: 2rem;">Recipe List</span>
-        </div>
-    </div>
-</div>
 
 <div class="row-wrapper section-row">
     <div class="row-content">
@@ -21,7 +14,7 @@
         
         <a href="{% url 'recipes:detail' pk=preview.id %}" class="preview-card-form">
             <button>
-                <div class="widget card">
+                <div class="card">
                     <div class="card-recipe-container">
                         <div class="recipe-properties-container">
                             <div class="recipe-difficulty recipe-difficulty-{{ preview.difficulty }}">{{ preview.get_difficulty_display }}</div>

@@ -84,8 +84,8 @@ DATABASES = {
     }
 }
 
+# MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'recipe_images')
 # MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Password validation

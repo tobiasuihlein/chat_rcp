@@ -56,25 +56,25 @@ def recipe_generated(request):
                 recipe = recipe_future.result()
                 image_url = image_future.result()
 
-            # Download image
-            response = requests.get(image_url)
-            image_content = response.content
+            # # Download image
+            # response = requests.get(image_url)
+            # image_content = response.content
             
             # Save recipe to database
             recipe_object = recipe_to_database(recipe["recipe"][0])
             recipe_object.author = author
             recipe_object.save()
             
-            # Save image
-            recipe_image = RecipeImage(
-                recipe=recipe_object,
-                alt_text=f"Image for {recipe_object.title}"
-            )
-            recipe_image.image.save(
-                f"recipe_{recipe_object.pk}.png",
-                ContentFile(image_content),
-                save=True
-            )
+            # # Save image
+            # recipe_image = RecipeImage(
+            #     recipe=recipe_object,
+            #     alt_text=f"Image for {recipe_object.title}"
+            # )
+            # recipe_image.image.save(
+            #     f"recipe_{recipe_object.pk}.png",
+            #     ContentFile(image_content),
+            #     save=True
+            # )
 
             return redirect('recipes:detail', pk=recipe_object.pk)
             

@@ -16,7 +16,7 @@
             <button>
                 <div class="card">
                     <div class="card-recipe-container">
-                        <div class="recipe-image-container">
+                        {% comment %} <div class="recipe-image-container">
                             {% if preview.image %}
                                 <img class="recipe-image" src="{{ preview.image.image.url }}" alt="{{ preview.image.alt_text }}">
                             {% else %}
@@ -31,7 +31,7 @@
                                     </g>
                                 </svg>
                             {% endif %}
-                        </div>
+                        </div> {% endcomment %}
                         <div class="recipe-properties-container">
                             <div class="recipe-difficulty recipe-difficulty-{{ preview.difficulty }}">{{ preview.get_difficulty_display }}</div>
                             <div class="recipe-time">

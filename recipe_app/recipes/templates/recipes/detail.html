@@ -8,7 +8,7 @@
 <div class="row-wrapper section-row" style="margin-top: 0;">
     <div class="row-content">
         <div class="widget recipe-pad">
-            <div class="recipe-image-container">
+            {% comment %} <div class="recipe-image-container">
                 {% if recipe.image %}
                     <img class="recipe-image" src="{{ recipe.image.image.url }}" alt="{{ recipe.image.alt_text }}">
                 {% else %}
@@ -23,7 +23,7 @@
                         </g>
                     </svg>
                 {% endif %}
-            </div>
+            </div> {% endcomment %}
             <div class="recipe-title">
                 <span>{{ recipe.title }}</span>
             </div>

@@ -84,3 +84,11 @@ def recipe_list(request):
     recipes = Recipe.objects.all()
     recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'), rating_count=Count('ratings__rating'))
     return render(request, 'recipes/list.html', {'recipes': recipes})
+
+
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url='recipes:login')
+def library(request):
+    recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'), rating_count=Count('ratings__rating')).filter(favourites__user=request.user)
+    return render(request, 'recipes/list.html', {'recipes': recipes})

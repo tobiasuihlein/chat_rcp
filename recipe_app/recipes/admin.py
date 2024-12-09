@@ -77,5 +77,9 @@ class BeverageAdmin(admin.ModelAdmin):
     list_display = ('name', 'type')
 
 @admin.register(RecipeRating)
-class RecipeRating(admin.ModelAdmin):
+class RecipeRatingAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'rating', 'author', 'created_at', 'last_change')
+
+@admin.register(SavedRecipe)
+class SavedRecipeAdmin(admin.ModelAdmin):
+    list_display = ('recipe', 'user', 'saved_at')

@@ -242,3 +242,12 @@ class RecipeImage(models.Model):
     @property
     def filename(self):
         return os.path.basename(self.image.name)
+
+
+class SavedRecipe(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="favourites")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favourites")
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.recipe} saved by {self.user}"

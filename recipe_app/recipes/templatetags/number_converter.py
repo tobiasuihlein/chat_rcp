@@ -54,3 +54,7 @@ def time_converter(value):
     else:
         return f"{value} Min."
     
+    
+@register.filter
+def multiply(value, arg):
+    return float(value) * float(arg)

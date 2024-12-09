@@ -3,6 +3,7 @@ from django.contrib import messages
 from generator.utils.helpers import sort_previews
 from generator.services import *
 from .models import *
+from django.db.models import Avg
 
 import logging
 logger = logging.getLogger(__name__)
@@ -76,10 +77,10 @@ def recipe_generated(request):
 
 def recipe_detail(request, pk):
     recipe = get_object_or_404(Recipe, pk=pk)
-    print(recipe)
     return render(request, 'recipes/detail.html', {'recipe': recipe})
 
 
 def recipe_list(request):
     recipes = Recipe.objects.all()
+    recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'))
     return render(request, 'recipes/list.html', {'recipes': recipes})

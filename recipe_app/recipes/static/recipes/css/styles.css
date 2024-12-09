@@ -22,10 +22,17 @@
     --icon-color: hsl(69, 8%, 50%);
     --bg-color: hsl(69, 8%, 83%);
     --element-color: hsl(72, 17%, 94%);
+    --element-color-2: hsl(72, 17%, 90%);
 }
 
-@media only screen and (max-width: 499px) {
+@media only screen and (max-width: 1024px) {
     .hide-mobile {
+        display: none;
+    }
+}
+
+@media only screen and (min-width: 1025px) {
+    .hide-desktop {
         display: none;
     }
 }
@@ -34,7 +41,7 @@ body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     min-height: 100vh;
     background-color: #d5d6cf;
-    padding-bottom: 100px;
+    padding-bottom: 80px;
 }
 
 footer {
@@ -46,9 +53,9 @@ footer {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 90px;
+    height: 70px;
     color: var(--text-color-highlight-1);
-    background-color: #F2F3EE;
+    background-color: var(--element-color);
     box-shadow: rgba(102, 101, 95, 0.2) 0px -2px 20px 0px;
 }
 
@@ -85,29 +92,60 @@ ul {
     gap: 0.5rem;
 }
 
-.navlink:hover {
+.navlink-desktop:hover {
     color: indianred;
 }
 
-.navlink {
+.navlink-desktop {
     color: #191918;
 }
 
-.navlink a{
+.navlink-desktop a{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.navlink-desktop svg {
+    color: hsl(69, 8%, 50%);
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.navlink-mobile {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.9rem;
+}
+
+.navlink-mobile {
+    color: #191918;
+}
+
+.navlink-mobile a{
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.navlink svg {
-    color: hsl(69, 8%, 50%)
+.navlink-mobile svg {
+    color: var(--icon-color);
+    width: 1.6rem;
+    height: 1.6rem;
+}
+
+.navlink-mobile svg:active {
+    transform: scale(0.95);
 }
 
 .navbar-list {
     display: inline-flex;
-    gap: clamp(2rem, 5vw, 5rem);
+    gap: clamp(2rem, 10vw, 5rem);
     list-style: none;
-    font-weight: 500;
+    font-weight: 400;
 }
 
 main {
@@ -284,6 +322,10 @@ main {
     box-shadow: rgba(102, 101, 95, 0.2) 0px 2px 8px 0px;
 }
 
+.card:active {
+    transform: scale(0.99);
+}
+
 @media only screen and (max-width: 499px) {
     .card {
         width: 100%;
@@ -395,11 +437,14 @@ main {
 
 .diets-preview-container {
     font-size: 1.2rem;
+    font-weight: 400;
     display: flex;
     gap: 0.5rem;
 }
 
-.diets-hashtag {
+.author {
+    font-size: 1.2rem;
+    font-weight: 400;
     border-radius: 99px;
     color: var(--icon-color);
 }
@@ -487,7 +532,7 @@ main {
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    padding: 0.8rem 1rem;
+    padding: 0.7rem 0.9rem;
     min-height: 1.5rem;
     min-width: 320px;
     max-width: 600px;
@@ -511,8 +556,8 @@ main {
 .searchbar-button {
     border-radius: 999px;
     border: none;
-    width: 1.9rem;
-    height: 1.9rem;
+    width: 2.2rem;
+    height: 2.2rem;
     background-color:indianred;
     color: white;
     display: flex;
@@ -529,7 +574,7 @@ main {
     flex: 1;
     border: none;
     background: transparent;
-    font-size: 1rem;
+    font-size: 1.1rem;
     padding: 0.2rem 0.5rem;
     outline: none;
 }
@@ -593,4 +638,25 @@ main {
 .recipe-image {
     width: 100%;
     border-radius: 6px;
+}
+
+.rating {
+    display: inline-block;
+}
+
+.stars {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.star-filled {
+    color: gold;
+    font-size: 1.5rem;
+}
+
+.list-preview-card-author-and-rating-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }

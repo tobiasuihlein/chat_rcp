@@ -48,6 +48,11 @@
                         </div>
                         <div class="title">{{ preview.title }}</div>
                         <div class="description">{{ preview.description }}</div>
+                        <div class="diets-preview-container">
+                            {% for item in preview.diets.all %}
+                                <div class="diets-hashtag">{{ item }}</div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </button>

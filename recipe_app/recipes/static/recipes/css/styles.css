@@ -18,6 +18,7 @@
     --main-spacing: 2rem;
     --main-bg: none;
     --accent-color: indianred;
+    --accent-color-light: hsl(0, 53%, 90%);
     --icon-color: hsl(69, 8%, 50%);
     --bg-color: hsl(69, 8%, 83%);
     --element-color: hsl(72, 17%, 94%);
@@ -50,7 +51,6 @@ footer {
     background-color: #F2F3EE;
     box-shadow: rgba(102, 101, 95, 0.2) 0px -2px 20px 0px;
 }
-
 
 
 a, button {
@@ -336,6 +336,7 @@ main {
     padding: 0.2rem 0.8rem 0.3rem 0.8rem;
 }
 
+
 .recipe-difficulty-1 {
     background-color: rgb(220 252 231);
     color: rgb(22 101 52);
@@ -361,6 +362,11 @@ main {
     color: rgb(153 27 27);
 }
 
+.recipe-difficulty-X {
+    background-color: var(--accent-color-light);
+    color: var(--accent-color);
+}
+
 
 
 .title {
@@ -381,6 +387,19 @@ main {
     font-size: 1.2rem;
     font-weight: 300;
     margin-bottom: 1rem;
+}
+
+.diets-preview-container {
+    font-size: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.diets-hashtag {
+    border-radius: 99px;
+    border: solid 1px var(--icon-color);
+    color: var(--icon-color);
+    padding: 0.1rem 0.5rem 0.3rem 0.5rem;
 }
 
 .main-ingredients, .additional-ingredients, .tips-container, .storage-container {

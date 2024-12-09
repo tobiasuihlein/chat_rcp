@@ -30,3 +30,31 @@ SESSION_COOKIE_AGE = 86400  # 24 hours
 STATIC_ROOT = '/app/staticfiles'
 STATIC_URL = 'static/'
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR.parent.parent, 'logs', 'django.log'),
+            'formatter': 'verbose',
+        }
+    },
+    'loggers': {
+        '': {  # Root logger
+            'handlers': ['console', 'file'],  # Log to both console AND file
+            'level': 'INFO',
+        },
+    },
+}

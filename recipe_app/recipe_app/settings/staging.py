@@ -5,6 +5,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'tobiasuihlein.de',
     'www.tobiasuihlein.de',
+    'chatrcp.de',
+    'www.chatrcp.de',
     '138.201.135.222', # Server IP
     '10.0.10.200', # Server-Proxy IP
     '10.0.10.210', # VM IP

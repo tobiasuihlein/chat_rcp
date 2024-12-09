@@ -1,13 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404 
-from django.urls import reverse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from generator.utils.helpers import sort_previews
 from generator.services import *
 from .models import *
 
+import logging
+logger = logging.getLogger(__name__)
 
-import requests
-from concurrent.futures import ThreadPoolExecutor
-from django.core.files.base import ContentFile
 
 def login(request):
 
@@ -43,48 +42,33 @@ def home(request):
 def recipe_generated(request):
     if request.method == "POST":
         try:
-            # recipe_generator = ClaudeRecipeGeneratorService()
+            logger.info("Starting recipe generation process")
+            
             recipe_generator = MistralRecipeGeneratorService()
             author = "Mistral AI"
-            image_generator = ImageGeneratorService()
             recipe_dict = request.POST.dict()
             
-            # Create prompt first since it's needed for recipe generation
             prompt = create_recipe_prompt_by_preview(recipe_dict)
+            logger.info("Prompt created successfully")
             
-            # Use ThreadPoolExecutor to run API calls concurrently
-            with ThreadPoolExecutor() as executor:
-                # recipe_future = executor.submit(recipe_generator.get_recipe_from_Claude, prompt)
-                recipe_future = executor.submit(recipe_generator.get_recipe_from_Mistral, prompt)
-                image_future = executor.submit(image_generator.get_image, recipe_dict)
-                
-                recipe = recipe_future.result()
-                image_url = image_future.result()
+            try:
+                recipe = recipe_generator.get_recipe_from_Mistral(prompt)
+                logger.info("Recipe generation completed")
+            except Exception as e:
+                logger.error(f"Recipe generation failed: {str(e)}")
+                raise
 
-            # # Download image
-            # response = requests.get(image_url)
-            # image_content = response.content
-            
-            # Save recipe to database
+            logger.info("Starting database save")
             recipe_object = recipe_to_database(recipe["recipe"][0])
             recipe_object.author = author
             recipe_object.save()
-            
-            # # Save image
-            # recipe_image = RecipeImage(
-            #     recipe=recipe_object,
-            #     alt_text=f"Image for {recipe_object.title}"
-            # )
-            # recipe_image.image.save(
-            #     f"recipe_{recipe_object.pk}.png",
-            #     ContentFile(image_content),
-            #     save=True
-            # )
+            logger.info(f"Recipe saved with ID: {recipe_object.pk}")
 
             return redirect('recipes:detail', pk=recipe_object.pk)
             
         except Exception as e:
-            print(f"Error occurred: {str(e)}")
+            logger.error(f"Detailed error in recipe generation: {str(e)}", exc_info=True)
+            messages.error(request, "Sorry, something went wrong while generating your recipe. Please try again.")
             return redirect('recipes:home')
     
     return redirect('recipes:home')

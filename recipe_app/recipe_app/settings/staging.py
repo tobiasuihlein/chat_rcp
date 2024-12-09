@@ -16,7 +16,9 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = [
     'https://tobiasuihlein.de',
-    'https://www.tobiasuihlein.de'
+    'https://www.tobiasuihlein.de',
+    'chatrcp.de',
+    'www.chatrcp.de',
 ]
 
 # Trust X-Forwarted-Proto header from reverse proxy after SSL termination

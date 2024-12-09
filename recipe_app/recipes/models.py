@@ -131,7 +131,7 @@ class Recipe(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['difficulty']
+        ordering = ['-created_at']
 
 
 class IngredientCategory(models.Model):

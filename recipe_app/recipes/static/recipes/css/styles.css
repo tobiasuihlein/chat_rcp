@@ -230,7 +230,7 @@ main {
 }
 
 .recipe-pad-row {
-    margin-top: 3rem;
+    margin-top: 2.5rem;
     border: solid 0px indianred;
     display: flex;
     justify-content: space-between;
@@ -377,7 +377,7 @@ main {
 }
 
 .subtitle {
-    font-size: 1.2rem;;
+    font-size: 1.2rem;
     line-height: 1.5rem;
     font-weight: 400;
     margin-bottom: 1rem;

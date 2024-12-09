@@ -52,8 +52,9 @@
                             <div class="author">{{ preview.author}}</div>
                             {% if preview.avg_rating %}
                                 <div class="stars">
-                                    {{ preview.avg_rating }}
                                     <div class="star-filled">★</div>
+                                    {{ preview.avg_rating }}
+                                    ({{ preview.rating_count }})
                                 </div>
                             {% endif %}
                         </div>

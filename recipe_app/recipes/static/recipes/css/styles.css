@@ -390,16 +390,14 @@ main {
 }
 
 .diets-preview-container {
-    font-size: 1rem;
+    font-size: 1.2rem;
     display: flex;
     gap: 0.5rem;
 }
 
 .diets-hashtag {
     border-radius: 99px;
-    border: solid 1px var(--icon-color);
     color: var(--icon-color);
-    padding: 0.1rem 0.5rem 0.3rem 0.5rem;
 }
 
 .main-ingredients, .additional-ingredients, .tips-container, .storage-container {

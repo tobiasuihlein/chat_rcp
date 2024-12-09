@@ -13,8 +13,8 @@
     --text-color-2: rgb(67, 67, 67);
     --transition-speed: 0.3s;
     --max-width: 1400px;
-    --content-padding: 1rem 2rem;
-    --content-padding-mobile: 0.5rem 1rem;
+    --content-padding: 1rem 1rem;
+    --content-padding-mobile: 0.5rem 0.8rem;
     --main-spacing: 2rem;
     --main-bg: none;
     --accent-color: indianred;
@@ -176,6 +176,10 @@ main {
     margin-bottom: 2rem;
 }
 
+.section-row:last-child {
+    margin-bottom: 0;
+}
+
 .row-content {
     display: flex;
     flex-wrap: wrap;
@@ -185,7 +189,7 @@ main {
 
 @media only screen and (max-width: 499px) {
     .row-content {
-        gap: 1.5rem;
+        gap: 1rem;
     }
 }
 

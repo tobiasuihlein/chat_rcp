@@ -83,10 +83,10 @@ class Recipe(models.Model):
 
     class Difficulty(models.IntegerChoices):
         UNKNOWN = 0, 'Not Specified'
-        BEGINNER = 1, 'Einfach'
-        INTERMEDIATE = 2, 'Fortgeschritten'
-        ADVANCED = 3, 'Profi'
-        EXPERT = 4, 'Sterneküche'
+        BEGINNER = 1, 'Simpel'
+        INTERMEDIATE = 2, 'Ambitioniert'
+        ADVANCED = 3, 'Gourmet'
+        EXPERT = 4, 'Avantgarde'
 
     class Spiciness(models.IntegerChoices):
         UNKNOWN = 0, 'Not Specified'

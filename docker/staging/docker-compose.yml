@@ -3,6 +3,7 @@ services:
     build:
       context: ../../
       dockerfile: docker/staging/Dockerfile
+    user: "${USER_ID:-$(id -u)}:${GROUP_ID:-$(id -g)}"
     command: >
       gunicorn recipe_app.wsgi:application
       --bind 0.0.0.0:8000
@@ -16,3 +17,4 @@ services:
       - SECRET_KEY=${SECRET_KEY}
     volumes:
       - ../../logs:/app/logs
+      - ../../recipe_app/db.sqlite3:/app/recipe_app/db.sqlite3

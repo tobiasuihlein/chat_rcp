@@ -7,9 +7,8 @@ urlpatterns = [
     path('generate/previews', views.previews, name="previews"),
     path('generate/recipe', views.recipe_generated, name="recipe"),
     path('detail/<int:pk>/', views.recipe_detail, name='detail'),
-    path('', views.recipe_list, name='list'),
+    path('explore', views.explore, name='explore'),
     path('library', views.library, name='library'),
-    path('generate', views.home, name="generate"),
-    path('generate', views.home, name="home"),
+    path('generate', views.generate, name="generate"),
     path('login', views.login, name='login')
 ]

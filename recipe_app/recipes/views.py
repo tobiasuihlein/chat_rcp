@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from generator.utils.helpers import sort_previews
 from generator.services import *
@@ -10,8 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 def login(request):
-
     return render(request, 'recipes/login.html')
+
+def generate(request):
+    return render(request, 'recipes/generate.html')
 
 
 def previews(request):
@@ -33,10 +36,6 @@ def previews(request):
         context = {"recipe_previews": previews["recipes"], "difficulty_choices": Recipe.Difficulty.choices}
         return render(request, 'recipes/previews.html', context=context)
     
-    return render(request, 'recipes/index.html')
-
-
-def home(request):
     return render(request, 'recipes/index.html')
 
 
@@ -80,13 +79,11 @@ def recipe_detail(request, pk):
     return render(request, 'recipes/detail.html', {'recipe': recipe})
 
 
-def recipe_list(request):
+def explore(request):
     recipes = Recipe.objects.all()
     recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'), rating_count=Count('ratings__rating'))
     return render(request, 'recipes/list.html', {'recipes': recipes})
 
-
-from django.contrib.auth.decorators import login_required
 
 @login_required(login_url='recipes:login')
 def library(request):

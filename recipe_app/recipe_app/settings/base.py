@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'recipe_app',
+    'chefs',
     'generator',
     'recipes',
     'api'
@@ -75,6 +76,12 @@ DATABASES = {
 
 # MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'recipe_images')
 # MEDIA_URL = '/media/'
+
+
+# Auth settings
+LOGIN_URL = 'chefs:login'
+LOGIN_REDIRECT_URL = 'home'  # where to send users after login
+LOGOUT_REDIRECT_URL = 'home'  # where to send users after logout
 
 
 # Password validation

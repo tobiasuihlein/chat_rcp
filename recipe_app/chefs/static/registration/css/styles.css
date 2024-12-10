@@ -1,0 +1,16 @@
+.input-field-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: left;
+    padding: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.error-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}

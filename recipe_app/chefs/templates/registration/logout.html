@@ -1,0 +1,22 @@
+{% extends "recipe_app/layout.html" %}
+
+{% load static %}
+
+{% block header-middle %}
+    LOGOUT PAGE
+{% endblock header-middle %}
+
+
+{% block main-content %}
+
+<div class="flex min-h-screen items-center justify-center">
+    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-md text-center">
+        <h2 class="mb-6 text-2xl font-bold">Logged Out</h2>
+        <p class="mb-6">You have been successfully logged out.</p>
+        <a href="{% url 'login' %}" class="inline-block px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
+            Log in again
+        </a>
+    </div>
+</div>
+
+{% endblock main-content %}

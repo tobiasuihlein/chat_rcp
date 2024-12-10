@@ -1,0 +1,53 @@
+{% extends "recipe_app/layout.html" %}
+
+{% load static %}
+
+{% block extra_css%}
+    <link rel="stylesheet" href="{% static 'registration/css/styles.css' %}">
+{% endblock extra_css%}
+
+
+{% block header-middle %}
+{% endblock header-middle %}
+
+
+{% block main-content %}
+
+<div class="row-wrapper section-row" style="margin-top: 10vh;">
+    <div class="row-content">
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-field-container">
+                <label class="" for="{{ form.username.id_for_label }}">
+                    Username
+                </label>
+                {{ form.username }}
+            </div>
+            
+            <div class="input-field-container">
+                <label class="" for="{{ form.password.id_for_label }}">
+                    Password
+                </label>
+                {{ form.password }}
+            </div>
+
+            <div class="input-field-container" style="text-align: center">
+                <button type="submit" class="">
+                    Log In
+                </button>
+            </div>
+
+            <input type="hidden" name="next" value="{{ next }}">
+        </form>
+    </div>
+    <div class="row-content">
+        {% if form.errors %}
+        <div class="error-message" style="margin-top: 5vh;">
+            Your username and password didn't match.<br>
+            Please try again.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock main-content %}

@@ -10,5 +10,4 @@ urlpatterns = [
     path('explore', views.explore, name='explore'),
     path('library', views.library, name='library'),
     path('generate', views.generate, name="generate"),
-    path('login', views.login, name='login')
 ]

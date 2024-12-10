@@ -10,8 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def login(request):
-    return render(request, 'recipes/login.html')
+
 
 def generate(request):
     return render(request, 'recipes/generate.html')
@@ -85,7 +84,7 @@ def explore(request):
     return render(request, 'recipes/list.html', {'recipes': recipes})
 
 
-@login_required(login_url='recipes:login')
+@login_required(login_url='recipe_app:login')
 def library(request):
     recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'), rating_count=Count('ratings__rating')).filter(favourites__user=request.user)
     return render(request, 'recipes/list.html', {'recipes': recipes})

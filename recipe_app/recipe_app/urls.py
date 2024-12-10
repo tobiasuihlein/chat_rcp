@@ -9,9 +9,11 @@ from . import views
 urlpatterns = [
     path('api/', include("api.urls")),
     path('recipes/', include("recipes.urls")),
-    path('', views.home, name='home'),
+    path('', views.home, name="home"),
     path('generator/', include("generator.urls")),
-    path('admin/', admin.site.urls)
+    path('admin/', admin.site.urls),
+    path('chefs/', include("chefs.urls")),
+    path('chefs/', include('django.contrib.auth.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

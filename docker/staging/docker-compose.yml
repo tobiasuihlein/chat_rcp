@@ -19,3 +19,9 @@ services:
     volumes:
       - ../../logs:/app/logs
       - ../../recipe_app/db.sqlite3:/app/recipe_app/db.sqlite3
+    networks:
+      - chatrcp-network
+
+networks:
+  chatrcp-network:
+    driver: bridge

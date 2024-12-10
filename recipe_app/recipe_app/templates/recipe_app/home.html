@@ -1,0 +1,69 @@
+{% extends "./layout.html" %}
+
+{% load static %}
+
+{% block main-content %}
+
+<div class="row-wrapper section-row" style="margin-top: 15vh;">
+    <div class="row-content">
+        <div class="body-container" style="position: relative;">
+            <div class="shadow-container">
+                <img src="{% static 'recipe_app/img/ghibli-shadow.svg' %}"/>
+            </div>
+            <div class="body-container">
+                <img src="{% static 'recipe_app/img/ghibli-empty-eyes.svg' %}"/>
+            </div>
+            <div class="pupils-container">
+                <img id="pupils" src="{% static 'recipe_app/img/ghibli-pupils.svg' %}"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row-wrapper">
+    <div class="row-content">
+        <div class="widget">
+            <div class="initial-prompt-heading">
+                <p>&thinsp;Hey, chef!&thinsp;</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% block javascript %}
+
+<script>
+    // idle eye movement animation
+    let idleTimer = null;
+    function startIdleAnimation() {
+        pupils.style.animation = 'moveEyes 30s infinite';
+    }
+    function stopIdleAnimation() {
+        pupils.style.animation = '';
+    }
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes moveEyes {
+            52% { transform: translate(0, 0); }
+            55% { transform: translate(3px, 3px); }
+            68% { transform: translate(3px, 3px); }
+            70% { transform: translate(-3px, 0); }
+            83% { transform: translate(-3px, 0); }
+            85% { transform: translate(0, -3px); }
+            100% { transform: translate(0, 0); }
+        }
+    `;
+    document.head.appendChild(style);
+    function resetIdleTimer() {
+        stopIdleAnimation();
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(startIdleAnimation, 3000);
+    }
+    document.addEventListener('mousemove', resetIdleTimer);
+    document.addEventListener('keypress', resetIdleTimer);
+</script>
+
+{% endblock javascript %}
+
+{% endblock main-content %}

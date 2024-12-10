@@ -1,0 +1,22 @@
+.body-container img {
+    width: 120px;
+    height: auto;
+}
+
+.pupils-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 120px;
+    height: auto;
+    transition: transform 0.5s ease;
+}
+
+.shadow-container img {
+    z-index: -99;
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 120px;
+    height: auto;
+}

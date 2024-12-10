@@ -1,4 +1,4 @@
-{% extends "./layout.html" %}
+{% extends "recipe_app/layout.html" %}
 
 {% load static %}
 
@@ -48,45 +48,6 @@
     document.getElementById('initial-prompt-form').addEventListener('submit', function(e) {
         document.getElementById('loading-spinner').style.display = 'flex';
     });
-
-    // eye movement when searchbar focused
-    const pupils = document.getElementById('pupils');
-    const ingredientsInput = document.getElementById('ingredients-input');
-    ingredientsInput.addEventListener('focus', (event) => {
-        pupils.style.transform = `translate(0, 5px)`;
-    });
-    ingredientsInput.addEventListener('blur', (event) => {
-        pupils.style.transform = `translate(0, 0)`;
-    });
-
-    // idle eye movement animation
-    let idleTimer = null;
-    function startIdleAnimation() {
-        pupils.style.animation = 'moveEyes 60s infinite';
-    }
-    function stopIdleAnimation() {
-        pupils.style.animation = '';
-    }
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes moveEyes {
-            52% { transform: translate(0, 0); }
-            55% { transform: translate(3px, 3px); }
-            68% { transform: translate(3px, 3px); }
-            70% { transform: translate(-3px, 0); }
-            83% { transform: translate(-3px, 0); }
-            85% { transform: translate(0, -3px); }
-            100% { transform: translate(0, 0); }
-        }
-    `;
-    document.head.appendChild(style);
-    function resetIdleTimer() {
-        stopIdleAnimation();
-        clearTimeout(idleTimer);
-        idleTimer = setTimeout(startIdleAnimation, 3000);
-    }
-    document.addEventListener('mousemove', resetIdleTimer);
-    document.addEventListener('keypress', resetIdleTimer);
 </script>
 
 {% endblock %}

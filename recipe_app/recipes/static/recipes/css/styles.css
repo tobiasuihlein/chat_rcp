@@ -607,30 +607,6 @@ main {
     100% { transform: rotate(360deg); }
 }
 
-
-.body-container img {
-    width: 150px;
-    height: auto;
-}
-
-.pupils-container img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 150px;
-    height: auto;
-    transition: transform 0.5s ease;
-}
-
-.shadow-container img {
-    z-index: -99;
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 150px;
-    height: auto;
-}
-
 .recipe-image-container {
     margin-bottom: 1.5rem;
 }

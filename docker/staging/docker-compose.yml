@@ -1,5 +1,6 @@
 services:
   web:
+    container_name: web-chatrcp
     build:
       context: ../../
       dockerfile: docker/staging/Dockerfile

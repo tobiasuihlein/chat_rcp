@@ -1,5 +1,5 @@
 services:
-  web:
+  web-chatrcp:
     container_name: web-chatrcp
     build:
       context: ../../

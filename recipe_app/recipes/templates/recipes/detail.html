@@ -25,9 +25,23 @@
                 {% endif %}
             </div> {% endcomment %}
             <div class="recipe-user-panel">
-                <div class="panel-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
-                </div>
+                {% if request.user.is_authenticated %}
+                    {% if recipe_saved_by_user %}
+                        <div class="panel-icon" id="bookmark-icon-saved" style="display: flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                        </div>
+                        <div class="panel-icon" id="bookmark-icon-unsaved" style="display: none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                        </div>
+                    {% else %}
+                        <div class="panel-icon" id="bookmark-icon-saved" style="display: none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                        </div>
+                        <div class="panel-icon" id="bookmark-icon-unsaved" style="display: flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+                        </div>
+                    {% endif %}
+                {% endif %}
             </div>
             <div class="recipe-title">
                 <span>{{ recipe.title }}</span>
@@ -91,6 +105,68 @@
         </div>
     </div>
 </div>
+
+{% block javascript %}
+
+    <script>
+
+    const recipe = { id: {{ recipe.id }} };
+    const iconSavedContainer = document.getElementById('bookmark-icon-saved');
+    const iconUnsavedContainer = document.getElementById('bookmark-icon-unsaved');
+    const iconSaved = iconSavedContainer ? iconSavedContainer.querySelector('svg') : null;
+    const iconUnsaved = iconUnsavedContainer ? iconUnsavedContainer.querySelector('svg') : null;
+
+    if (iconUnsaved) {
+        iconUnsaved.addEventListener('mouseenter', () => {
+            iconUnsaved.innerHTML = `<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/><line x1="12" x2="12" y1="7" y2="13"/><line x1="15" x2="9" y1="10" y2="10"/>`;
+        });
+
+        iconUnsaved.addEventListener('mouseleave', () => {
+            iconUnsaved.innerHTML = `<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>`;
+        });
+    }
+
+    if (iconSaved) {
+        iconSaved.addEventListener('mouseenter', () => {
+            // Change both SVG and path fill
+            iconSaved.setAttribute('fill', 'none');
+            const path = iconSaved.querySelector('path');
+            if (path) path.setAttribute('fill', 'none');
+            iconSaved.innerHTML = `<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/><path d="m14.5 7.5-5 5"/><path d="m9.5 7.5 5 5"/>`;
+        });
+
+        iconSaved.addEventListener('mouseleave', () => {
+            iconSaved.setAttribute('fill', 'currentColor');
+            const path = iconSaved.querySelector('path');
+            if (path) path.setAttribute('fill', 'currentColor');
+            iconSaved.innerHTML = `<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>`;
+        });
+    }
+
+    function toggleSave() {
+        fetch(`/recipes/toggle-save/${recipe.id}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'saved') {
+                    iconUnsavedContainer.style.display = 'none';
+                    iconSavedContainer.style.display = 'flex';
+                    iconSaved.setAttribute('fill', 'currentColor');
+                    iconSaved.setAttribute('stroke', 'currentColor');
+                } else {
+                    iconSavedContainer.style.display = 'none';
+                    iconUnsavedContainer.style.display = 'flex';
+                    iconUnsaved.setAttribute('fill', 'none');
+                    iconUnsaved.setAttribute('stroke', 'currentColor');
+                }
+            });
+    }
+
+    iconSavedContainer?.addEventListener('click', toggleSave);
+    iconUnsavedContainer?.addEventListener('click', toggleSave);
+
+</script>
+
+{% endblock javascript %}
 
 
 {% endblock main-content %}

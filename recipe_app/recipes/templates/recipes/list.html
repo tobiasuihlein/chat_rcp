@@ -6,7 +6,13 @@
 
 
 {% block header-middle %}
-    <span style="font-size: 2rem; font-weight: 500; margin-bottom: 2rem;" class="hide-mobile">Entdecken</span>
+    <span style="font-size: 2rem; font-weight: 500; margin-bottom: 2rem;" class="hide-mobile">
+    {% if request.path == '/recipes/library/'%}
+        Bibliothek
+    {% elif request.path == '/recipes/explore/'%}
+        Entdecken
+    {% endif %}
+    </span>
 {% endblock header-middle %}
 
 

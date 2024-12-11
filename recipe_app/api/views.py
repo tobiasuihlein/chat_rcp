@@ -15,3 +15,7 @@ class ComponentViewSet(viewsets.ModelViewSet):
 class InstructionViewSet(viewsets.ModelViewSet):
     queryset = RecipeInstruction.objects.all()
     serializer_class = InstructionSerializer
+
+class SavedRecipeViewSet(viewsets.ModelViewSet):
+    queryset = SavedRecipe.objects.all()
+    serializer_class = SavedRecipeSerializer

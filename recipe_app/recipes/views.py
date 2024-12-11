@@ -9,21 +9,40 @@ from django.db.models import Avg, Count
 import logging
 logger = logging.getLogger(__name__)
 
+from django.http import JsonResponse
+
+@login_required(login_url='chefs:login')
+def toggle_save_recipe(request, recipe_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Login required'}, status=401)
+    
+    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    saved = SavedRecipe.objects.filter(recipe=recipe, user=request.user)
+    
+    if saved.exists():
+        saved.delete()
+        return JsonResponse({'status': 'unsaved'})
+    else:
+        SavedRecipe.objects.create(recipe=recipe, user=request.user)
+        return JsonResponse({'status': 'saved'})
+
 
 def recipe_detail(request, pk):
     recipe = get_object_or_404(Recipe, pk=pk)
-    return render(request, 'recipes/detail.html', {'recipe': recipe})
+    if request.user.is_authenticated:
+        recipe_saved_by_user = SavedRecipe.objects.filter(recipe=pk, user=request.user).exists()
+    return render(request, 'recipes/detail.html', {'recipe_id': recipe.id, 'recipe': recipe, 'recipe_saved_by_user': recipe_saved_by_user})
+
 
 @login_required(login_url='chefs:login')
 def explore(request):
-    recipes = Recipe.objects.all()
-    recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'), rating_count=Count('ratings__rating'))
+    recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'), rating_count=Count('ratings__rating')).order_by('-created_at')
     return render(request, 'recipes/list.html', {'recipes': recipes})
 
 
 @login_required(login_url='chefs:login')
 def library(request):
-    recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'), rating_count=Count('ratings__rating')).filter(favourites__user=request.user)
+    recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'), rating_count=Count('ratings__rating')).filter(favourites__user=request.user).order_by('-created_at')
     return render(request, 'recipes/list.html', {'recipes': recipes})
 
 

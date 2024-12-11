@@ -645,5 +645,5 @@ main {
 }
 
 .panel-icon {
-    color: var(--icon-color);
+    color: var(--accent-color);
 }

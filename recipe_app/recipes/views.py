@@ -10,12 +10,29 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def recipe_detail(request, pk):
+    recipe = get_object_or_404(Recipe, pk=pk)
+    return render(request, 'recipes/detail.html', {'recipe': recipe})
+
+@login_required(login_url='chefs:login')
+def explore(request):
+    recipes = Recipe.objects.all()
+    recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'), rating_count=Count('ratings__rating'))
+    return render(request, 'recipes/list.html', {'recipes': recipes})
 
 
+@login_required(login_url='chefs:login')
+def library(request):
+    recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'), rating_count=Count('ratings__rating')).filter(favourites__user=request.user)
+    return render(request, 'recipes/list.html', {'recipes': recipes})
+
+
+@login_required(login_url='chefs:login')
 def generate(request):
     return render(request, 'recipes/generate.html')
 
 
+@login_required(login_url='chefs:login')
 def previews(request):
 
     if request.method == "POST":
@@ -38,6 +55,7 @@ def previews(request):
     return render(request, 'recipes/index.html')
 
 
+@login_required(login_url='chefs:login')
 def recipe_generated(request):
     if request.method == "POST":
         try:
@@ -68,23 +86,6 @@ def recipe_generated(request):
         except Exception as e:
             logger.error(f"Detailed error in recipe generation: {str(e)}", exc_info=True)
             messages.error(request, "Sorry, something went wrong while generating your recipe. Please try again.")
-            return redirect('recipes:home')
+            return redirect('recipes:generate')
     
-    return redirect('recipes:home')
-
-
-def recipe_detail(request, pk):
-    recipe = get_object_or_404(Recipe, pk=pk)
-    return render(request, 'recipes/detail.html', {'recipe': recipe})
-
-
-def explore(request):
-    recipes = Recipe.objects.all()
-    recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'), rating_count=Count('ratings__rating'))
-    return render(request, 'recipes/list.html', {'recipes': recipes})
-
-
-@login_required(login_url='recipe_app:login')
-def library(request):
-    recipes = Recipe.objects.annotate(avg_rating=Avg('ratings__rating'), rating_count=Count('ratings__rating')).filter(favourites__user=request.user)
-    return render(request, 'recipes/list.html', {'recipes': recipes})
+    return redirect('recipes:generate')

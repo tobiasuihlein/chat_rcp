@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from . import views
 
+app_name = "recipe_app"
 
 urlpatterns = [
     path('api/', include("api.urls")),
@@ -15,7 +16,6 @@ urlpatterns = [
     path('chefs/', include("chefs.urls")),
     path('chefs/', include('django.contrib.auth.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
 
 from django.conf import settings
 from django.conf.urls.static import static

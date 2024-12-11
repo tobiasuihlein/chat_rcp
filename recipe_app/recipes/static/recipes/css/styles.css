@@ -322,7 +322,7 @@ main {
     box-shadow: rgba(102, 101, 95, 0.2) 0px 2px 8px 0px;
 }
 
-.card:active {
+.card-clickable:active {
     transform: scale(0.99);
 }
 

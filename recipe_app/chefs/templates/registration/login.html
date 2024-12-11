@@ -13,13 +13,18 @@
 
 {% block main-content %}
 
-<div class="row-wrapper section-row" style="margin-top: 10vh;">
-    <div class="row-content">
+<div class="row-wrapper section-row card" style="margin-top: 0;">
+    <div class="row-content" style="margin-top: 1rem; margin-bottom: 1rem;">
+        <div class="form-header">
+            LOGIN
+        </div>
+    </div>
+    <div class="row-content" style="width: 100%; padding: 1rem;">
         <form method="post">
             {% csrf_token %}
             <div class="input-field-container">
-                <label class="" for="{{ form.username.id_for_label }}">
-                    Username
+                <label for="{{ form.username.id_for_label }}">
+                    Email oder Nutzername
                 </label>
                 {{ form.username }}
             </div>
@@ -32,17 +37,22 @@
             </div>
 
             <div class="input-field-container" style="text-align: center">
-                <button type="submit" class="">
-                    Log In
+                <button type="submit" class="submit-button">
+                    LOGIN
                 </button>
             </div>
 
             <input type="hidden" name="next" value="{{ next }}">
         </form>
     </div>
-    <div class="row-content">
+    <div class="row-content" style="margin-top: 0.5rem; margin-bottom: 1rem;">
+        <div>
+            Noch keinen Account? <a href="{% url 'chefs:signup' %}" style="text-decoration: underline">Anmelden</a>
+        </div>
+    </div>
+    <div class="row-content" style="margin-bottom: 1rem;">
         {% if form.errors %}
-        <div class="error-message" style="margin-top: 5vh;">
+        <div class="error-message warning-text">
             Your username and password didn't match.<br>
             Please try again.
         </div>

@@ -1,0 +1,50 @@
+{% extends "recipe_app/layout.html" %}
+
+{% load static %}
+
+{% block extra_css%}
+    <link rel="stylesheet" href="{% static 'registration/css/styles.css' %}">
+{% endblock extra_css%}
+
+
+{% block header-middle %}
+{% endblock header-middle %}
+
+
+{% block main-content %}
+
+<div class="row-wrapper section-row card" style="margin-top: 0;">
+    <div class="row-content" style="margin-top: 1rem; margin-bottom: 1rem;">
+        <div class="form-header">
+            ANMELDEN
+        </div>
+    </div>
+    <div class="row-content" style="width: 100%; padding: 1rem;">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="input-field-container">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% for error in field.errors %}
+                    <div class="error-message warning-text">
+                        {{ error }}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <div class="input-field-container" style="text-align: center">
+                <button type="submit" class="submit-button">
+                    ANMELDEN
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="row-content" style="margin-top: 0.5rem; margin-bottom: 2rem;">
+        <div>
+            Du hast schon einen Account? <a href="{% url 'chefs:login' %}" style="text-decoration: underline">Login</a>
+        </div>
+    </div>
+</div>
+
+{% endblock main-content %}

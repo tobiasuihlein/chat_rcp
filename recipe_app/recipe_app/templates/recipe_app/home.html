@@ -24,7 +24,11 @@
     <div class="row-content">
         <div class="widget">
             <div class="initial-prompt-heading">
-                <p>&thinsp;Hey, chef!&thinsp;</p>
+                {% if user.is_authenticated%}
+                    <p>Hallo {{ request.user.username }}!</p>
+                {% else %}
+                    <p>Hey, chef!</p>
+                {% endif %}
             </div>
         </div>
     </div>

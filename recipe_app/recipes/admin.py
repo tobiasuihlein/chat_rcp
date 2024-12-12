@@ -38,7 +38,7 @@ class RecipeImageAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('title', 'difficulty', 'beverage_recommendation', 'get_cuisine_types', 'author')
+    list_display = ('title', 'difficulty', 'beverage', 'get_cuisine_types', 'author')
     inlines = [RecipeImageInline]
 
 

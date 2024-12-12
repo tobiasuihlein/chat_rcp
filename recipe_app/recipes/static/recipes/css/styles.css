@@ -20,9 +20,11 @@
     --accent-color: indianred;
     --accent-color-light: hsl(0, 53%, 90%);
     --icon-color: hsl(69, 8%, 50%);
+    --icon-color-light: hsl(69, 8%, 65%);
     --bg-color: hsl(69, 8%, 83%);
     --element-color: hsl(72, 17%, 94%);
     --element-color-2: hsl(72, 17%, 90%);
+    --element-color-3: hsl(72, 17%, 92%);
 }
 
 @media only screen and (max-width: 1024px) {
@@ -123,6 +125,16 @@ ul {
 
 .navlink-mobile {
     color: #191918;
+    border-radius: 6px;
+    outline: 4px solid transparent;
+}
+
+.navlink-mobile:hover {
+    background-color: var(--element-color-3);
+    outline-color: var(--element-color-3);
+    svg {
+        color: var(--accent-color)
+    }   
 }
 
 .navlink-mobile a{
@@ -135,15 +147,17 @@ ul {
     color: var(--icon-color);
     width: 1.6rem;
     height: 1.6rem;
+    border-radius: 999px;
 }
 
-.navlink-mobile svg:active {
-    transform: scale(0.95);
+.navlink-mobile:active {
+    svg {
+        transform: scale(0.95);
+    }
 }
-
 .navbar-list {
     display: inline-flex;
-    gap: clamp(2rem, 10vw, 5rem);
+    gap: clamp(0.5rem, 5vw, 5rem);
     list-style: none;
     font-weight: 400;
 }
@@ -346,11 +360,12 @@ main {
 }
 
 .recipe-properties-container {
+    padding: 0.2rem 0.5rem 0 0.5rem;
+    width: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
-    margin-bottom: 1rem;
 }
 
 .recipe-time, .recipe-servings {
@@ -409,8 +424,8 @@ main {
 }
 
 .recipe-difficulty-X {
-    background-color: var(--accent-color-light);
-    color: var(--accent-color);
+    background-color: var(--element-color-2);
+    color: var(--icon-color);
 }
 
 
@@ -432,7 +447,8 @@ main {
 .description {
     font-size: 1.2rem;
     font-weight: 300;
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
+    hyphens: auto;
 }
 
 .diets-preview-container {
@@ -443,10 +459,18 @@ main {
 }
 
 .author {
-    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 1rem;
     font-weight: 400;
     border-radius: 99px;
     color: var(--icon-color);
+}
+
+.author svg {
+    height: 1.2rem;
+    width: 1.2rem;
 }
 
 .main-ingredients, .additional-ingredients, .tips-container, .storage-container {
@@ -616,25 +640,19 @@ main {
     border-radius: 6px;
 }
 
-.rating {
-    display: inline-block;
-}
-
 .stars {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 0.2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color-2);
 }
 
-.star-filled {
+.stars svg {
     color: gold;
-    font-size: 1.5rem;
-}
-
-.list-preview-card-author-and-rating-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    height: 1.2rem;
+    width: 1.2rem;
 }
 
 .recipe-user-panel {
@@ -645,5 +663,63 @@ main {
 }
 
 .panel-icon {
+    color: var(--icon-color-light);
+    display: flex;
+    align-items: center;
+    border-radius: 999px;
+    border: 1px solid transparent;
+}
+
+.panel-icon svg {
+    height: 1.3rem;
+    width: 1.3rem;
+}
+
+.panel-icon:hover{
+    cursor: pointer;
     color: var(--accent-color);
+    background-color: var(--element-color-2);
+    border-radius: 99px;
+    outline: 6px solid var(--element-color-2);
+}
+
+.panel-icon:active{
+    transform: scale(0.9);
+}
+
+.multi-input-line-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.2rem;
+}
+
+.ingredient-field {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.preview-card-bottom-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.share-tooltip {
+    position: absolute;
+    background: var(--element-color-2);
+    color: var(--text-color);
+    border: 1px solid var(--bg-color);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 1000;
+}
+
+.share-tooltip.visible {
+    opacity: 1;
 }

@@ -157,12 +157,12 @@ def recipe_to_database(recipe):
             )
 
             beverage_type_object, _ = BeverageType.objects.get_or_create(
-                name = recipe['beverage_recommendation']['type'],
+                name = recipe['beverage']['type'],
                 language = language_object
             )
 
             beverage_object, _ = Beverage.objects.get_or_create(
-                name = recipe['beverage_recommendation']['name'],
+                name = recipe['beverage']['name'],
                 type = beverage_type_object,
                 language = language_object
             )
@@ -178,24 +178,16 @@ def recipe_to_database(recipe):
                 category = recipe_category_object,
                 cost = int(recipe.get('cost', 0)),
                 spiciness = int(recipe.get('spiciness', 0)),
-                beverage_recommendation = beverage_object,
+                beverage = beverage_object,
                 language = language_object
             )
 
-            for element in recipe['cuisine_type']:
-                type = element['type']
-                subtype = element['subtype']
+            for cuisine_type in recipe['cuisine_type']:
                 type_object, _ = CuisineType.objects.get_or_create(
-                    name = type,
-                    language = language_object
-                )
-                subtype_object, _ = CuisineSubtype.objects.get_or_create(
-                    name = subtype,
-                    cuisine_type = type_object,
+                    name = cuisine_type,
                     language = language_object
                 )
                 recipe_object.cuisine_types.add(type_object)
-                recipe_object.cuisine_subtypes.add(subtype_object)
             
             for diet in recipe['diet']:
                 diet_object, _ = Diet.objects.get_or_create(
@@ -277,7 +269,7 @@ def create_previews_prompt(user_input) -> str:
         "recipes": [
             {{
                 "title": "string",    // Title of the recipe
-                "difficulty": number, // 1=beginner, 2=intermediate, 3=advanced, 4=expert
+                "difficulty": number, // 1=beginner, 2=advanced, 3=expert
                 "time": "X Min.",     // sum of both active (preparation, cooking, ...) and inactive time (cooling, proofing, ...)
                 "description": "A brief, appealing description of the dish.",
                 "main_ingredients": [
@@ -300,7 +292,7 @@ def create_previews_prompt(user_input) -> str:
     5. Difficulties should be one of these: "Easy", "Medium", or "Hard"
     6. Try to provide one very basic, one relatively common, and one more extravagant dish
     7. Only create recipes that you would expect to receive the best ratings
-    8. For more advanced dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
+    8. For expert level dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
     9. If you use dashes, make sure to use them properly (not '-', but '–')
     10. Make sure to include also spices and seasoning in the ingredients lists
     11. Explain complex steps in more detail than easier ones
@@ -330,7 +322,7 @@ def create_recipe_prompt_by_preview(recipe_dict: dict) -> str:
             {{
                 "language": "en|de",  // Language code
                 "title": string,      // Recipe title
-                "difficulty": number, // 1=beginner, 2=intermediate, 3=advanced, 4=expert
+                "difficulty": number, // 1=beginner, 2=advanced, 3=expert
                 "time": {{
                     "active": number,   // time the chef is active (preparation, cooking, ...)
                     "inactive": number, // time the chef is inactive (cooling, proofing, ...)
@@ -378,21 +370,14 @@ def create_recipe_prompt_by_preview(recipe_dict: dict) -> str:
                     "tip2"
                 ]
                 "storage": "string",
-                "cuisine_type": [
-                {{"type": "Type 1 (e.g. 'Mediterranean')",
-                "subtype": "Subtype 1 (e.g. Italian)}}",
-                {{"type": "Type 2 (e.g. 'Asian')",
-                "subtype": "Subtype 2 (e.g. Vietnamese)}}",
-                {{"type": "Type 3 (e.g. 'Central European')",
-                "subtype": "Subtype 3 (e.g. German)}}",
-                ],
+                "cuisine_type": ['cuisine_type_1', 'cuisine_type_2', ...],
                 "category": "type of dish (e.g., 'Main course', 'Soup', or 'Dessert'),
                 "diet": ["diet restriction one (e.g. 'Vegetarian')", "diet restriction two (e.g., 'Gluten-Free')"],
                 "cooking_method": ["cooking method one (e.g. 'Grilling')", "cooking method two (e.g., 'Baking')"],
-                "cost": "cost of the dish (use the numbers of the following mapping: 'budget'->1, 'moderate'->2, 'mid-range'->3, 'premium'->4)",
-                "spiciness": "pungency level (use the numbers of the following mapping: 'not spicy'->1, 'mild'->2, 'medium'->3, 'hot'->4)",
-                "beverage_recommendation": {{
-                    "name": string // name of the beverage (e.g., Chardonnay)
+                "cost": "cost of the dish (use the numbers of the following mapping: 'budget'->1, 'moderate'->2, 'premium'->3)",
+                "spiciness": "pungency level (use the numbers of the following mapping: 'not spicy'->0, 'mild'->1, 'medium'->2, 'hot'->3)",
+                "beverage": {{
+                    "name": string // name of the beverage (e.g., Chardonnay) // Beverage recommendation
                     "type": string // type of beverage (e.g., White Wine)
                 }}
                 "hashtags": ["hashtag one (e.g., 'Winter')", "hashtag two (e.g., 'Classic')", "hashtag three (e.g. Super-Sweet)", "hashtag four (e.g., Party-Food)", "hashtag five (e.g. Birthday)],
@@ -404,22 +389,19 @@ def create_recipe_prompt_by_preview(recipe_dict: dict) -> str:
     1. Response must be valid JSON
     2. Use only the provided ingredients
     3. Each recipe must be realistic and cookable
-    4. Time must be the number of minutes
-    5. Use the metric system and Celcius instead of Fahrenheit always
+    4. Time specifications in number minutes
+    5. Use the metric system and Celcius
     6. For each instruction step create an appropriate headline and a short paragraph
     7. Notes for ingredients must be short
-    8. List of cuisine types maybe only one (if dish is common only in one specific cuisine) or several (if dish is common in several cusines)
-    9. For the list of cuisine types, follow the rule that the type is the superordinate category (e.g. Mediterranean), while the subtype is the basic or generic level (e.g. Italian)
-    10. If several types or subtyes apply, use separate items in the list (do not combine two types to a new category, e.g. do not use Italian-American, but use two separate types instead)
-    11. Make sure to provide appropriate spiciness (level 0 only if no spice at all, i.e. no pepper)
-    12. For the hashtags, try to use single words if possible, else user '-' to combine, always use capitalized words (e.g. Super-Sweet, Party-Food, Sharing-Plate)
-    13. For the hashtags, do not repeat other properties already provided (such as cuisine type or cost)
-    14. For more advanced dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
-    15. Amount field for ingredients must be a digit number with max. 2 decimal places
-    16. Use the same language for all output including ingredient category, hashtags, category, diet, cuisine_types, and cooking_method
-    17. Divide the dish in a reasonable number of components (e.g., 'Steak', 'Sauce', 'Roasted Potatoes')
-    18. Provide ingredients for all components (e.g. 'Pasta' --> 250 g pasta, 1 tsp salt)
-    19. Make sure to include all igredients for each component (i.e. including salt, spices, herbs etc.)
+    8. For the list of cuisine types, include all relevant cuisines
+    9. For the hashtags, try to use single words if possible, else user '-' to combine, always use capitalized words (e.g. Super-Sweet, Party-Food, Sharing-Plate)
+    10. For the hashtags, do not repeat other properties already provided (such as cuisine type or cost)
+    11. For expert level dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
+    12. Amount field for ingredients must be a digit number with max. 2 decimal places
+    13. Use the same language for all output fields including ingredient category, hashtags, category, diet, cuisine_types, and cooking_method
+    14. Divide the dish in a reasonable number of components (e.g., 'Steak', 'Sauce', 'Roasted Potatoes')
+    15. Provide ingredients for all components (e.g. 'Pasta' --> 250 g pasta, 1 tsp salt)
+    16. Make sure to include all igredients for each component (i.e. including salt, spices, herbs etc.)
 
     Language: German
 

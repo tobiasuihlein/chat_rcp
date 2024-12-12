@@ -1,0 +1,63 @@
+{% extends "recipe_app/layout.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'registration/css/styles.css' %}">
+{% endblock extra_css %}
+
+{% block main-content %}
+
+<div class="row-wrapper section-row card" style="margin-top: 0;">
+    <div class="row-content" style="margin-top: 1rem; margin-bottom: 1rem;">
+        <div class="form-header">
+            NEUES REZEPT
+        </div>
+    </div>
+    <div class="row-content" style="margin-top: 1rem; margin-bottom: 1rem;">
+        <form method="post">
+            {% csrf_token %}
+            {{ recipe_form.as_p }}
+            <div class="input-field-container" style="text-align: center">
+                <button type="submit" class="submit-button">SPEICHERN</button>
+            </div>
+            <div class="input-field-container">
+                Ingredients:
+                <div class="multi-input-line-container" id="ingredients-container">
+                    <div class="ingredient-field">
+                        <input type="text" name="items[]" required>
+                        <button type="button" class="remove-button" onclick="removeField(this)"></button>
+                    </div>
+                </div>
+                <button type="button" class="add-button" onclick="addField()"></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block javascript %}
+
+<script>
+    function addField() {
+        const container = document.getElementById('ingredients-container');
+        const ingredientField = document.createElement('div');
+        ingredientField.className = 'ingredient-field';
+        ingredientField.innerHTML = `
+        <input type="text" name="items[]" required>
+        <button type="button" class="remove-button" onclick="removeField(this)">-</button>
+        `;
+        container.appendChild(ingredientField)
+    }
+
+    function removeField(button) {
+        const fieldsCount = document.getElementsByClassName('ingredient-field').length;
+        if (fieldsCount > 1) {
+            button.parentElement.remove();
+        }
+    }
+</script>
+
+{% endblock javascript %}
+
+
+{% endblock main-content %}

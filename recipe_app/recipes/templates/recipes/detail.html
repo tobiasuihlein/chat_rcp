@@ -25,21 +25,24 @@
                 {% endif %}
             </div> {% endcomment %}
             <div class="recipe-user-panel">
+                <button class="panel-icon" id="share-button-{{ preview.id }}" style="transform: scale(0.9)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+                </button>
                 {% if request.user.is_authenticated %}
                     {% if recipe_saved_by_user %}
-                        <div class="panel-icon" id="bookmark-icon-saved" style="display: flex">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                        </div>
-                        <div class="panel-icon" id="bookmark-icon-unsaved" style="display: none">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                        </div>
+                        <button class="panel-icon" id="bookmark-icon-saved" style="display: flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="indianred" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                        </button>
+                        <button class="panel-icon" id="bookmark-icon-unsaved" style="display: none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+                        </button>
                     {% else %}
-                        <div class="panel-icon" id="bookmark-icon-saved" style="display: none">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                        </div>
-                        <div class="panel-icon" id="bookmark-icon-unsaved" style="display: flex">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bookmark"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                        </div>
+                        <button class="panel-icon" id="bookmark-icon-saved" style="display: none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="indianred" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                        </button>
+                        <button class="panel-icon" id="bookmark-icon-unsaved" style="display: flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>    
+                        </button>
                     {% endif %}
                 {% endif %}
             </div>
@@ -50,9 +53,14 @@
                 <div style="max-width: 500px; text-align: center"><span>{{ recipe.description }}</span></div>
             </div>
             <div class="recipe-pad-row">
-                <div class="recipe-difficulty recipe-difficulty-{{ recipe.difficulty }}">
+                <div class="recipe-difficulty recipe-difficulty-X">
                     {{ recipe.get_difficulty_display }}
                 </div>
+                {% for cuisine_type in recipe.cuisine_types.all %}
+                <div class="recipe-difficulty recipe-difficulty-X">
+                    {{ cuisine_type.name }}
+                </div>
+                {% endfor %}
                 <div class="recipe-time">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
                     {{ recipe.time_total|time_converter }}
@@ -67,6 +75,14 @@
             </div>
             <div class="recipe-pad-row">
                 <div class="recipe-pad-content">
+                    <div>
+                        <div class="main-ingredients"><span style="font-weight: 400">Zeitbedarf</span><br>
+                            <ul style="overflow-wrap: break-word; padding-left: 1rem; list-style-type: none">
+                                <li style="margin-top: 0.5rem;">{{ recipe.time_active|time_converter }} Arbeitszeit</li>
+                                <li style="margin-top: 0.5rem;">{{ recipe.time_inactive|time_converter }} Kochzeit</li>
+                            </ul>
+                        </div>
+                    </div>
                     <div>
                         {% for component in recipe.components.all %}
                             <div class="main-ingredients"><span style="font-weight: 400">{{ component.name }}</span><br>
@@ -108,40 +124,12 @@
 
 {% block javascript %}
 
-    <script>
+<script>
 
+    // Save button functionality
     const recipe = { id: {{ recipe.id }} };
     const iconSavedContainer = document.getElementById('bookmark-icon-saved');
     const iconUnsavedContainer = document.getElementById('bookmark-icon-unsaved');
-    const iconSaved = iconSavedContainer ? iconSavedContainer.querySelector('svg') : null;
-    const iconUnsaved = iconUnsavedContainer ? iconUnsavedContainer.querySelector('svg') : null;
-
-    if (iconUnsaved) {
-        iconUnsaved.addEventListener('mouseenter', () => {
-            iconUnsaved.innerHTML = `<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/><line x1="12" x2="12" y1="7" y2="13"/><line x1="15" x2="9" y1="10" y2="10"/>`;
-        });
-
-        iconUnsaved.addEventListener('mouseleave', () => {
-            iconUnsaved.innerHTML = `<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>`;
-        });
-    }
-
-    if (iconSaved) {
-        iconSaved.addEventListener('mouseenter', () => {
-            // Change both SVG and path fill
-            iconSaved.setAttribute('fill', 'none');
-            const path = iconSaved.querySelector('path');
-            if (path) path.setAttribute('fill', 'none');
-            iconSaved.innerHTML = `<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/><path d="m14.5 7.5-5 5"/><path d="m9.5 7.5 5 5"/>`;
-        });
-
-        iconSaved.addEventListener('mouseleave', () => {
-            iconSaved.setAttribute('fill', 'currentColor');
-            const path = iconSaved.querySelector('path');
-            if (path) path.setAttribute('fill', 'currentColor');
-            iconSaved.innerHTML = `<path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>`;
-        });
-    }
 
     function toggleSave() {
         fetch(`/recipes/toggle-save/${recipe.id}/`)
@@ -150,19 +138,49 @@
                 if (data.status === 'saved') {
                     iconUnsavedContainer.style.display = 'none';
                     iconSavedContainer.style.display = 'flex';
-                    iconSaved.setAttribute('fill', 'currentColor');
-                    iconSaved.setAttribute('stroke', 'currentColor');
                 } else {
                     iconSavedContainer.style.display = 'none';
                     iconUnsavedContainer.style.display = 'flex';
-                    iconUnsaved.setAttribute('fill', 'none');
-                    iconUnsaved.setAttribute('stroke', 'currentColor');
                 }
             });
     }
 
     iconSavedContainer?.addEventListener('click', toggleSave);
     iconUnsavedContainer?.addEventListener('click', toggleSave);
+
+    // Share button functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'share-tooltip';
+        tooltip.textContent = 'Link kopiert!';
+        document.body.appendChild(tooltip);
+    
+        document.querySelectorAll('[id^="share-button-"]').forEach(button => {
+            button.addEventListener('click', async function(e) {
+                
+                const recipeId = this.id.split('-').pop();
+                const url = `${window.location.origin}/recipes/detail/${recipeId}/`;
+    
+                try {
+                    await navigator.clipboard.writeText(url);
+                    
+                    // Show tooltip
+                    const rect = this.getBoundingClientRect();
+                    tooltip.style.left = `${rect.left}px`;
+                    tooltip.style.top = `${rect.bottom + 5}px`;
+                    tooltip.classList.add('visible');
+                    
+                    // Remove tooltop
+                    setTimeout(() => {
+                        tooltip.classList.remove('visible');
+                        this.style.color = '';
+                    }, 1000);
+                } catch (err) {
+                    console.error('Failed to copy link:', err);
+                }
+            });
+        });
+    });
 
 </script>
 

@@ -44,17 +44,7 @@ class CuisineType(models.Model):
     language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return self.name
-
-
-class CuisineSubtype(models.Model):
-    name = models.CharField(max_length=50)
-    cuisine_type = models.ForeignKey(CuisineType, on_delete=models.SET_NULL, related_name="subtypes", null=True)
-    language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
-
-    def __str__(self):
-        return self.name
-    
+        return self.name   
 
 
 class BeverageType(models.Model):
@@ -85,45 +75,40 @@ class Hashtag(models.Model):
 class Recipe(models.Model):
 
     class Difficulty(models.IntegerChoices):
-        UNKNOWN = 0, 'Not Specified'
         BEGINNER = 1, 'Simpel'
-        INTERMEDIATE = 2, 'Ambitioniert'
-        ADVANCED = 3, 'Gourmet'
-        EXPERT = 4, 'Avantgarde'
+        ADVANCED = 2, 'Ambitioniert'
+        EXPERT = 3, 'Gourmet'
 
     class Spiciness(models.IntegerChoices):
-        UNKNOWN = 0, 'Not Specified'
-        NOT_SPICY = 1, 'Not Spicy'
-        MILD = 2, 'Mild'
-        MEDIUM = 3, 'Medium'
-        HOT = 4, 'Hot'
+        NOT_SPICY = 0, 'Not Spicy'
+        MILD = 1, 'Mild'
+        MEDIUM = 2, 'Medium'
+        HOT = 3, 'Hot'
 
     class Cost(models.IntegerChoices):
         UNKNOWN = 0, 'Not Specified'
-        BUDGET = 1, 'Budget'
-        MODERATE = 2, 'Moderate'
-        MID_RANGE = 3, 'Mid-Range'
-        PREMIUM = 4, 'Premium'
+        BUDGET = 1, 'Günstig'
+        MODERATE = 2, 'Mittel'
+        EXPENSIVE = 3, 'Teuer'
 
 
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-    difficulty = models.IntegerField(choices=Difficulty.choices, default=Difficulty.UNKNOWN)
-    time_active = models.IntegerField()
-    time_inactive = models.IntegerField(blank=True, default=0)
-    default_servings = models.IntegerField()
-    storage = models.TextField(blank=True, null=True)
-    cuisine_types = models.ManyToManyField(CuisineType, related_name="recipes", blank=True)
-    cuisine_subtypes = models.ManyToManyField(CuisineSubtype, related_name="recipes", blank=True)
-    category = models.ForeignKey(RecipeCategory, on_delete=models.SET_NULL, related_name="recipes", null=True)
-    diets = models.ManyToManyField(Diet, related_name="recipes", blank=True)
-    cooking_methods = models.ManyToManyField(CookingMethod, related_name="recipes", blank=True)
-    cost = models.IntegerField(choices=Cost.choices, default=Cost.UNKNOWN)
-    spiciness = models.IntegerField(choices=Spiciness.choices, default=Spiciness.UNKNOWN)
-    beverage_recommendation = models.ForeignKey(Beverage, on_delete=models.SET_NULL, blank=True, null=True)
-    hashtags = models.ManyToManyField(Hashtag, related_name="recipes", blank=True)
-    language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
-    author = models.CharField(max_length=255, null=True)
+    title = models.CharField(verbose_name="Titel", max_length=255)
+    description = models.TextField(verbose_name="Kurzbeschreibung", blank=True, null=True)
+    difficulty = models.IntegerField(verbose_name="Schwierigkeitsgrad", choices=Difficulty.choices)
+    time_active = models.IntegerField(verbose_name="Aktive Zeit (Min.)")
+    time_inactive = models.IntegerField(verbose_name="Inakive Zeit (Min.)",blank=True, default=0)
+    default_servings = models.IntegerField(verbose_name="Portionen")
+    storage = models.TextField(verbose_name="Aufbewahrung", blank=True, null=True)
+    cuisine_types = models.ManyToManyField(verbose_name="Küche", to=CuisineType, related_name="recipes", blank=True)
+    category = models.ForeignKey(verbose_name="Kategorie", to=RecipeCategory, on_delete=models.SET_NULL, related_name="recipes", null=True)
+    diets = models.ManyToManyField(verbose_name="Ernährungsweise", to=Diet, related_name="recipes", blank=True)
+    cooking_methods = models.ManyToManyField(verbose_name="Techniken", to=CookingMethod, related_name="recipes", blank=True)
+    cost = models.IntegerField(verbose_name="Kosten", choices=Cost.choices, default=Cost.UNKNOWN)
+    spiciness = models.IntegerField(verbose_name="Schärfe", choices=Spiciness.choices, default=Spiciness.NOT_SPICY)
+    beverage = models.ForeignKey(verbose_name="Getränkeempfehlung", to=Beverage, on_delete=models.SET_NULL, blank=True, null=True)
+    hashtags = models.ManyToManyField(verbose_name="Hashtags", to=Hashtag, related_name="recipes", blank=True)
+    language = models.ForeignKey(verbose_name="Sprache", to=Language, on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey(verbose_name="Autor", to=User, on_delete=models.SET_NULL, related_name="recipes", null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     @property

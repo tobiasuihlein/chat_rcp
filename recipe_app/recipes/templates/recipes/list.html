@@ -18,16 +18,50 @@
 
 {% block main-content %}
 
-
-
-
 <div class="row-wrapper section-row" style="margin-top: 0;">
     <div class="row-content">
         {% for preview in recipes %}
-        
-        <a href="{% url 'recipes:detail' pk=preview.id %}" class="preview-card-form">
-            <button>
-                <div class="card card-clickable">
+            <div class="card card-clickable preview-card">
+                <div class="recipe-properties-container">
+                    {% if preview.avg_rating %}
+                        <div class="stars">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 1.726l2.338 7.196h7.566l-6.121 4.448 2.338 7.196L12 16.118l-6.121 4.448 2.338-7.196L2.096 8.922h7.566z"
+                                    fill="currentColor"
+                                    stroke="currentColor"
+                                    stroke-width="1"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+                            {{ preview.avg_rating }}
+                            <span style="font-weight: 400">({{ preview.rating_count }})</span>
+                        </div>
+                    {% endif %}
+                    <div class="recipe-user-panel">
+                        <button class="panel-icon" id="share-button-{{ preview.id }}" style="transform: scale(0.9)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+                        </button>
+                        {% if request.user.is_authenticated %}
+                            {% if preview.is_saved %}
+                                <button class="panel-icon" id="bookmark-icon-saved-{{ preview.id }}" style="display: flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="indianred" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                                </button>
+                                <button class="panel-icon" id="bookmark-icon-unsaved-{{ preview.id }}" style="display: none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+                                </button>
+                            {% else %}
+                                <button class="panel-icon" id="bookmark-icon-saved-{{ preview.id }}" style="display: none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="indianred" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                                </button>
+                                <button class="panel-icon" id="bookmark-icon-unsaved-{{ preview.id }}" style="display: flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>    
+                                </button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                <a href="{% url 'recipes:detail' pk=preview.id %}" class="clickable-wrapper">
                     <div class="card-recipe-container">
                         {% comment %} <div class="recipe-image-container">
                             {% if preview.image %}
@@ -45,34 +79,100 @@
                                 </svg>
                             {% endif %}
                         </div> {% endcomment %}
-                        <div class="recipe-properties-container">
-                            <div class="recipe-difficulty recipe-difficulty-{{ preview.difficulty }}">{{ preview.get_difficulty_display }}</div>
-                            <div class="recipe-time">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-timer"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>
-                                {{ preview.time_total|time_converter}}
+                        <div class="title" style="margin-bottom: 0.3rem;">{{ preview.title }}</div>
+                        <div style="font-size: 1rem; font-weight: 500; color: indianred; margin-bottom: 0.5rem;">
+                            {{ preview.get_difficulty_display }} • 
+                            {{ preview.time_total|time_converter}}
+                            {% for diet in preview.diets.all %}
+                                <span> • {{ diet }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="description">{{ preview.description }}</div>
+                        <div class="preview-card-bottom-panel">
+                            <div class="author">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                {% if preview.author %}
+                                    {{ preview.author }}
+                                {% else %}
+                                    <span>Unbekannt</span>
+                                {% endif %}
                             </div>
                         </div>
-                        <div class="title">{{ preview.title }}</div>
-                        <div class="description">{{ preview.description }}</div>
-                        <div class="list-preview-card-author-and-rating-container">
-                            <div class="author">{{ preview.author}}</div>
-                            {% if preview.avg_rating %}
-                                <div class="stars">
-                                    <div class="star-filled">★</div>
-                                    {{ preview.avg_rating }}
-                                    ({{ preview.rating_count }})
-                                </div>
-                            {% endif %}
-                        </div>
                     </div>
-                </div>
-            </button>
-        </a>
+                </a>
+            </div>
         {% endfor %} 
     </div>
 </div>
 
 {% block javascript %}
+
+<script>
+
+    // Save button functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[id^="bookmark-icon-saved-"], [id^="bookmark-icon-unsaved-"]').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const recipeId = this.id.split('-').pop();
+                const iconSaved = document.getElementById(`bookmark-icon-saved-${recipeId}`);
+                const iconUnsaved = document.getElementById(`bookmark-icon-unsaved-${recipeId}`);
+        
+                fetch(`/recipes/toggle-save/${recipeId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'saved') {
+                            iconUnsaved.style.display = 'none';
+                            iconSaved.style.display = 'flex';
+                        } else {
+                            iconSaved.style.display = 'none';
+                            iconUnsaved.style.display = 'flex';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        });
+    });
+
+    // Share button functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'share-tooltip';
+        tooltip.textContent = 'Link kopiert!';
+        document.body.appendChild(tooltip);
+    
+        document.querySelectorAll('[id^="share-button-"]').forEach(button => {
+            button.addEventListener('click', async function(e) {
+                
+                const recipeId = this.id.split('-').pop();
+                const url = `${window.location.origin}/recipes/detail/${recipeId}/`;
+    
+                try {
+                    await navigator.clipboard.writeText(url);
+                    
+                    // Show tooltip
+                    const rect = this.getBoundingClientRect();
+                    tooltip.style.left = `${rect.left}px`;
+                    tooltip.style.top = `${rect.bottom + 5}px`;
+                    tooltip.classList.add('visible');
+                    
+                    // Remove tooltop
+                    setTimeout(() => {
+                        tooltip.classList.remove('visible');
+                        this.style.color = '';
+                    }, 1000);
+                } catch (err) {
+                    console.error('Failed to copy link:', err);
+                }
+            });
+        });
+    });
+
+</script>
 
 {% endblock %}
 

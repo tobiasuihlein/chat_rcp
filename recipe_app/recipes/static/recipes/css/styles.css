@@ -629,23 +629,35 @@ main {
     outline: none;
 }
 
-.spinner-overlay {
+.spinner-background {
     position: fixed;
-    top: 0vh;
+    top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #d5d6cf;
+    background-color: var(--bg-color);
+    opacity: 0.8;
+    z-index: 100;
+}
+
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    text-align: center;
+    z-index: 101;
 }
 
 .spinner {
     width: 70px;
     height: 70px;
-    border: 5px solid #F2F3EE;
+    border: 5px solid var(--element-color-2);
     border-top: 5px solid indianred;
     border-radius: 100%;
     animation: spin 1.8s linear infinite;

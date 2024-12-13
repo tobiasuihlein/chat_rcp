@@ -9,10 +9,14 @@
 {% block main-content %}
 
 <div style="height: 70vh; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-
-    <div id="loading-spinner" class="spinner-overlay" style="display: none; text-align: center;">
-        <p style="font-weight: 600; font-size: 2rem;">Erstelle Rezeptvorschläge ...</p>
-        <div class="spinner"></div>
+    
+    
+    <div class="spinner-background" id="loading-spinner-bg" style="display: none;"></div>
+    <div class="spinner-overlay" id="loading-spinner-card" style="display: none;">
+        <div class="card">
+            <p style="font-weight: 600; font-size: 2rem;">Erstelle Rezeptvorschläge ...</p>
+            <div class="spinner"></div>
+        </div>
     </div>
 
     <div class="row-wrapper">
@@ -46,7 +50,8 @@
 <script>
     // activate loading spinner overlay on submit
     document.getElementById('initial-prompt-form').addEventListener('submit', function(e) {
-        document.getElementById('loading-spinner').style.display = 'flex';
+        document.getElementById('loading-spinner-bg').style.display = 'flex';
+        document.getElementById('loading-spinner-card').style.display = 'flex';
     });
 </script>
 

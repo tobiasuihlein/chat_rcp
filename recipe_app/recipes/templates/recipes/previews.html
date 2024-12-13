@@ -17,10 +17,13 @@
     </div>
 </div>
 
-<div id="loading-spinner" class="spinner-overlay" style="display: none; text-align: center;">
-    <p style="font-weight: 600; font-size: 2rem;">Erstelle vollständiges Rezept ...</p>
-    <div class="spinner"></div>
-</div>
+<div class="spinner-background" id="loading-spinner-bg" style="display: none;"></div>
+    <div class="spinner-overlay" id="loading-spinner-card" style="display: none;">
+        <div class="card">
+            <p style="font-weight: 600; font-size: 2rem;">Erstelle vollständiges Rezept ...</p>
+            <div class="spinner"></div>
+        </div>
+    </div>
 
 <div class="row-wrapper section-row">
     <div class="row-content">
@@ -70,10 +73,12 @@
     const forms = document.querySelectorAll('.preview-card-form');
     forms.forEach(form => {
         form.addEventListener('submit', function(e) {
-            document.getElementById('loading-spinner').style.display = 'flex';
+            document.getElementById('loading-spinner-bg').style.display = 'flex';
+            document.getElementById('loading-spinner-card').style.display = 'flex';
         });
     });
 </script>
+
 
 {% endblock %}
 

@@ -29,7 +29,15 @@ def toggle_save_recipe(request, recipe_id):
 
 
 def recipe_detail(request, pk):
-    recipe = get_object_or_404(Recipe, pk=pk)
+    recipe = get_object_or_404(Recipe.objects.annotate(
+            avg_rating=Avg('ratings__rating'),
+            rating_count=Count('ratings__rating'),
+            is_saved=Exists(
+                SavedRecipe.objects.filter(recipe=OuterRef('pk'), user=request.user)
+            ) if request.user.is_authenticated else Value(False)
+        ),
+        pk=pk
+    )
     if request.user.is_authenticated:
         recipe_saved_by_user = SavedRecipe.objects.filter(recipe=pk, user=request.user).exists()
     else:

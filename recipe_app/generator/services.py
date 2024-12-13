@@ -402,6 +402,7 @@ def create_recipe_prompt_by_preview(recipe_dict: dict) -> str:
     14. Divide the dish in a reasonable number of components (e.g., 'Steak', 'Sauce', 'Roasted Potatoes')
     15. Provide ingredients for all components (e.g. 'Pasta' --> 250 g pasta, 1 tsp salt)
     16. Make sure to include all igredients for each component (i.e. including salt, spices, herbs etc.)
+    17. If no diet restriction applicable: provide empty list
 
     Language: German
 

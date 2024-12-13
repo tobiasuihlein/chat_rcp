@@ -41,7 +41,6 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ('title', 'difficulty', 'beverage', 'get_cuisine_types', 'author')
     inlines = [RecipeImageInline]
 
-
     def get_cuisine_types(self, obj):
         return ", ".join([cuisine_type.name for cuisine_type in obj.cuisine_types.all()])
     

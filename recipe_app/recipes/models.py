@@ -77,7 +77,7 @@ class Recipe(models.Model):
     class Difficulty(models.IntegerChoices):
         BEGINNER = 1, 'Simpel'
         ADVANCED = 2, 'Ambitioniert'
-        EXPERT = 3, 'Gourmet'
+        EXPERT = 3, 'Anspruchsvoll'
 
     class Spiciness(models.IntegerChoices):
         NOT_SPICY = 0, 'Not Spicy'

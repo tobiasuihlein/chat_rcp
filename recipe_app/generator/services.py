@@ -171,8 +171,6 @@ def recipe_to_database(recipe):
                 title = recipe['title'],
                 description = recipe['description'],
                 difficulty = recipe['difficulty'],
-                time_active = recipe['time']['active'],
-                time_inactive = recipe['time']['inactive'],
                 default_servings = int(recipe.get('servings', 0)),
                 storage = recipe['storage'],
                 category = recipe_category_object,
@@ -182,12 +180,27 @@ def recipe_to_database(recipe):
                 language = language_object
             )
 
+            for time in recipe['times']:
+                RecipeTime.objects.create(
+                        name = time['name'],
+                        value = time['value'],
+                        recipe = recipe_object,
+                        language = language_object
+                    )
+
             for cuisine_type in recipe['cuisine_type']:
                 type_object, _ = CuisineType.objects.get_or_create(
                     name = cuisine_type,
                     language = language_object
                 )
                 recipe_object.cuisine_types.add(type_object)
+
+            for equipment in recipe['equipment']:
+                equipment_object, _ = Equipment.objects.get_or_create(
+                    name = equipment,
+                    language = language_object
+                )
+                recipe_object.equipments.add(equipment_object)
             
             for diet in recipe['diet']:
                 diet_object, _ = Diet.objects.get_or_create(
@@ -323,10 +336,10 @@ def create_recipe_prompt_by_preview(recipe_dict: dict) -> str:
                 "language": "en|de",  // Language code
                 "title": string,      // Recipe title
                 "difficulty": number, // 1=beginner, 2=advanced, 3=expert
-                "time": {{
-                    "active": number,   // time the chef is active (preparation, cooking, ...)
-                    "inactive": number, // time the chef is inactive (cooling, proofing, ...)
-                }},
+                "times": [
+                    {{"name": "time_1", "value": number}}, // e.g. preparation: 20
+                    {{"name": "time_2", "value": number}}, // e.g. cooking time: 10
+                ] // list of times necessary to spent for the dish (including cooling or resting time)
                 "components": [
                     {{
                         "name": string, // name of the first component (e.g., 'Steak')
@@ -371,6 +384,7 @@ def create_recipe_prompt_by_preview(recipe_dict: dict) -> str:
                 ]
                 "storage": "string",
                 "cuisine_type": ['cuisine_type_1', 'cuisine_type_2', ...],
+                "equipment": ['equipment_1', 'equipment_2', ...],
                 "category": "type of dish (e.g., 'Main course', 'Soup', or 'Dessert'),
                 "diet": ["diet restriction one (e.g. 'Vegetarian')", "diet restriction two (e.g., 'Gluten-Free')"],
                 "cooking_method": ["cooking method one (e.g. 'Grilling')", "cooking method two (e.g., 'Baking')"],
@@ -389,7 +403,7 @@ def create_recipe_prompt_by_preview(recipe_dict: dict) -> str:
     1. Response must be valid JSON
     2. Use only the provided ingredients
     3. Each recipe must be realistic and cookable
-    4. Time specifications in number minutes
+    4. Time specifications in number minutes; time values should add up to total time necessary (e.g. cutting ingredients during cooking time should not be accounted for)
     5. Use the metric system and Celcius
     6. For each instruction step create an appropriate headline and a short paragraph
     7. Notes for ingredients must be short

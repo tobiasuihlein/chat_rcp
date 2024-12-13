@@ -63,7 +63,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <a href="{% url 'recipes:detail' pk=preview.id %}" class="clickable-wrapper">
+                <a href="{{ preview.get_absolute_url }}" class="clickable-wrapper">
                     <div class="card-recipe-container">
                         {% comment %} <div class="recipe-image-container">
                             {% if preview.image %}

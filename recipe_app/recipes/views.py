@@ -28,7 +28,7 @@ def toggle_save_recipe(request, recipe_id):
         return JsonResponse({'status': 'saved'})
 
 
-def recipe_detail(request, pk):
+def recipe_detail(request, slug):
     recipe = get_object_or_404(Recipe.objects.annotate(
             avg_rating=Avg('ratings__rating'),
             rating_count=Count('ratings__rating'),
@@ -36,10 +36,10 @@ def recipe_detail(request, pk):
                 SavedRecipe.objects.filter(recipe=OuterRef('pk'), user=request.user)
             ) if request.user.is_authenticated else Value(False)
         ),
-        pk=pk
+        slug=slug
     )
     if request.user.is_authenticated:
-        recipe_saved_by_user = SavedRecipe.objects.filter(recipe=pk, user=request.user).exists()
+        recipe_saved_by_user = SavedRecipe.objects.filter(recipe=recipe.pk, user=request.user).exists()
     else:
         recipe_saved_by_user = False
     return render(request, 'recipes/detail.html', {'recipe_id': recipe.id, 'recipe': recipe, 'recipe_saved_by_user': recipe_saved_by_user})
@@ -140,7 +140,7 @@ def recipe_generated(request):
             recipe_object.save()
             logger.info(f"Recipe saved with ID: {recipe_object.pk}")
 
-            return redirect('recipes:detail', pk=recipe_object.pk)
+            return redirect('recipes:detail', slug=recipe_object.slug)
             
         except Exception as e:
             logger.error(f"Detailed error in recipe generation: {str(e)}", exc_info=True)

@@ -68,7 +68,7 @@
             </div>
             <div style="font-size: 1.1rem; font-weight: 500; color: indianred; margin-top: 1.1rem; text-align: center;">
                 {{ recipe.get_difficulty_display }} • 
-                <span title="{{ recipe.time_active|time_converter }} Arbeitszeit | {{ recipe.time_inactive|time_converter }} Kochzeit">{{ recipe.time_total|time_converter}}</span>
+                <span title="{% for time in recipe.times.all %}{{ time.value|time_converter }} {{ time.name }}&#13;&#10;{% endfor %}">{{ recipe.time_total|time_converter}}</span>
                 {% for diet in recipe.diets.all %}
                     <span> • {{ diet }}</span>
                 {% endfor %}

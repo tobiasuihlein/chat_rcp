@@ -15,7 +15,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     followers = models.ManyToManyField(User, blank=True, related_name='following')
     is_alpha_tester = models.BooleanField(default=True)
-    chef_level = models.IntegerField(max_length=50, choices=ChefLevel.choices, default=ChefLevel.LEVEL_0)
+    chef_level = models.IntegerField(choices=ChefLevel.choices, default=ChefLevel.LEVEL_0)
     
     def __str__(self):
         return f"{self.user.username}'s profile"

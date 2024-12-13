@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils.text import slugify
+from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 import os
@@ -44,7 +46,15 @@ class CuisineType(models.Model):
     language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return self.name   
+        return self.name
+
+
+class Equipment(models.Model):
+    name = models.CharField(max_length=100)
+    language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return self.name  
 
 
 class BeverageType(models.Model):
@@ -93,13 +103,13 @@ class Recipe(models.Model):
 
 
     title = models.CharField(verbose_name="Titel", max_length=255)
+    slug = models.SlugField(max_length=200, unique=True)
     description = models.TextField(verbose_name="Kurzbeschreibung", blank=True, null=True)
     difficulty = models.IntegerField(verbose_name="Schwierigkeitsgrad", choices=Difficulty.choices)
-    time_active = models.IntegerField(verbose_name="Aktive Zeit (Min.)")
-    time_inactive = models.IntegerField(verbose_name="Inakive Zeit (Min.)",blank=True, default=0)
     default_servings = models.IntegerField(verbose_name="Portionen")
     storage = models.TextField(verbose_name="Aufbewahrung", blank=True, null=True)
     cuisine_types = models.ManyToManyField(verbose_name="Küche", to=CuisineType, related_name="recipes", blank=True)
+    equipments = models.ManyToManyField(verbose_name="Ausrüstung", to=Equipment, related_name="recipes", blank=True)
     category = models.ForeignKey(verbose_name="Kategorie", to=RecipeCategory, on_delete=models.SET_NULL, related_name="recipes", null=True)
     diets = models.ManyToManyField(verbose_name="Ernährungsweise", to=Diet, related_name="recipes", blank=True)
     cooking_methods = models.ManyToManyField(verbose_name="Techniken", to=CookingMethod, related_name="recipes", blank=True)
@@ -111,15 +121,47 @@ class Recipe(models.Model):
     author = models.ForeignKey(verbose_name="Autor", to=User, on_delete=models.SET_NULL, related_name="recipes", null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            
+            while Recipe.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            
+            self.slug = slug
+            
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("recipes:detail", kwargs={"slug": self.slug})
+
     @property
     def time_total(self):
-        return self.time_active + self.time_inactive
+        result = self.times.aggregate(total_time=models.Sum('value'))
+        total = result['total_time']
+        return total or 0
 
     def __str__(self):
         return self.title
 
     class Meta:
         ordering = ['-created_at']
+
+
+class RecipeTime(models.Model):
+    name = models.CharField(max_length=50)
+    value = models.IntegerField()
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='times')
+    language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        ordering = ['recipe']
 
 
 class IngredientCategory(models.Model):

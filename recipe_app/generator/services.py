@@ -318,6 +318,123 @@ def create_previews_prompt(user_input) -> str:
     return prompt
 
 
+def create_recipe_prompt_by_description(recipe_description: str) -> str:
+    prompt = f"""Given this recipe information:
+    
+    {recipe_description}
+
+    Please create the corresponding recipe in the following exact JSON format, nothing else:
+
+    {{
+        "recipe": [
+            {{
+                "language": "en|de",  // Language code
+                "title": string,      // Recipe title
+                "difficulty": number, // 1=beginner, 2=advanced, 3=expert
+                "times": [
+                    {{"name": "time_1", "value": number}}, // e.g. preparation: 20
+                    {{"name": "time_2", "value": number}}, // e.g. cooking time: 10
+                ] // list of times necessary to spent for the dish (including cooling or resting time)
+                "components": [
+                    {{
+                        "name": string, // name of the first component (e.g., 'Steak')
+                        "ingredients": [
+                            {{"name": "ingredient one",
+                            "amount": "amount of ingredient one",
+                            "unit": "unit for amount specification of ingredient one",
+                            "notes": "notes for ingredient one (e.g., 'finely chopped'),
+                            "category": "category for ingredient one (e.g. 'vegetable', 'meat')}},
+                            {{"name": "ingredient two",
+                            "amount": "amount of ingredient two",
+                            "unit": "unit for amount specification of ingredient two",
+                            "notes": "notes for ingredient two (e.g., 'finely chopped'),
+                            "category": "category for ingredient two (e.g. 'vegetable', 'meat')}},
+                        ] // list of the ingredients for the first component
+                        }},
+                    {{
+                        "name": string, // name of the second component (e.g., 'Wine Sauce')
+                        "ingredients": [
+                            {{"name": "ingredient one",
+                            "amount": "amount of ingredient one",
+                            "unit": "unit for amount specification of ingredient one",
+                            "notes": "notes for ingredient one (e.g., 'finely chopped'),
+                            "category": "category for ingredient one (e.g. 'vegetable', 'meat')}},
+                            {{"name": "ingredient two",
+                            "amount": "amount of ingredient two",
+                            "unit": "unit for amount specification of ingredient two",
+                            "notes": "notes for ingredient two (e.g., 'finely chopped'),
+                            "category": "category for ingredient two (e.g. 'vegetable', 'meat')}},
+                        ] // list of the ingredients for the first component
+                        }}
+                ],
+                "description": "A brief, appealing description of the dish.",
+                "servings": number, // number of persons to serve with this recipe
+                "instructions": {{
+                    "headline step one": "description step one",
+                    "headline step two": "description step two",
+                }}
+                "tips": [
+                    "tip1",
+                    "tip2"
+                ]
+                "storage": "string",
+                "cuisine_type": ['cuisine_type_1', 'cuisine_type_2', ...],
+                "equipment": ['equipment_1', 'equipment_2', ...],
+                "category": "type of dish (e.g., 'Main course', 'Soup', or 'Dessert'),
+                "diet": ["diet restriction one (e.g. 'Vegetarian')", "diet restriction two (e.g., 'Gluten-Free')"],
+                "cooking_method": ["cooking method one (e.g. 'Grilling')", "cooking method two (e.g., 'Baking')"],
+                "cost": "cost of the dish (use the numbers of the following mapping: 'budget'->1, 'moderate'->2, 'premium'->3)",
+                "spiciness": "pungency level (use the numbers of the following mapping: 'not spicy'->0, 'mild'->1, 'medium'->2, 'hot'->3)",
+                "beverage": {{
+                    "name": string // name of the beverage (e.g., Chardonnay) // Beverage recommendation
+                    "type": string // type of beverage (e.g., White Wine)
+                }}
+                "hashtags": ["hashtag one (e.g., 'Winter')", "hashtag two (e.g., 'Classic')", "hashtag three (e.g. Super-Sweet)", "hashtag four (e.g., Party-Food)", "hashtag five (e.g. Birthday)],
+            }}
+        ]
+    }}
+
+    Requirements:
+    1. Response must be valid JSON
+    2. Use only the provided ingredients
+    3. Each recipe must be realistic and cookable
+    4. Time specifications in number minutes; time values should add up to total time necessary (e.g. cutting ingredients during cooking time should not be accounted for)
+    5. Use the metric system and Celcius
+    6. For each instruction step create an appropriate headline and a short paragraph
+    7. Notes for ingredients must be short
+    8. For the list of cuisine types, include all relevant cuisines
+    9. For the hashtags, try to use single words if possible, else user '-' to combine, always use capitalized words (e.g. Super-Sweet, Party-Food, Sharing-Plate)
+    10. For the hashtags, do not repeat other properties already provided (such as cuisine type or cost)
+    11. For expert level dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
+    12. Amount field for ingredients must be a digit number with max. 2 decimal places
+    13. Use the same language for all output fields including ingredient category, hashtags, category, diet, cuisine_types, and cooking_method
+    14. Divide the dish in a reasonable number of components (e.g., 'Steak', 'Sauce', 'Roasted Potatoes')
+    15. Provide ingredients for all components (e.g. 'Pasta' --> 250 g pasta, 1 tsp salt)
+    16. Make sure to include all igredients for each component (i.e. including salt, spices, herbs etc.)
+    17. If no diet restriction applicable: provide empty list
+
+    Language: German
+
+    VALIDATION REQUIREMENTS:
+    1. Response MUST be complete, valid JSON
+    2. ALL fields are required
+    3. ALL arrays must have proper closing brackets
+    4. ALL objects must have proper closing braces
+    5. Response must end with proper closing brackets: {{}}]}}
+
+    Example End Structure:
+                        "hashtags": ["Tag1", "Tag2"]
+                    }}
+                ]
+            }}
+
+    Ensure the response includes these exact closing characters: {{}}]}}
+
+    Return only the JSON, no other text."""
+
+    return prompt
+
+
 
 def create_recipe_prompt_by_preview(recipe_dict: dict) -> str:
     prompt = f"""Given these recipe information:
@@ -373,7 +490,7 @@ def create_recipe_prompt_by_preview(recipe_dict: dict) -> str:
                         }}
                 ],
                 "description": "A brief, appealing description of the dish.",
-                "servings": "number of persons to serve with this recipe",
+                "servings": number, // number of persons to serve with this recipe
                 "instructions": {{
                     "headline step one": "description step one",
                     "headline step two": "description step two",

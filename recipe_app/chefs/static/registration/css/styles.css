@@ -55,3 +55,7 @@ form {
     font-weight: 500;
     margin-top: 1rem;
 }
+
+.submit-button:hover {
+    background-color: var(--accent-color-hover);
+}

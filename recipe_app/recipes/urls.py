@@ -12,4 +12,5 @@ urlpatterns = [
     path('library/', views.library, name='library'),
     path('generate/', views.generate, name="generate"),
     path('write/', views.write, name="write"),
+    path('new_recipe/', views.new_recipe, name="new_recipe"),
 ]

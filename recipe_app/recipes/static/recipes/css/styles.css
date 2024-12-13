@@ -18,6 +18,7 @@
     --main-spacing: 2rem;
     --main-bg: none;
     --accent-color: indianred;
+    --accent-color-hover: #e56767; 
     --accent-color-light: hsl(0, 53%, 90%);
     --icon-color: hsl(69, 8%, 50%);
     --icon-color-light: hsl(69, 8%, 65%);
@@ -616,7 +617,7 @@ main {
 }
 
 .searchbar-button:hover {
-    background-color: #e56767;
+    background-color: var(--accent-color-hover);
     cursor: pointer;
 }
 
@@ -760,4 +761,8 @@ main {
 
 .tooltip.visible {
     opacity: 1;
+}
+
+textarea {
+    width: 100%;
 }

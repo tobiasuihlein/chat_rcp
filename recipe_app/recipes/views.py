@@ -137,7 +137,7 @@ def new_recipe(request):
 
             logger.info("Starting database save")
             recipe_object = recipe_to_database(recipe["recipe"][0])
-            recipe_object.author = User.objects.get(username="MistralAI")
+            recipe_object.author = request.user
             recipe_object.save()
             logger.info(f"Recipe saved with ID: {recipe_object.pk}")
 

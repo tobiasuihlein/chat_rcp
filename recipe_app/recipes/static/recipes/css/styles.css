@@ -7,6 +7,7 @@
 
 :root {
     --navbar-height: 5rem;
+    --navbar-height-mobile: 4rem;
     --navbar-bg: none;
     --navbar-shadow: none;
     --text-color: #333;
@@ -95,27 +96,6 @@ ul {
     gap: 0.5rem;
 }
 
-.navlink-desktop:hover {
-    color: indianred;
-}
-
-.navlink-desktop {
-    color: #191918;
-}
-
-.navlink-desktop a{
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-}
-
-.navlink-desktop svg {
-    color: hsl(69, 8%, 50%);
-    width: 1.4rem;
-    height: 1.4rem;
-}
-
 .navlink-mobile {
     display: inline-flex;
     flex-direction: column;
@@ -178,6 +158,10 @@ main {
     main {
         padding: var(--content-padding-mobile);
     }
+    .navbar {
+        padding: 0 1.2rem;
+        height: var(--navbar-height-mobile);
+    }
 }
 
 .btn {
@@ -229,7 +213,7 @@ main {
     margin-bottom: 2rem;
 }
 
-.section-row:last-child {
+.section-row:last-of-type {
     margin-bottom: 0;
 }
 
@@ -438,6 +422,30 @@ main {
 .recipe-difficulty-X {
     background-color: var(--element-color-2);
     color: var(--icon-color);
+}
+
+.servings-buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.2rem;
+    button {
+        width: 1.4rem;
+        height: 1.4rem;
+        border-radius: 99px;
+    }
+    svg {
+        width: 1.4rem;
+        height: 1.4rem;
+    }
+}
+
+.servings-button:active {
+    transform: scale(0.95);
+}
+
+.servings-button:hover {
+    background-color: var(--element-color-2);
+    outline: 0.2rem solid var(--element-color-2);
 }
 
 .title {

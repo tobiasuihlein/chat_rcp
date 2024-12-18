@@ -201,7 +201,7 @@
             {% endfor %}
         </div>
         <div>
-            <form>
+            <form id="rating-form">
                 <button id="submit-rating-button" class="submit-button" style="padding-left: 1rem; padding-right: 1rem; margin-top: 0;">
                     ABSENDEN
                 </button>
@@ -344,16 +344,19 @@
     // Rating overlay functionality
 
     const ratingButton = document.getElementById('rating-button');
+    const ratingForm = document.getElementById('rating-form');
     const ratingOverlay = document.getElementById('rating-overlay-container');
     const submitRatingButton = document.getElementById('submit-rating-button');
     const ratingOverlayCloseButton = document.getElementById('rating-overlay-close-button');
 
-    ratingButton.addEventListener('click', function() {
-        ratingOverlay.style.display = 'flex';
+    ratingForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await submitRating(ratingId, newUserRating);
+        ratingOverlay.style.display = 'none';
     });
 
-    submitRatingButton.addEventListener('click', function() {
-        ratingOverlay.style.display = 'none';
+    ratingButton.addEventListener('click', function() {
+        ratingOverlay.style.display = 'flex';
     });
 
     ratingOverlayCloseButton.addEventListener('click', function() {
@@ -411,10 +414,6 @@
 
     let ratingId = {{ recipe.rating_id|default:'null' }};
 
-    submitRatingButton.addEventListener('click', function() {
-        submitRating(ratingId, newUserRating);
-    });
-
     async function submitRating(ratingId, ratingValue) {
         if (ratingId) {
             console.log(`Submit new user rating: ${ratingValue} for rating ID ${ratingId}`);
@@ -432,6 +431,7 @@
                 
                 if (response.ok) {
                     console.log('Rating updated!');
+                    window.location.reload();
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -453,6 +453,7 @@
 
                 if (response.ok) {
                     console.log('New rating added!');
+                    window.location.reload();
                 }
             } catch (error) {
                 console.error('Error', error);

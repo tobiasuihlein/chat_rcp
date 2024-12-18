@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from generator.utils.helpers import sort_previews
 from generator.services import *
-from django.db.models import Avg, Count, Exists, OuterRef, Value
+from django.db.models import Avg, Count, Exists, OuterRef, Value, Subquery
 from .models import *
 from .forms import *
 
@@ -34,15 +34,15 @@ def recipe_detail(request, slug):
             rating_count=Count('ratings__rating'),
             is_saved=Exists(
                 SavedRecipe.objects.filter(recipe=OuterRef('pk'), user=request.user)
-            ) if request.user.is_authenticated else Value(False)
+            ) if request.user.is_authenticated else Value(False),
+            user_rating=Subquery(RecipeRating.objects.filter(recipe=OuterRef('pk'), author=request.user).values('rating')[:1]
+            ) if request.user.is_authenticated else Value(None),
+            rating_id=Subquery(RecipeRating.objects.filter(recipe=OuterRef('pk'), author=request.user).values('id')[:1]
+            ) if request.user.is_authenticated else Value(None),
         ),
         slug=slug
     )
-    if request.user.is_authenticated:
-        recipe_saved_by_user = SavedRecipe.objects.filter(recipe=recipe.pk, user=request.user).exists()
-    else:
-        recipe_saved_by_user = False
-    return render(request, 'recipes/detail.html', {'recipe_id': recipe.id, 'recipe': recipe, 'recipe_saved_by_user': recipe_saved_by_user})
+    return render(request, 'recipes/detail.html', {'recipe_id': recipe.id, 'recipe': recipe})
 
 
 @login_required(login_url='chefs:login')
@@ -184,3 +184,38 @@ def recipe_generated(request):
             return redirect('recipes:generate')
     
     return redirect('recipes:generate')
+
+
+@login_required
+def rate_recipe(request, recipe_id):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    try:
+        recipe = Recipe.objects.get(pk=recipe_id)
+        data = json.loads(request.body)
+        rating = int(data.get('rating'))
+        
+        if not 1 <= rating <= 5:
+            return JsonResponse({'error': 'Invalid rating'}, status=400)
+        
+        # Update or create rating
+        rating_obj, created = RecipeRating.objects.update_or_create(
+            recipe=recipe,
+            author=request.user,
+            defaults={'rating': rating}
+        )
+        
+        # Get updated stats
+        avg_rating = recipe.ratings.aggregate(Avg('rating'))['rating__avg']
+        rating_count = recipe.ratings.count()
+        
+        return JsonResponse({
+            'avg_rating': round(avg_rating, 1),
+            'rating_count': rating_count
+        })
+        
+    except Recipe.DoesNotExist:
+        return JsonResponse({'error': 'Recipe not found'}, status=404)
+    except (ValueError, KeyError):
+        return JsonResponse({'error': 'Invalid data'}, status=400)

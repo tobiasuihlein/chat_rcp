@@ -1,5 +1,4 @@
- 
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from recipes.models import Recipe
 from .serializers import *
 from recipes.models import *
@@ -19,3 +18,7 @@ class InstructionViewSet(viewsets.ModelViewSet):
 class SavedRecipeViewSet(viewsets.ModelViewSet):
     queryset = SavedRecipe.objects.all()
     serializer_class = SavedRecipeSerializer
+
+class RecipeRatingViewSet(viewsets.ModelViewSet):
+    queryset = RecipeRating.objects.all()
+    serializer_class = RecipeRatingSerializer

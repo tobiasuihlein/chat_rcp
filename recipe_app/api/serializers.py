@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from recipes.models import Recipe, RecipeComponent, ComponentIngredient, RecipeInstruction, SavedRecipe
+from recipes.models import Recipe, RecipeComponent, ComponentIngredient, RecipeInstruction, SavedRecipe, RecipeRating
 
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,3 +23,9 @@ class SavedRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavedRecipe
         fields = ['recipe', 'user']
+
+
+class RecipeRatingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecipeRating
+        fields = ['id', 'rating', 'recipe', 'author']

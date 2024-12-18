@@ -221,7 +221,7 @@ main {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 3rem;
+    gap: 1rem;
 }
 
 @media only screen and (max-width: 499px) {
@@ -302,7 +302,7 @@ main {
     font-weight: 500;
     width: 100%;
     text-align: center;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
 }
 
 .recipe-description {
@@ -340,6 +340,10 @@ main {
 @media only screen and (max-width: 499px) {
     .card {
         width: 100%;
+    }
+    .recipe-pad-row {
+        margin-top: 1.4rem;
+        gap: 0.8rem;
     }
 }
 
@@ -700,6 +704,53 @@ main {
     color: gold;
     height: 1.2rem;
     width: 1.2rem;
+}
+
+.overlay-stars svg {
+    height: 1.6rem;
+    width: 1.6rem;
+}
+
+.overlay-stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.star-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--bg-color);
+}
+
+.star-button.filled {
+    color: gold;
+}
+
+.star-button:hover {
+    transform: scale(1.15);
+}
+
+.overlay-stars[data-preview] .star-button {
+    color: var(--bg-color);
+}
+
+.overlay-stars[data-preview] .star-button.preview {
+    color: gold;
+}
+
+/* Current rating display */
+.overlay-stars .star-button.active {
+    color: gold;
+}
+
+#rating-button:hover {
+    background-color: var(--element-color-2);
+    border-radius: 99px;
+    outline: 5px solid var(--element-color-2);
+    cursor: pointer;
 }
 
 .recipe-user-panel {

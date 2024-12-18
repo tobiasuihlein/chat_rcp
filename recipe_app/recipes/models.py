@@ -86,14 +86,14 @@ class Recipe(models.Model):
 
     class Difficulty(models.IntegerChoices):
         BEGINNER = 1, 'Simpel'
-        ADVANCED = 2, 'Ambitioniert'
+        ADVANCED = 2, 'Fortgeschritten'
         EXPERT = 3, 'Anspruchsvoll'
 
     class Spiciness(models.IntegerChoices):
-        NOT_SPICY = 0, 'Not Spicy'
-        MILD = 1, 'Mild'
-        MEDIUM = 2, 'Medium'
-        HOT = 3, 'Hot'
+        NOT_SPICY = 0, 'Nicht Scharf'
+        MILD = 1, 'Leicht scharf'
+        MEDIUM = 2, 'Mittelscharf'
+        HOT = 3, 'Sehr scharf'
 
     class Cost(models.IntegerChoices):
         UNKNOWN = 0, 'Not Specified'
@@ -237,6 +237,9 @@ class RecipeRating(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="ratings")
     created_at = models.DateTimeField(auto_now_add=True)
     last_change = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['recipe', 'author'], name='unique_rating')]
 
     def __str__(self):
         return f"{self.recipe.title} {self.rating}"

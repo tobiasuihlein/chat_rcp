@@ -1,11 +1,18 @@
 {% extends "recipe_app/layout.html" %}
 
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'registration/css/styles.css' %}">
+{% endblock extra_css %}
+
 {% load number_converter %}
 
 {% block main-content %}
 
+{% csrf_token %}
 
-<div class="row-wrapper section-row" style="margin-top: 0;">
+<div class="row-wrapper section-row" style="margin-top: 0; margin-bottom: 0">
     <div class="row-content">
         <div class="widget recipe-pad">
             {% comment %} <div class="recipe-image-container">
@@ -25,7 +32,7 @@
                 {% endif %}
             </div> {% endcomment %}
             <div class="recipe-top-panel">
-                <div class="stars">
+                <div class="stars" id="rating-button">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path
                             d="M12 1.726l2.338 7.196h7.566l-6.121 4.448 2.338 7.196L12 16.118l-6.121 4.448 2.338-7.196L2.096 8.922h7.566z"
@@ -45,7 +52,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
                     </button>
                     {% if request.user.is_authenticated %}
-                        {% if recipe_saved_by_user %}
+                        {% if recipe.is_saved %}
                             <button class="panel-icon" id="bookmark-icon-saved" style="display: flex">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="indianred" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                             </button>
@@ -106,10 +113,13 @@
                                 <ul style="overflow-wrap: break-word; padding-left: 1rem;">
                                     {% for ingredient in component.ingredients.all %}
                                         <li style="margin-top: 0.5rem;">
+                                            {% if ingredient.amount %}
                                             <span class="ingredient-amount" data-base-amount="{{ ingredient.amount }}">
                                                 {{ ingredient.amount|to_fraction }}
                                             </span>
-                                            {{ ingredient.unit }} <span style="font-weight: 400;">{{ ingredient.ingredient.name }}</span> {{ ingredient.note }} </li>
+                                            {{ ingredient.unit }} 
+                                            {% endif %}
+                                            <span style="font-weight: 400;">{{ ingredient.ingredient.name }}</span> {{ ingredient.note }} </li>
                                     {% endfor %}
                                 </ul>
                             </div>
@@ -163,9 +173,52 @@
     </div>
 </div>
 
+
+<div id="rating-overlay-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #F2F3EE;">
+    <div style="padding: 1rem; display: flex; width: 100%; flex-direction: column; align-items: center; gap: 1.4rem; justify-content: center;">
+        <div>
+            <button class="panel-icon" id="rating-overlay-close-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-x"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            </button>
+        </div>
+        <div style="font-size: 1.4rem;">
+            Rezept bewerten
+        </div>
+        <div class="overlay-stars" id="rating-button-stars" data-userrating="{{ recipe.user_rating|default:0 }}">
+            {% for i in '12345' %}
+            <button class="star-button" data-value="{{ forloop.counter }}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path
+                        d="M12 1.726l2.338 7.196h7.566l-6.121 4.448 2.338 7.196L12 16.118l-6.121 4.448 2.338-7.196L2.096 8.922h7.566z"
+                        class="star-path"
+                        stroke="currentColor"
+                        fill="currentColor"
+                        stroke-width="1"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+            </button>
+            {% endfor %}
+        </div>
+        <div>
+            <form>
+                <button id="submit-rating-button" class="submit-button" style="padding-left: 1rem; padding-right: 1rem; margin-top: 0;">
+                    ABSENDEN
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
 {% block javascript %}
 
 <script>
+
+    const userId = {{ user.id|default:'null' }};
+
+    function getCsrfToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
 
     // Save button functionality
     const recipe = { id: {{ recipe.id }} };
@@ -286,6 +339,126 @@
             }
         });
     });
+
+
+    // Rating overlay functionality
+
+    const ratingButton = document.getElementById('rating-button');
+    const ratingOverlay = document.getElementById('rating-overlay-container');
+    const submitRatingButton = document.getElementById('submit-rating-button');
+    const ratingOverlayCloseButton = document.getElementById('rating-overlay-close-button');
+
+    ratingButton.addEventListener('click', function() {
+        ratingOverlay.style.display = 'flex';
+    });
+
+    submitRatingButton.addEventListener('click', function() {
+        ratingOverlay.style.display = 'none';
+    });
+
+    ratingOverlayCloseButton.addEventListener('click', function() {
+        ratingOverlay.style.display = 'none';
+    });
+
+    const starsContainer = document.querySelector('.overlay-stars');
+    let currentUserRating = parseFloat(starsContainer.dataset.userrating) || 0;
+    let newUserRating = currentUserRating;
+    const starButtons = document.querySelectorAll('.star-button');
+
+    updateStarDisplay(currentUserRating);
+
+    // Add hover effects
+    starButtons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            const value = parseInt(this.dataset.value);
+            previewRating(value);
+        });
+
+        button.addEventListener('mouseleave', function() {
+            starsContainer.removeAttribute('data-preview');
+            updateStarDisplay(newUserRating);
+        });
+
+        button.addEventListener('click', function() {
+            const value = parseInt(this.dataset.value);
+            newUserRating = value;
+            updateStarDisplay(newUserRating);
+        });
+    });
+
+    function previewRating(value) {
+        starsContainer.setAttribute('data-preview', value);
+        starButtons.forEach(btn => {
+            const btnValue = parseInt(btn.dataset.value);
+            if (btnValue <= value) {
+                btn.classList.add('preview');
+            } else {
+                btn.classList.remove('preview');
+            }
+        });
+    }
+
+    function updateStarDisplay(rating) {
+        starButtons.forEach(btn => {
+            const value = parseInt(btn.dataset.value);
+            if (value <= rating) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    let ratingId = {{ recipe.rating_id|default:'null' }};
+
+    submitRatingButton.addEventListener('click', function() {
+        submitRating(ratingId, newUserRating);
+    });
+
+    async function submitRating(ratingId, ratingValue) {
+        if (ratingId) {
+            console.log(`Submit new user rating: ${ratingValue} for rating ID ${ratingId}`);
+            try {           
+                const response = await fetch(`/api/v1/recipe_ratings/${ratingId}/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify({
+                        rating: ratingValue
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log('Rating updated!');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        } else {
+            try {
+                const response = await fetch(`/api/v1/recipe_ratings/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify({
+                        rating: ratingValue,
+                        recipe: recipe.id,
+                        author: userId
+                    })
+                });
+
+                if (response.ok) {
+                    console.log('New rating added!');
+                }
+            } catch (error) {
+                console.error('Error', error);
+            }
+        }
+    }
 
 </script>
 

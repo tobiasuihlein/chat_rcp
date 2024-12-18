@@ -15,7 +15,7 @@
     --transition-speed: 0.3s;
     --max-width: 1400px;
     --content-padding: 1rem 1rem;
-    --content-padding-mobile: 0.5rem 0.8rem;
+    --content-padding-mobile: 0rem 0.8rem;
     --main-spacing: 2rem;
     --main-bg: none;
     --accent-color: indianred;
@@ -226,7 +226,7 @@ main {
 
 @media only screen and (max-width: 499px) {
     .row-content {
-        gap: 1rem;
+        gap: 0.8rem;
     }
 }
 
@@ -826,4 +826,16 @@ main {
 
 textarea {
     width: 100%;
+}
+
+#camera {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#camera video {
+    border-radius: 8px;
+    margin-bottom: 1rem;
 }

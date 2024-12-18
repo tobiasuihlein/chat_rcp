@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from .models import Profile
 from django.contrib.auth.models import User
 
+
 def login_chef(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -25,22 +26,8 @@ def login_chef(request):
     
     return render(request, 'registration/login.html', {
         'form': form,
-        'next': request.GET.get('next', 'home')
+        'next': request.GET.get('next', 'recipes:explore')
     })
-
-
-from django.contrib.auth import login
-from django.shortcuts import render, redirect
-
-def login_view(request):
-    if request.method == 'POST':
-        form = EmailAuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            login(request, form.user_cache)
-            return redirect('home')
-    else:
-        form = EmailAuthenticationForm(request)
-    return render(request, 'registration/login.html', {'form': form})
 
 
 @login_required

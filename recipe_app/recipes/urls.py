@@ -12,6 +12,7 @@ urlpatterns = [
     path('explore/', views.explore, name='explore'),
     path('library/', views.library, name='library'),
     path('generate/', views.generate, name="generate"),
-    path('write/', views.write, name="write"),
-    path('new_recipe/', views.new_recipe, name="new_recipe"),
+    path('create/text/', views.create_recipe_with_text, name="create_with_text"),
+    path('create/image/', views.create_recipe_with_image, name="create_with_image"),
+    path('new_recipe/text/', views.new_recipe_by_text, name="new_recipe_by_text"),
 ]

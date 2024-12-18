@@ -75,7 +75,7 @@ def generate(request):
 
 
 @login_required(login_url='chefs:login')
-def write(request):
+def create_recipe_with_text(request):
     if request.method == 'POST':
         recipe_form = RecipeForm(request.POST)
         if recipe_form.is_valid():
@@ -86,10 +86,53 @@ def write(request):
             recipe_object.save()
             messages.info(request, "Rezept gespeichert!")
             return render(request, 'recipes/detail.html', {'recipe_id': recipe_object.id, 'recipe': recipe_object, 'recipe_saved_by_user': False})
-        return redirect('recipes:write')
+        return redirect('recipes:create_with_text')
 
     recipe_form = RecipeForm()
-    return render(request, 'recipes/write.html', {'recipe_form': recipe_form})
+    return render(request, 'recipes/create_with_text.html', {'recipe_form': recipe_form})
+
+
+@login_required(login_url='chefs:login')
+def create_recipe_with_image(request):
+    if request.method == 'POST':
+        try:
+            if 'photo' not in request.FILES:
+                return JsonResponse({
+                    'error': 'No photo provided'
+                }, status=400)
+            
+            photo = request.FILES['photo']
+            
+            # Initialize Pixtral handler
+            recipe_generator = PixtralHandler()
+
+            prompt = create_recipe_prompt_for_image()
+            logger.info("Prompt created successfully")
+
+            try:
+                recipe = recipe_generator.process_image(photo, prompt)
+                logger.info("Recipe generation completed")
+            except Exception as e:
+                logger.error(f"Recipe generation failed: {str(e)}")
+                raise
+
+            print(recipe)
+
+            logger.info("Starting database save")
+            recipe_object = recipe_to_database(recipe["recipe"][0])
+            recipe_object.author = request.user
+            recipe_object.save()
+            logger.info(f"Recipe saved with ID: {recipe_object.pk}")
+
+            return redirect('recipes:detail', slug=recipe_object.slug)
+            
+        except Exception as e:
+            print("Error:", str(e))  # Debug logging
+            return JsonResponse({
+                'error': str(e)
+            }, status=500)
+            
+    return render(request, 'recipes/create_with_image.html')
 
 
 @login_required(login_url='chefs:login')
@@ -114,8 +157,10 @@ def previews(request):
     
     return render(request, 'recipes/index.html')
 
+
+
 @login_required(login_url='chefs:login')
-def new_recipe(request):
+def new_recipe_by_text(request):
 
     if request.method == "POST":
         try:
@@ -146,9 +191,9 @@ def new_recipe(request):
         except Exception as e:
             logger.error(f"Detailed error in recipe generation: {str(e)}", exc_info=True)
             messages.error(request, "Sorry, something went wrong while generating your recipe. Please try again.")
-            return redirect('recipes:write')
+            return redirect('recipes:create_with_text')
         
-    return redirect('recipes:write')
+    return redirect('recipes:create_with_text')
 
 
 @login_required(login_url='chefs:login')

@@ -50,22 +50,39 @@ def explore(request):
     if request.method == "POST":
         search_input = request.POST.get("search-input")
         base_query = Recipe.search.advanced_search(search_input)
-        print(f"search: {search_input}")
     else:
-        base_query = Recipe.objects.all()
-    recipes = base_query.annotate(
+        base_query = Recipe.objects.all().order_by('-created_at')
 
-        avg_rating=Avg('ratings__rating'),
-        rating_count=Count('ratings__rating', distinct=True),
+    recipes = base_query.annotate(
+        avg_rating=models.Subquery(
+            RecipeRating.objects.filter(recipe=models.OuterRef('id'))
+            .values('recipe')
+            .annotate(avg=Avg('rating'))
+            .values('avg')[:1]
+        ),
+        rating_count=models.Subquery(
+            RecipeRating.objects.filter(recipe=models.OuterRef('id'))
+            .values('recipe')
+            .annotate(count=Count('rating', distinct=True))
+            .values('count')[:1]
+        ),
         is_saved=Exists(
             SavedRecipe.objects.filter(recipe=OuterRef('pk'), user=request.user)
-        ) if request.user.is_authenticated else Value(False)
-    ).order_by('-created_at')
+        )
+    )
 
+    # Only order by search_rank if we're searching
+    if request.method == "POST" and request.POST.get("search-input"):
+        recipes = recipes.order_by('-search_rank', 'title')
+    
     categories = RecipeCategory.objects.all()
     cuisine_types = CuisineType.objects.all()
 
-    return render(request, 'recipes/list.html', {'recipes': recipes, 'categories': categories, 'cuisine_types': cuisine_types})
+    return render(request, 'recipes/list.html', {
+        'recipes': recipes, 
+        'categories': categories, 
+        'cuisine_types': cuisine_types
+    })
 
 
 @login_required(login_url='chefs:login')

@@ -12,55 +12,49 @@ from django.db.models import Q, Value, CharField
 from django.db.models.functions import Concat
 
 class RecipeSearchManager(models.Manager):
-    def search(self, query):
-        """
-        Basic search implementation for SQLite using LIKE queries
-        """
-        return self.get_queryset().filter(
-            Q(title__icontains=query) |
-            Q(description__icontains=query) |
-            Q(instruction_steps__description__icontains=query) |
-            Q(tips__tip__icontains=query) |
-            Q(cuisine_types__name__icontains=query) |
-            Q(category__name__icontains=query) |
-            Q(diets__name__icontains=query) |
-            Q(cooking_methods__name__icontains=query) |
-            Q(hashtags__name__icontains=query) |
-            Q(components__ingredients__ingredient__name__icontains=query)
-        ).distinct()
-
     def advanced_search(self, query):
-        """
-        More advanced search implementation using SQLite's LIKE with multiple terms
-        """
-        # Split the search query into terms
         search_terms = query.split()
-        
-        # Start with an empty Q object
         q_objects = Q()
         
-        # Add each term to the query
         for term in search_terms:
             q_objects |= (
                 Q(title__icontains=term) |
                 Q(description__icontains=term) |
-                Q(instruction_steps__description__icontains=term) |
                 Q(components__ingredients__ingredient__name__icontains=term) |
-                Q(author__username__icontains=query)
+                Q(cuisine_types__name__icontains=term) |
+                Q(category__name__icontains=term) |
+                Q(diets__name__icontains=term) |
+                Q(hashtags__name__icontains=term) |
+                Q(instruction_steps__description__icontains=term) |
+                Q(cooking_methods__name__icontains=term) |
+                Q(tips__tip__icontains=term) |
+                Q(author__username__icontains=term)
             )
+
+        # Get distinct recipe IDs in a subquery
+        subquery = self.get_queryset().filter(q_objects).values('id').distinct()
         
-        # Add annotation for ranking (basic implementation)
-        return self.get_queryset().filter(q_objects).distinct().annotate(
-            search_rank=models.Case(
-                # Highest rank if term is in title
-                models.When(title__icontains=query, then=Value(3)),
-                # Medium rank if in description
-                models.When(description__icontains=query, then=Value(2)),
-                # Lower rank for other matches
-                default=Value(1),
-                output_field=models.IntegerField(),
+        # Use those IDs to get the final recipes with ranking
+        base_qs = self.get_queryset().filter(id__in=subquery)
+
+        # Add search ranking as a subquery annotation
+        rank_case = models.Case(
+            models.When(title__icontains=query, then=Value(5)),
+            models.When(components__ingredients__ingredient__name__icontains=query, then=Value(4)),
+            models.When(description__icontains=query, then=Value(2)),
+            models.When(hashtags__name__icontains=query, then=Value(2)),
+            models.When(diets__name__icontains=query, then=Value(2)),
+            default=Value(1),
+            output_field=models.IntegerField(),
+        )
+
+        return base_qs.annotate(
+            search_rank=models.Subquery(
+                base_qs.filter(id=models.OuterRef('id'))
+                .annotate(rank=rank_case)
+                .values('rank')[:1]
             )
-        ).order_by('-search_rank', 'title')
+        )
 
 
 class Language(models.Model):

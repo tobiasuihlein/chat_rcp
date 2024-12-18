@@ -45,7 +45,7 @@
                         {% if recipe.avg_rating %}
                             &thinsp;{{ recipe.avg_rating }}
                         {% endif %}
-                        <span style="font-weight: 400">({{ recipe.rating_count }})</span>
+                        <span class="recipe-count-display">({{ recipe.rating_count }})</span>
                 </div>
                 <div class="recipe-user-panel">
                     <button class="panel-icon" id="share-button-{{ recipe.id }}" data-slug="{{ recipe.slug }}" style="transform: scale(0.9)">

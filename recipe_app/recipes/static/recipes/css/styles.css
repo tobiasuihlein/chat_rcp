@@ -700,6 +700,11 @@ main {
     color: var(--text-color-2);
 }
 
+.recipe-count-display {
+    font-weight: 400;
+    color: var(--icon-color);
+}
+
 .stars svg {
     color: gold;
     height: 1.2rem;
@@ -747,9 +752,6 @@ main {
 }
 
 #rating-button:hover {
-    background-color: var(--element-color-2);
-    border-radius: 99px;
-    outline: 5px solid var(--element-color-2);
     cursor: pointer;
 }
 

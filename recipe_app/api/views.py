@@ -22,3 +22,7 @@ class SavedRecipeViewSet(viewsets.ModelViewSet):
 class RecipeRatingViewSet(viewsets.ModelViewSet):
     queryset = RecipeRating.objects.all()
     serializer_class = RecipeRatingSerializer
+
+class RecipeCategoryViewSet(viewsets.ModelViewSet):
+    queryset = RecipeCategory.objects.all()
+    serializer_class = RecipeCategorySerializer

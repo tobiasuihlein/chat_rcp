@@ -9,6 +9,7 @@ router.register(r'components', ComponentViewSet)
 router.register(r'instructions', InstructionViewSet)
 router.register(r'saved_recipes', SavedRecipeViewSet)
 router.register(r'recipe_ratings', RecipeRatingViewSet)
+router.register(r'recipe_categories', RecipeCategoryViewSet)
 
 urlpatterns = [
     path('v1/', include(router.urls)),

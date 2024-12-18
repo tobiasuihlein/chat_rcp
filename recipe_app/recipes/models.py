@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, connection
 from django.utils.text import slugify
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
@@ -7,6 +7,60 @@ import os
 
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+
+from django.db.models import Q, Value, CharField
+from django.db.models.functions import Concat
+
+class RecipeSearchManager(models.Manager):
+    def search(self, query):
+        """
+        Basic search implementation for SQLite using LIKE queries
+        """
+        return self.get_queryset().filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(instruction_steps__description__icontains=query) |
+            Q(tips__tip__icontains=query) |
+            Q(cuisine_types__name__icontains=query) |
+            Q(category__name__icontains=query) |
+            Q(diets__name__icontains=query) |
+            Q(cooking_methods__name__icontains=query) |
+            Q(hashtags__name__icontains=query) |
+            Q(components__ingredients__ingredient__name__icontains=query)
+        ).distinct()
+
+    def advanced_search(self, query):
+        """
+        More advanced search implementation using SQLite's LIKE with multiple terms
+        """
+        # Split the search query into terms
+        search_terms = query.split()
+        
+        # Start with an empty Q object
+        q_objects = Q()
+        
+        # Add each term to the query
+        for term in search_terms:
+            q_objects |= (
+                Q(title__icontains=term) |
+                Q(description__icontains=term) |
+                Q(instruction_steps__description__icontains=term) |
+                Q(components__ingredients__ingredient__name__icontains=term) |
+                Q(author__username__icontains=query)
+            )
+        
+        # Add annotation for ranking (basic implementation)
+        return self.get_queryset().filter(q_objects).distinct().annotate(
+            search_rank=models.Case(
+                # Highest rank if term is in title
+                models.When(title__icontains=query, then=Value(3)),
+                # Medium rank if in description
+                models.When(description__icontains=query, then=Value(2)),
+                # Lower rank for other matches
+                default=Value(1),
+                output_field=models.IntegerField(),
+            )
+        ).order_by('-search_rank', 'title')
 
 
 class Language(models.Model):
@@ -120,6 +174,8 @@ class Recipe(models.Model):
     language = models.ForeignKey(verbose_name="Sprache", to=Language, on_delete=models.SET_NULL, null=True)
     author = models.ForeignKey(verbose_name="Autor", to=User, on_delete=models.SET_NULL, related_name="recipes", null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    objects = models.Manager()
+    search = RecipeSearchManager()
     
     def save(self, *args, **kwargs):
         if not self.slug:

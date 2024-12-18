@@ -47,19 +47,36 @@ def recipe_detail(request, slug):
 
 @login_required(login_url='chefs:login')
 def explore(request):
-    recipes = Recipe.objects.annotate(
+    if request.method == "POST":
+        search_input = request.POST.get("search-input")
+        base_query = Recipe.search.advanced_search(search_input)
+        print(f"search: {search_input}")
+    else:
+        base_query = Recipe.objects.all()
+    recipes = base_query.annotate(
+
         avg_rating=Avg('ratings__rating'),
-        rating_count=Count('ratings__rating'),
+        rating_count=Count('ratings__rating', distinct=True),
         is_saved=Exists(
             SavedRecipe.objects.filter(recipe=OuterRef('pk'), user=request.user)
         ) if request.user.is_authenticated else Value(False)
     ).order_by('-created_at')
-    return render(request, 'recipes/list.html', {'recipes': recipes})
+
+    categories = RecipeCategory.objects.all()
+    cuisine_types = CuisineType.objects.all()
+
+    return render(request, 'recipes/list.html', {'recipes': recipes, 'categories': categories, 'cuisine_types': cuisine_types})
 
 
 @login_required(login_url='chefs:login')
 def library(request):
-    recipes = Recipe.objects.annotate(
+    if request.method == "POST":
+        search_input = request.POST.get("search-input")
+        base_query = Recipe.search.advanced_search(search_input)
+        print(f"search: {search_input}")
+    else:
+        base_query = Recipe.objects.all()
+    recipes = base_query.annotate(
         avg_rating=Avg('ratings__rating'),
         rating_count=Count('ratings__rating'),
         is_saved=Exists(
@@ -103,7 +120,6 @@ def create_recipe_with_image(request):
             
             photo = request.FILES['photo']
             
-            # Initialize Pixtral handler
             recipe_generator = PixtralHandler()
 
             prompt = create_recipe_prompt_for_image()

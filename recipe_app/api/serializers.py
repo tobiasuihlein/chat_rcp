@@ -4,8 +4,7 @@ from recipes.models import Recipe, RecipeComponent, RecipeInstruction, SavedReci
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
-        fields = ['title', 'description', 'difficulty', 
-                 'time_active', 'time_inactive', 'default_servings',
+        fields = ['title', 'description', 'difficulty', 'default_servings',
                  'storage', 'cost', 'spiciness', 'author']
 
 class ComponentSerializer(serializers.ModelSerializer):

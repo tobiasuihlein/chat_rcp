@@ -41,6 +41,7 @@ class RecipeSearchManager(models.Manager):
         rank_case = models.Case(
             models.When(title__icontains=query, then=Value(5)),
             models.When(components__ingredients__ingredient__name__icontains=query, then=Value(4)),
+            models.When(components__name__icontains=query, then=Value(4)),
             models.When(description__icontains=query, then=Value(2)),
             models.When(hashtags__name__icontains=query, then=Value(2)),
             models.When(diets__name__icontains=query, then=Value(2)),

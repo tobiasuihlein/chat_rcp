@@ -311,7 +311,6 @@ class RecipeImage(models.Model):
     class Meta:
         ordering = ['-upload_datetime']
 
-
     def __str__(self):
         return f"Image for {self.recipe.title}"
     
@@ -326,8 +325,8 @@ class RecipeImage(models.Model):
 
 
 class SavedRecipe(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="favourites")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favourites")
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="favorites")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")
     saved_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

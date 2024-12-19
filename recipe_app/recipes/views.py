@@ -99,7 +99,7 @@ def library(request):
         is_saved=Exists(
             SavedRecipe.objects.filter(recipe=OuterRef('pk'), user=request.user)
         ) if request.user.is_authenticated else Value(False)
-    ).filter(favourites__user=request.user).order_by('-created_at')
+    ).filter(favorites__user=request.user).order_by('-created_at')
     return render(request, 'recipes/list.html', {'recipes': recipes})
 
 

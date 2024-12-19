@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Profile
 from django.contrib.auth.models import User
+from django.template.defaultfilters import date
 
 
 def login_chef(request):
@@ -64,18 +65,19 @@ def follow_toggle(request, user_id):
         return JsonResponse({
             'success': True,
             'is_following': is_following,
-            'follower_count': user_to_toggle.profile.followers.count()
         })
     return JsonResponse({'success': False, 'error': 'Cannot follow yourself'})
 
-@login_required
-def following_list(request, username):
-    user = get_object_or_404(User, username=username)
-    following = user.following.all()
-    return render(request, 'following_list.html', {'following': following})
 
 @login_required
-def followers_list(request, username):
-    user = get_object_or_404(User, username=username)
-    followers = user.profile.followers.all()
-    return render(request, 'followers_list.html', {'followers': followers})
+def profile_view(request, username):
+    user = User.objects.get(username=username)
+    context = {
+        'username': user.username,
+        'user_id': user.id,
+        'date_joined': date(request.user.date_joined, 'd.m.Y'),
+        'chef_level': user.profile.get_chef_level_display(),
+        'following': user.profile.following.all(),
+        'follower': user.follower.all(),
+    }
+    return render(request, 'chefs/profile.html', context=context)

@@ -32,7 +32,7 @@
                 {% endif %}
             </div> {% endcomment %}
             <div class="recipe-top-panel">
-                <div class="stars" id="rating-button">
+                <div class="stars" id="rating-button" title="Rezept bewerten">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path
                             d="M12 1.726l2.338 7.196h7.566l-6.121 4.448 2.338 7.196L12 16.118l-6.121 4.448 2.338-7.196L2.096 8.922h7.566z"
@@ -48,27 +48,34 @@
                         <span class="recipe-count-display">({{ recipe.rating_count }})</span>
                 </div>
                 <div class="recipe-user-panel">
+                    {% if recipe.author %}
+                        <button class="panel-icon" id="recipe-author-button" style="transform: scale(0.9)" title="Chef aufrufen">
+                            <a href="{% url 'chefs:profile' recipe.author %}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </a>
+                        </button>
+                    {% endif %}
                     {% if request.user == recipe.author %}
-                        <button class="panel-icon" id="delete-button" style="transform: scale(0.9)">
+                        <button class="panel-icon" id="delete-button" style="transform: scale(0.9)" title="Rezept löschen">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                         </button>
                     {% endif %}
-                    <button class="panel-icon" id="share-button-{{ recipe.id }}" data-slug="{{ recipe.slug }}" style="transform: scale(0.9)">
+                    <button class="panel-icon" id="share-button-{{ recipe.id }}" data-slug="{{ recipe.slug }}" style="transform: scale(0.9)" title="Rezept teilen">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
                     </button>
                     {% if request.user.is_authenticated %}
                         {% if recipe.is_saved %}
-                            <button class="panel-icon" id="bookmark-icon-saved" style="display: flex">
+                            <button class="panel-icon" id="bookmark-icon-saved" style="display: flex" title="Aus Bibliothek entfernen">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="indianred" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                             </button>
-                            <button class="panel-icon" id="bookmark-icon-unsaved" style="display: none">
+                            <button class="panel-icon" id="bookmark-icon-unsaved" style="display: none" title="Zu Bibliothek hinzufügen">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
                             </button>
                         {% else %}
-                            <button class="panel-icon" id="bookmark-icon-saved" style="display: none">
+                            <button class="panel-icon" id="bookmark-icon-saved" style="display: none" title="Aus Bibliothek entfernen">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="indianred" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                             </button>
-                            <button class="panel-icon" id="bookmark-icon-unsaved" style="display: flex">
+                            <button class="panel-icon" id="bookmark-icon-unsaved" style="display: flex" title="Zu Bibliothek hinzufügen">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>    
                             </button>
                         {% endif %}
@@ -81,9 +88,6 @@
             <div style="font-size: 1.1rem; font-weight: 500; color: indianred; margin-top: 1.1rem; text-align: center;">
                 {{ recipe.get_difficulty_display }} • 
                 <span title="{% for time in recipe.times.all %}{{ time.value|time_converter }} {{ time.name }}&#13;&#10;{% endfor %}">{{ recipe.time_total|time_converter}}</span>
-                {% for diet in recipe.diets.all %}
-                    <span> • {{ diet }}</span>
-                {% endfor %}
             </div>
             <div class="recipe-description">
                 <div style="max-width: 500px; text-align: center"><span>{{ recipe.description }}</span></div>
@@ -168,7 +172,7 @@
                 <div class="author">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     {% if recipe.author %}
-                        {{ recipe.author }}
+                        <a href="{% url 'chefs:profile' recipe.author %}"> {{ recipe.author }} </a>
                     {% else %}
                         <span>Unbekannt</span>
                     {% endif %}
@@ -473,7 +477,7 @@
     const exploreUrl = '{{ explore_url }}';
 
     function deleteRecipe(recipeId) {
-        if (confirm('Are you sure you want to delete this recipe?')) {
+        if (confirm('Sicher, dass du das Rezept löschen möchtest?')) {
             fetch(`/api/v1/recipes/${recipeId}/`, {
                 method: 'DELETE',
                 headers: {

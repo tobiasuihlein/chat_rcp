@@ -18,7 +18,7 @@
 
 {% block main-content %}
 
-<div class="row-wrapper section-row">
+<div class="row-wrapper section-row" style="margin-top: 0;">
     <div class="row-content">
         <div class="widget">
             <form id="searchbar-form" class="searchbar" method="post">
@@ -99,9 +99,6 @@
                         <div style="font-size: 1rem; font-weight: 500; color: indianred; margin-bottom: 0.5rem;">
                             {{ preview.get_difficulty_display }} • 
                             {{ preview.time_total|time_converter}}
-                            {% for diet in preview.diets.all %}
-                                <span> • {{ diet }}</span>
-                            {% endfor %}
                         </div>
                         <div class="description">{{ preview.description }}</div>
                         <div class="preview-card-bottom-panel">

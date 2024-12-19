@@ -1,0 +1,90 @@
+{% extends "recipe_app/layout.html" %}
+
+{% load static %}
+
+{% block extra_css%}
+    <link rel="stylesheet" href="{% static 'registration/css/styles.css' %}">
+{% endblock extra_css%}
+
+
+{% block main-content %}
+
+<div class="row-wrapper section-row card" style="margin-top: 0;">
+    <div class="row-content" style="margin-top: 1rem; margin-bottom: 1rem; flex-direction: column; align-items: center;">
+        <div class="form-header">
+            {{ username }}
+        </div>
+        <div>
+            {{ chef_level }}
+        </div>
+    </div>
+    <div class="row-content" style="width: 100%; padding: 1rem; flex-direction: column;">
+        <div>
+            <div style="font-weight: 500; margin-bottom: 0.2rem;">
+                Follower:
+            </div>
+            <div>
+                <ul>
+                {% for chef in follower.all%}
+                    <li><a href="{% url 'chefs:profile' chef.user.username %}">{{ chef.user.username }}</a></li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div>
+            <div style="font-weight: 500; margin-bottom: 0.2rem;">
+                Following:
+            </div>
+            <div>
+                <ul>
+                {% for chef in following.all%}
+                <li><a href="{% url 'chefs:profile' chef %}">{{ chef }}</a></li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row-content" style="margin-top: 1rem; margin-bottom: 1rem; flex-direction: column; align-items: center;">
+        {% if user.username != username %}
+        <div>
+            <button class="submit-button" id="follow-button" title="Chef folgen / entfolgen">
+                Folgen / Entfolgen
+            </button>
+        </div>
+        {% else %}
+        <a href="{% url 'chefs:logout' %}">
+            <button class="submit-button" id="logout-button" title="Ausloggen">
+                Ausloggen
+            </button>
+        </a>
+        {% endif %}
+    </div>
+
+</div>
+
+{% block javascript %}
+
+<script>
+
+    const userId = {{ user_id }};
+
+    function getCsrfToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    // Follow button functionality
+    const followButton = document.getElementById('follow-button');
+
+    function toggleFollow() {
+        fetch(`/chefs/toggle-follow/${userId}/`)
+            .then(response => response.json()
+            )
+    }
+
+    followButton.addEventListener('click', toggleFollow);
+
+</script>
+
+{% endblock javascript%}
+
+{% endblock main-content %}

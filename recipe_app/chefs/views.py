@@ -79,5 +79,7 @@ def profile_view(request, username):
         'chef_level': user.profile.get_chef_level_display(),
         'following': user.profile.following.all(),
         'follower': user.follower.all(),
+        'is_following': user.follower.filter(id=request.user.id).exists()
     }
+    print(context)
     return render(request, 'chefs/profile.html', context=context)

@@ -17,6 +17,11 @@
         <div>
             {{ chef_level }}
         </div>
+        <div>
+            <div style="font-weight: 500;">
+                <a href="{% url 'recipes:author_recipes' username %}">Rezepte ansehen</a>
+            </div>
+        </div>
     </div>
     <div class="row-content" style="width: 100%; padding: 1rem; flex-direction: column;">
         <div>
@@ -24,7 +29,7 @@
                 Follower:
             </div>
             <div>
-                <ul>
+                <ul style="overflow-wrap: break-word; padding-left: 1rem;">
                 {% for chef in follower.all%}
                     <li><a href="{% url 'chefs:profile' chef.user.username %}">{{ chef.user.username }}</a></li>
                 {% endfor %}
@@ -36,7 +41,7 @@
                 Following:
             </div>
             <div>
-                <ul>
+                <ul style="overflow-wrap: break-word; padding-left: 1rem;">
                 {% for chef in following.all%}
                 <li><a href="{% url 'chefs:profile' chef %}">{{ chef }}</a></li>
                 {% endfor %}
@@ -48,12 +53,16 @@
         {% if user.username != username %}
         <div>
             <button class="submit-button" id="follow-button" title="Chef folgen / entfolgen">
-                Folgen / Entfolgen
+                {% if is_following %}
+                    Entfolgen
+                {% else %}
+                    Folgen
+                {% endif %}
             </button>
         </div>
         {% else %}
         <a href="{% url 'chefs:logout' %}">
-            <button class="submit-button" id="logout-button" title="Ausloggen">
+            <button type="submit" class="submit-button" id="logout-button" title="Ausloggen">
                 Ausloggen
             </button>
         </a>
@@ -77,8 +86,19 @@
 
     function toggleFollow() {
         fetch(`/chefs/toggle-follow/${userId}/`)
-            .then(response => response.json()
-            )
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok');
+            })
+            .then(data => {
+                console.log('Follow/unfollow successful!');
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     }
 
     followButton.addEventListener('click', toggleFollow);

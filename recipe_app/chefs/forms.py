@@ -26,6 +26,10 @@ class EmailSignUpForm(UserCreationForm):
         # Remove password confirmation field
         del self.fields['password2']
 
+        # Custom CSS class for input fields
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'registration-input'
+
     # Override password validation for single password signup
     def validate_passwords(self):
         password1 = self.cleaned_data.get('password1')
@@ -65,6 +69,13 @@ class EmailAuthenticationForm(AuthenticationForm):
         label="Username or Email",
         widget=forms.TextInput(attrs={'autofocus': True})
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # Add the registration-input class to all fields
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'registration-input'
     
     def clean(self):
         username = self.cleaned_data.get("username")

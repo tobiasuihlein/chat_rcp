@@ -1,32 +1,83 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from generator.utils.helpers import sort_previews
 from generator.services import *
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView
 from django.db.models import Avg, Count, Exists, OuterRef, Value, Subquery
 from .models import *
 from .forms import *
-
+from .services import annotate_recipes
 import logging
+
+from recipes.templatetags.number_converter import to_fraction
+
+
 logger = logging.getLogger(__name__)
 
-from django.http import JsonResponse
 
-@login_required(login_url='chefs:login')
-def toggle_save_recipe(request, recipe_id):
-    if not request.user.is_authenticated:
-        return JsonResponse({'error': 'Login required'}, status=401)
-    
-    recipe = get_object_or_404(Recipe, pk=recipe_id)
-    saved = SavedRecipe.objects.filter(recipe=recipe, user=request.user)
-    
-    if saved.exists():
-        saved.delete()
-        return JsonResponse({'status': 'unsaved'})
-    else:
-        SavedRecipe.objects.create(recipe=recipe, user=request.user)
-        return JsonResponse({'status': 'saved'})
+from django.db.models import Sum, F
+from itertools import groupby
+from operator import itemgetter
 
+@login_required
+def shopping_list(request):
+    recipes = Recipe.objects.filter(favorites__user=request.user)
+
+    # First get all ingredients
+    items = ComponentIngredient.objects.filter(
+        recipe_component__recipe__favorites__user=request.user
+    ).select_related(
+        'ingredient',
+        'ingredient__category'
+    ).values(
+        'ingredient__name',
+        'ingredient__category__name',
+        'unit',
+        'amount',
+        'ingredient_id'
+    ).order_by(
+        'ingredient__category__name',
+        'ingredient__name',
+        'unit'
+    )
+
+    # Convert to list and aggregate amounts by ingredient
+    aggregated_items = []
+    for ingredient_name, group in groupby(items, key=lambda x: x['ingredient__name']):
+        group_list = list(group)
+        # Group by unit and sum amounts
+        unit_amounts = {}
+        category_name = group_list[0]['ingredient__category__name']
+        ingredient_id = group_list[0]['ingredient_id']
+        
+        for item in group_list:
+            unit = item['unit']
+            if unit in unit_amounts:
+                unit_amounts[unit] += item['amount']
+            else:
+                unit_amounts[unit] = item['amount']
+        
+        # Create combined amount string
+        amount_parts = []
+        for unit, amount in unit_amounts.items():
+            fraction_amount = to_fraction(amount)
+            amount_parts.append(f"{fraction_amount} {unit}")
+        amount_string = " + ".join(amount_parts)
+
+        aggregated_items.append({
+            'ingredient_name': ingredient_name,
+            'category_name': category_name,
+            'amount': amount_string,
+            'ingredient_id': ingredient_id
+        })
+
+    return render(request, 'recipes/shopping_list.html', {'items': aggregated_items, 'recipes': recipes})
+
+
+### Detail view ###
 
 def recipe_detail(request, slug):
     recipe = get_object_or_404(Recipe.objects.annotate(
@@ -45,63 +96,58 @@ def recipe_detail(request, slug):
     return render(request, 'recipes/detail.html', {'recipe_id': recipe.id, 'recipe': recipe})
 
 
-@login_required(login_url='chefs:login')
-def explore(request):
-    if request.method == "POST":
-        search_input = request.POST.get("search-input")
-        base_query = Recipe.search.advanced_search(search_input)
-    else:
-        base_query = Recipe.objects.all().order_by('-created_at')
+### List views ###
 
-    recipes = base_query.annotate(
-        avg_rating=models.Subquery(
-            RecipeRating.objects.filter(recipe=models.OuterRef('id'))
-            .values('recipe')
-            .annotate(avg=Avg('rating'))
-            .values('avg')[:1]
-        ),
-        rating_count=models.Subquery(
-            RecipeRating.objects.filter(recipe=models.OuterRef('id'))
-            .values('recipe')
-            .annotate(count=Count('rating', distinct=True))
-            .values('count')[:1]
-        ),
-        is_saved=Exists(
-            SavedRecipe.objects.filter(recipe=OuterRef('pk'), user=request.user)
-        )
-    )
-
-    # Only order by search_rank if we're searching
-    if request.method == "POST" and request.POST.get("search-input"):
-        recipes = recipes.order_by('-search_rank', 'title')
+class RecipeListBaseView(LoginRequiredMixin, ListView):
+    model = Recipe
+    template_name = 'recipes/list.html'
+    context_object_name = 'recipes'
+    login_url = 'chefs:login'
     
-    categories = RecipeCategory.objects.all()
-    cuisine_types = CuisineType.objects.all()
+    def get_base_queryset(self):
+        raise NotImplementedError
+    
+    def get_search_input(self):
+        return self.request.GET.get("search-input") 
+    
+    def apply_search(self, queryset, search_input):
+        if search_input:
+            class FilteredSearchManager(RecipeSearchManager):
+                def get_queryset(self):
+                    return queryset
+            return FilteredSearchManager().advanced_search(search_input)
+        return queryset
 
-    return render(request, 'recipes/list.html', {
-        'recipes': recipes, 
-        'categories': categories, 
-        'cuisine_types': cuisine_types
-    })
+    def apply_annotations(self, queryset):
+        return annotate_recipes(queryset, self.request.user)
+
+    def get_queryset(self):
+        queryset = self.get_base_queryset()
+        search_input = self.get_search_input()
+        queryset = self.apply_search(queryset, search_input)
+        
+        if search_input:
+            queryset = queryset.order_by('-search_rank', 'title')
+        else:
+            queryset = queryset.order_by('-created_at')
+            
+        return self.apply_annotations(queryset)
+
+class ExploreView(RecipeListBaseView):
+    def get_base_queryset(self):
+        return Recipe.objects.all().order_by('-created_at')
+
+class LibraryView(RecipeListBaseView):
+    def get_base_queryset(self):
+        return Recipe.objects.filter(favorites__user=self.request.user).order_by('-created_at')
+    
+class AuthorRecipesView(RecipeListBaseView):
+    def get_base_queryset(self):
+        author = get_object_or_404(User, username=self.kwargs['author'])
+        return Recipe.objects.filter(author=author).order_by('-created_at')
 
 
-@login_required(login_url='chefs:login')
-def library(request):
-    if request.method == "POST":
-        search_input = request.POST.get("search-input")
-        base_query = Recipe.search.advanced_search(search_input)
-        print(f"search: {search_input}")
-    else:
-        base_query = Recipe.objects.all()
-    recipes = base_query.annotate(
-        avg_rating=Avg('ratings__rating'),
-        rating_count=Count('ratings__rating'),
-        is_saved=Exists(
-            SavedRecipe.objects.filter(recipe=OuterRef('pk'), user=request.user)
-        ) if request.user.is_authenticated else Value(False)
-    ).filter(favorites__user=request.user).order_by('-created_at')
-    return render(request, 'recipes/list.html', {'recipes': recipes})
-
+### Generate views ###
 
 @login_required(login_url='chefs:login')
 def generate(request):
@@ -191,7 +237,6 @@ def previews(request):
     return render(request, 'recipes/index.html')
 
 
-
 @login_required(login_url='chefs:login')
 def new_recipe_by_text(request):
 
@@ -263,6 +308,23 @@ def recipe_generated(request):
     
     return redirect('recipes:generate')
 
+
+### Service views
+
+@login_required(login_url='chefs:login')
+def toggle_save_recipe(request, recipe_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Login required'}, status=401)
+    
+    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    saved = SavedRecipe.objects.filter(recipe=recipe, user=request.user)
+    
+    if saved.exists():
+        saved.delete()
+        return JsonResponse({'status': 'unsaved'})
+    else:
+        SavedRecipe.objects.create(recipe=recipe, user=request.user)
+        return JsonResponse({'status': 'saved'})
 
 @login_required
 def rate_recipe(request, recipe_id):

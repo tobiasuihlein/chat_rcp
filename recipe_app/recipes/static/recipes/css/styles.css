@@ -842,3 +842,13 @@ textarea {
     border-radius: 8px;
     margin-bottom: 1rem;
 }
+
+.checked .shopping-text {
+    text-decoration: line-through;
+    color: var(--icon-color);
+}
+
+.shopping-checkbox {
+    cursor: pointer;
+    accent-color: var(--accent-color);
+}

@@ -22,7 +22,7 @@
     color: indianred;
 }
 
-input {
+.registration-input {
     padding: 0.4rem 0.4rem;
     width: 100%;
     border-radius: 6px;
@@ -51,7 +51,7 @@ form {
     background-color: var(--accent-color);
     color: white;
     border-radius: 6px;
-    padding: 0.4rem;
+    padding: 0.4rem 0.8rem;
     font-weight: 500;
     margin-top: 1rem;
 }

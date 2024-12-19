@@ -1,0 +1,116 @@
+{% extends "recipe_app/layout.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'registration/css/styles.css' %}">
+{% endblock extra_css %}
+
+{% load number_converter %}
+
+{% block header-middle %}
+    <span style="font-size: 2rem; font-weight: 500; margin-bottom: 2rem;" class="hide-mobile">
+        Zutaten-Einkaufsliste
+    </span>
+{% endblock header-middle %}
+
+
+{% block main-content %}
+
+<div class="row-wrapper section-row" style="margin-top: 0;">
+    <div class="row-content">
+        <div class="card">
+            <div class="form-header">
+                <div style="margin-bottom: 0.4rem;"><span>Zutaten für</span></div>
+            </div>
+            <div style="width: 100%; display: flex; justify-content: left; font-size: 1.2rem; font-weight: 300;">
+                <ul>
+                    {% for recipe in recipes %}
+                    <a href="{% url 'recipes:detail' recipe.slug %}">
+                        <li style="padding-left: 1rem; margin-bottom: 0.2rem;">{{ recipe.title }}</li>
+                    </a>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="main-ingredients" style="width: 100%; align-items: flex-start; margin-top: 0.4rem; padding-left: 0.4rem;">
+                {% regroup items by category_name as items_list %}
+                {% for category in items_list %}
+                    <div style="margin-top: 0.4rem;"><span style="font-weight: 400"> {{ category.grouper }} </span></div>
+                    <ul class="shopping-list" style="overflow-wrap: break-word; padding-left: 1rem;">
+                        {% for item in category.list %}
+                            <li class="shopping-item">
+                                <label>
+                                    <input type="checkbox" class="shopping-checkbox" data-item-id="{{ item.id }}">
+                                    <span class="shopping-text">{{ item.ingredient_name }} ({{ item.amount }})</span>
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
+            <div style="margin-bottom: 0.8rem;">
+                <button style="margin-top: 0.2rem;" onclick="clearChecked()" class="submit-button">Auswahl aufheben</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% block javascript %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load saved state from localStorage
+        function loadSavedState() {
+            const savedState = localStorage.getItem('shoppingList');
+            if (savedState) {
+                const checkedItems = JSON.parse(savedState);
+                checkedItems.forEach(itemId => {
+                    const checkbox = document.querySelector(`[data-item-id="${itemId}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        checkbox.closest('.shopping-item').classList.add('checked');
+                    }
+                });
+            }
+        }
+    
+        // Save state to localStorage
+        function saveState() {
+            const checkedBoxes = document.querySelectorAll('.shopping-checkbox:checked');
+            const checkedIds = Array.from(checkedBoxes).map(box => box.dataset.itemId);
+            localStorage.setItem('shoppingList', JSON.stringify(checkedIds));
+        }
+    
+        // Add click handlers to checkboxes
+        document.querySelectorAll('.shopping-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const listItem = this.closest('.shopping-item');
+                if (this.checked) {
+                    listItem.classList.add('checked');
+                } else {
+                    listItem.classList.remove('checked');
+                }
+                saveState();
+            });
+        });
+    
+        // Load saved state when page loads
+        loadSavedState();
+    });
+
+    function clearChecked() {
+        if (confirm('Alle Markierungen aufheben?')) {
+            document.querySelectorAll('.shopping-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.closest('.shopping-item').classList.remove('checked');
+            });
+            localStorage.removeItem('shoppingList');
+        }
+    }
+
+</script>
+
+{% endblock javascript %}
+
+{% endblock main-content %}

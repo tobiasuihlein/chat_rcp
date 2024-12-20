@@ -331,3 +331,12 @@ class SavedRecipe(models.Model):
 
     def __str__(self):
         return f"{self.recipe} saved by {self.user}"
+    
+
+class ShoppingRecipes(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="shopping_lists")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="shopping_recipes")
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.recipe} in shopping list of {self.user}"

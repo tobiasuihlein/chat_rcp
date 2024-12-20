@@ -22,6 +22,9 @@ from django.db.models import Sum, F
 from itertools import groupby
 from operator import itemgetter
 
+
+### Shopping views ###
+
 @login_required
 def shopping_list(request):
     recipes = Recipe.objects.filter(favorites__user=request.user)

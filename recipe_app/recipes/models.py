@@ -333,7 +333,7 @@ class SavedRecipe(models.Model):
         return f"{self.recipe} saved by {self.user}"
     
 
-class ShoppingRecipes(models.Model):
+class ShoppingRecipe(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="shopping_lists")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="shopping_recipes")
     added_at = models.DateTimeField(auto_now_add=True)

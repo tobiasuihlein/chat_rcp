@@ -21,13 +21,13 @@
     <div class="row-content">
         <div class="card">
             <div class="form-header">
-                <div style="margin-bottom: 0.4rem;"><span>Zutaten für</span></div>
+                <div style="margin-bottom: 0.4rem;"><span>Einkaufsliste für</span></div>
             </div>
-            <div style="width: 100%; display: flex; justify-content: left; font-size: 1.2rem; font-weight: 300;">
+            <div style="width: 100%; display: flex; justify-content: center; font-size: 1.2rem; font-weight: 300;">
                 <ul>
                     {% for recipe in recipes %}
-                    <a href="{% url 'recipes:detail' recipe.slug %}">
-                        <li style="padding-left: 1rem; margin-bottom: 0.2rem;">{{ recipe.title }}</li>
+                    <a href="{% url 'recipes:detail' recipe.recipe.slug %}">
+                        <li style="margin-bottom: 0.2rem;">{{ recipe.recipe.title }}</li>
                     </a>
                     {% endfor %}
                 </ul>

@@ -82,3 +82,7 @@ class RecipeRatingAdmin(admin.ModelAdmin):
 @admin.register(SavedRecipe)
 class SavedRecipeAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'user', 'saved_at')
+
+@admin.register(ShoppingRecipe)
+class ShoppingRecipeAdmin(admin.ModelAdmin):
+    list_display = ('recipe', 'user', 'added_at')

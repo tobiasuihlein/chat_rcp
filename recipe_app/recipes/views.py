@@ -27,11 +27,14 @@ from operator import itemgetter
 
 @login_required
 def shopping_list(request):
-    recipes = Recipe.objects.filter(favorites__user=request.user)
+    shopping_list = ShoppingRecipe.objects.filter(user=request.user)
+    recipe_ids = shopping_list.values_list('recipe', flat=True)
 
-    # First get all ingredients
+    for recipe in shopping_list:
+        print(recipe.recipe.slug)
+
     items = ComponentIngredient.objects.filter(
-        recipe_component__recipe__favorites__user=request.user
+        recipe_component__recipe__in=recipe_ids
     ).select_related(
         'ingredient',
         'ingredient__category'
@@ -77,7 +80,7 @@ def shopping_list(request):
             'ingredient_id': ingredient_id
         })
 
-    return render(request, 'recipes/shopping_list.html', {'items': aggregated_items, 'recipes': recipes})
+    return render(request, 'recipes/shopping_list.html', {'items': aggregated_items, 'recipes': shopping_list})
 
 
 ### Detail view ###

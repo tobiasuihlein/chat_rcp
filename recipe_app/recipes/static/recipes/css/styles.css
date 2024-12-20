@@ -754,6 +754,25 @@ main {
     color: gold;
 }
 
+@keyframes shine {
+    0% {
+        filter: brightness(1) drop-shadow(0 0 0 var(--element-color));
+        transform: scale(1);
+    }
+    70% {
+        filter: brightness(1.1) drop-shadow(0 0 10px var(--element-color));
+        transform: scale(1.1);
+    }
+    100% {
+        filter: brightness(1) drop-shadow(0 0 0 var(--element-color));
+        transform: scale(1.05);
+    }
+}
+
+.rating-success-animation {
+    animation: shine 0.6s ease-in-out;
+}
+
 #rating-button:hover {
     cursor: pointer;
 }
@@ -773,12 +792,31 @@ main {
     border: 1px solid transparent;
 }
 
-.panel-icon svg {
-    height: 1.3rem;
-    width: 1.3rem;
+.panel-icon-overlay {
+    color: var(--icon-color);
+    display: flex;
+    align-items: center;
+    border-radius: 999px;
+    border: 3px solid transparent;
+    padding: 0 0.4rem;
+}
+
+.panel-icon, .panel-icon-overlay{
+    svg {
+        height: 1.3rem;
+        width: 1.3rem;
+    }
 }
 
 .panel-icon:hover{
+    cursor: pointer;
+    color: var(--accent-color);
+    background-color: var(--element-color-2);
+    border-radius: 99px;
+    outline: 6px solid var(--element-color-2);
+}
+
+.panel-icon-overlay:hover{
     cursor: pointer;
     color: var(--accent-color);
     background-color: var(--element-color-2);

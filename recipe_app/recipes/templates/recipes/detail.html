@@ -48,23 +48,8 @@
                         <span class="recipe-count-display">({{ recipe.rating_count }})</span>
                 </div>
                 <div class="recipe-user-panel">
-                    <button class="panel-icon" id="add-to-shopping-list-button" style="transform: scale(0.9)" title="Zur Einkaufsliste hinzufügen">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>    
-                    </button>
-                    {% if recipe.author %}
-                        <button class="panel-icon" id="recipe-author-button" style="transform: scale(0.9)" title="Chef aufrufen">
-                            <a href="{% url 'chefs:profile' recipe.author %}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </a>
-                        </button>
-                    {% endif %}
-                    {% if request.user == recipe.author %}
-                        <button class="panel-icon" id="delete-button" style="transform: scale(0.9)" title="Rezept löschen">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                        </button>
-                    {% endif %}
-                    <button class="panel-icon" id="share-button-{{ recipe.id }}" data-slug="{{ recipe.slug }}" style="transform: scale(0.9)" title="Rezept teilen">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+                    <button class="panel-icon" id="recipe-panel-menu-overlay-open-button" style="transform: scale(0.9)" title="Rezept teilen">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>    
                     </button>
                     {% if request.user.is_authenticated %}
                         {% if recipe.is_favorite %}
@@ -222,6 +207,64 @@
     </div>
 </div>
 
+
+<div id="recipe-panel-menu-overlay-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #F2F3EE;">
+    <div style="padding: 1rem; display: flex; width: 100%; flex-direction: column; align-items: center; gap: 1.4rem; justify-content: center;">
+        <div>
+            <button class="panel-icon" id="recipe-panel-menu-overlay-close-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="indianred" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-x"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            </button>
+        </div>
+        <div style="font-size: 1.4rem; text-align: center; font-weight: 500; margin-bottom: 0.2rem;">
+            {{ recipe.title }}
+        </div>
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: left; gap: 0.8rem; font-size: 1.2rem;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
+                <button class="panel-icon-overlay" id="share-button-{{ recipe.id }}" data-slug="{{ recipe.slug }}" style="transform: scale(0.9)" title="Rezept teilen">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+                    <div style="margin-left: 0.6rem;">Teilen</div>
+                </button>
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
+                <button class="panel-icon-overlay" id="add-to-shopping-list-button" title="Zu Einkaufsliste hinzufügen">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>    
+                    <div style="margin-left: 0.6rem;">Zu Einkaufsliste hinzufügen</div>
+                </button>
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
+                <button class="panel-icon-overlay" id="rating-button-overlay-menu" title="Rezept bewerten">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path
+                            d="M12 1.726l2.338 7.196h7.566l-6.121 4.448 2.338 7.196L12 16.118l-6.121 4.448 2.338-7.196L2.096 8.922h7.566z"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                    <div style="margin-left: 0.6rem;">Rezept bewerten</div>
+                </button>
+            </div>
+            {% if recipe.author %}
+            <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
+                <a href="{% url 'chefs:profile' recipe.author %}" class="panel-icon-overlay" id="recipe-author-button" title="Chef aufrufen">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <div style="margin-left: 0.6rem;">Chef aufrufen</div>
+                </a>
+            </div>
+            {% endif %}
+            {% if request.user == recipe.author %}
+            <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
+                <button class="panel-icon-overlay" id="delete-button" style="transform: scale(0.9)" title="Rezept löschen">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                    <div style="margin-left: 0.6rem;">Löschen</div>
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
 {% block javascript %}
 
 {% url 'recipes:explore' as explore_url %}
@@ -354,10 +397,25 @@
         });
     });
 
+    // Recipe menu panel overlay functionality
+
+    const recipePanelMenuOverlayContainer = document.getElementById('recipe-panel-menu-overlay-container');
+    const recipePanelMenuOverlayOpenButton = document.getElementById('recipe-panel-menu-overlay-open-button');
+    const recipePanelMenuOverlayCloseButton = document.getElementById('recipe-panel-menu-overlay-close-button');
+
+    recipePanelMenuOverlayOpenButton.addEventListener('click', function() {
+        recipePanelMenuOverlayContainer.style.display = 'flex';
+    });
+
+    recipePanelMenuOverlayCloseButton.addEventListener('click', function() {
+        recipePanelMenuOverlayContainer.style.display = 'none';
+    });
+
 
     // Rating overlay functionality
 
     const ratingButton = document.getElementById('rating-button');
+    const ratingButtonOverlayMenu = document.getElementById('rating-button-overlay-menu');
     const ratingForm = document.getElementById('rating-form');
     const ratingOverlay = document.getElementById('rating-overlay-container');
     const submitRatingButton = document.getElementById('submit-rating-button');
@@ -371,6 +429,11 @@
 
     ratingButton.addEventListener('click', function() {
         ratingOverlay.style.display = 'flex';
+    });
+
+    ratingButtonOverlayMenu.addEventListener('click', function() {
+        ratingOverlay.style.display = 'flex';
+        recipePanelMenuOverlayContainer.style.display = 'none';
     });
 
     ratingOverlayCloseButton.addEventListener('click', function() {
@@ -430,7 +493,6 @@
 
     async function submitRating(ratingId, ratingValue) {
         if (ratingId) {
-            console.log(`Submit new user rating: ${ratingValue} for rating ID ${ratingId}`);
             try {           
                 const response = await fetch(`/api/v1/recipe_ratings/${ratingId}/`, {
                     method: 'PATCH',
@@ -444,8 +506,16 @@
                 });
                 
                 if (response.ok) {
-                    console.log('Rating updated!');
-                    window.location.reload();
+                    // Add animation to the star in the main view
+                    const ratingButton = document.getElementById('rating-button');
+                    ratingButton.classList.add('rating-success-animation');
+                    
+                    // Remove animation class after it completes
+                    ratingButton.addEventListener('animationend', () => {
+                        ratingButton.classList.remove('rating-success-animation');
+                        // Only reload after animation completes
+                        window.location.reload();
+                    });
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -464,10 +534,18 @@
                         author: userId
                     })
                 });
-
+    
                 if (response.ok) {
-                    console.log('New rating added!');
-                    window.location.reload();
+                    // Add animation to the star in the main view
+                    const ratingButton = document.getElementById('rating-button');
+                    ratingButton.classList.add('rating-success-animation');
+                    
+                    // Remove animation class after it completes
+                    ratingButton.addEventListener('animationend', () => {
+                        ratingButton.classList.remove('rating-success-animation');
+                        // Only reload after animation completes
+                        window.location.reload();
+                    });
                 }
             } catch (error) {
                 console.error('Error', error);
@@ -505,15 +583,52 @@
 
     deleteButton?.addEventListener('click', () => deleteRecipe(recipe.id));
 
+    
     // Add shopping list functionality
-    const addToShoppingListButton = document.getElementById('add-to-shopping-list-button')
+    const addToShoppingListButton = document.getElementById('add-to-shopping-list-button');
 
-    function addToShoppingList(recipeId) {
+    function addToShoppingList(recipeId, buttonElement) {
+        // Create tooltip
+        const shopping_list_tooltip = document.createElement('div');
+        shopping_list_tooltip.className = 'tooltip';
+        shopping_list_tooltip.textContent = 'Zu Einkaufsliste hinzugefügt!';
+        document.body.appendChild(shopping_list_tooltip);
+
+        // Make API call
         fetch(`/recipes/add-recipe-to-shopping-list/${recipeId}/`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(() => {
+                // Show tooltip
+                const rect = buttonElement.getBoundingClientRect();
+                shopping_list_tooltip.style.left = `${rect.left}px`;
+                shopping_list_tooltip.style.top = `${rect.bottom + 5}px`;
+                shopping_list_tooltip.classList.add('visible');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                shopping_list_tooltip.textContent = 'Ein Fehler ist aufgetreten';
+                shopping_list_tooltip.classList.add('error');
+            })
+            .finally(() => {
+                // Remove tooltip after delay
+                setTimeout(() => {
+                    shopping_list_tooltip.classList.remove('visible');
+                    document.body.removeChild(shopping_list_tooltip);
+                }, 1000);
+            });
     }
 
-    addToShoppingListButton?.addEventListener('click', () => addToShoppingList(recipe.id));
+    // Only add event listener if button exists
+    if (addToShoppingListButton) {
+        addToShoppingListButton.addEventListener('click', function() {
+            addToShoppingList(recipe.id, this);
+        });
+    }
 
 
 </script>

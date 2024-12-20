@@ -83,7 +83,7 @@ def recipe_detail(request, slug):
     recipe = get_object_or_404(Recipe.objects.annotate(
             avg_rating=Avg('ratings__rating'),
             rating_count=Count('ratings__rating'),
-            is_saved=Exists(
+            is_favorite=Exists(
                 SavedRecipe.objects.filter(recipe=OuterRef('pk'), user=request.user)
             ) if request.user.is_authenticated else Value(False),
             user_rating=Subquery(RecipeRating.objects.filter(recipe=OuterRef('pk'), author=request.user).values('rating')[:1]

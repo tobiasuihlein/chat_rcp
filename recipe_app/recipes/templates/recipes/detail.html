@@ -48,6 +48,9 @@
                         <span class="recipe-count-display">({{ recipe.rating_count }})</span>
                 </div>
                 <div class="recipe-user-panel">
+                    <button class="panel-icon" id="add-to-shopping-list-button" style="transform: scale(0.9)" title="Zur Einkaufsliste hinzufügen">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>    
+                    </button>
                     {% if recipe.author %}
                         <button class="panel-icon" id="recipe-author-button" style="transform: scale(0.9)" title="Chef aufrufen">
                             <a href="{% url 'chefs:profile' recipe.author %}">
@@ -500,8 +503,18 @@
         }
     }
 
-    // Add click event listener to delete button
     deleteButton?.addEventListener('click', () => deleteRecipe(recipe.id));
+
+    // Add shopping list functionality
+    const addToShoppingListButton = document.getElementById('add-to-shopping-list-button')
+
+    function addToShoppingList(recipeId) {
+        fetch(`/recipes/add-recipe-to-shopping-list/${recipeId}/`)
+            .then(response => response.json())
+    }
+
+    addToShoppingListButton?.addEventListener('click', () => addToShoppingList(recipe.id));
+
 
 </script>
 

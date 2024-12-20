@@ -30,29 +30,33 @@ def shopping_list(request):
     shopping_list = ShoppingRecipe.objects.filter(user=request.user)
     recipe_ids = shopping_list.values_list('recipe', flat=True)
 
-    for recipe in shopping_list:
-        print(recipe.recipe.slug)
+    print(recipe_ids)
 
-    items = ComponentIngredient.objects.filter(
-        recipe_component__recipe__in=recipe_ids
-    ).select_related(
-        'ingredient',
-        'ingredient__category'
-    ).values(
-        'ingredient__name',
-        'ingredient__category__name',
-        'unit',
-        'amount',
-        'ingredient_id'
-    ).order_by(
-        'ingredient__category__name',
-        'ingredient__name',
-        'unit'
-    )
+    all_items = []
+    for recipe_id in recipe_ids:
+        items = ComponentIngredient.objects.filter(
+            recipe_component__recipe_id=recipe_id
+        ).select_related(
+            'ingredient',
+            'ingredient__category'
+        ).values(
+            'ingredient__name',
+            'ingredient__category__name',
+            'unit',
+            'amount',
+            'ingredient_id'
+        )
+        all_items.extend(items)
+
+    all_items = sorted(all_items, 
+                      key=lambda x: (x['ingredient__category__name'], 
+                                   x['ingredient__name'], 
+                                   x['unit']))
+
 
     # Convert to list and aggregate amounts by ingredient
     aggregated_items = []
-    for ingredient_name, group in groupby(items, key=lambda x: x['ingredient__name']):
+    for ingredient_name, group in groupby(all_items, key=lambda x: x['ingredient__name']):
         group_list = list(group)
         # Group by unit and sum amounts
         unit_amounts = {}
@@ -317,7 +321,23 @@ def recipe_generated(request):
 
 ### Service views
 
-@login_required(login_url='chefs:login')
+def add_recipe_to_shopping_list(request, recipe_id):
+
+    recipe = get_object_or_404(Recipe, pk=recipe_id)
+    added_recipe = ShoppingRecipe.objects.create(recipe=recipe, user=request.user)
+
+    if added_recipe:
+        return JsonResponse({'status': 'recipe_added_to_shopping_list'})
+    else:
+        return JsonResponse({'status': 'request failed'})
+    
+def remove_recipe_from_shopping_list(request, shopping_recipe_id):
+
+    shopping_recipe = get_object_or_404(ShoppingRecipe, pk=shopping_recipe_id)
+    shopping_recipe.delete()
+
+    return JsonResponse({'status': 'recipe_removed_from_shopping_list'})
+
 def toggle_save_recipe(request, recipe_id):
     if not request.user.is_authenticated:
         return JsonResponse({'error': 'Login required'}, status=401)
@@ -332,7 +352,6 @@ def toggle_save_recipe(request, recipe_id):
         SavedRecipe.objects.create(recipe=recipe, user=request.user)
         return JsonResponse({'status': 'saved'})
 
-@login_required
 def rate_recipe(request, recipe_id):
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=405)

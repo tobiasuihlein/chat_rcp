@@ -38,11 +38,8 @@ class RecipeImageAdmin(admin.ModelAdmin):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('title', 'difficulty', 'beverage', 'get_cuisine_types', 'author')
+    list_display = ('title', 'difficulty', 'author')
     inlines = [RecipeImageInline]
-
-    def get_cuisine_types(self, obj):
-        return ", ".join([cuisine_type.name for cuisine_type in obj.cuisine_types.all()])
     
 @admin.register(RecipeComponent)
 class RecipeComponentAdmin(admin.ModelAdmin):
@@ -59,21 +56,9 @@ class IngredientCategoryAdmin(admin.ModelAdmin):
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'language')
 
-@admin.register(RecipeCategory)
-class RecipeCategoryAdmin(admin.ModelAdmin):
-    pass
-
 @admin.register(Diet)
 class DietAdmin(admin.ModelAdmin):
     pass
-
-@admin.register(CookingMethod)
-class CookingMethodAdmin(admin.ModelAdmin):
-    pass
-
-@admin.register(Beverage)
-class BeverageAdmin(admin.ModelAdmin):
-    list_display = ('name', 'type')
 
 @admin.register(RecipeRating)
 class RecipeRatingAdmin(admin.ModelAdmin):

@@ -211,32 +211,14 @@ def recipe_to_database(recipe):
                 code = recipe['language']
             )
 
-            recipe_category_object, _ = RecipeCategory.objects.get_or_create(
-                name = recipe['category'],
-                language = language_object
-            )
-
-            beverage_type_object, _ = BeverageType.objects.get_or_create(
-                name = recipe['beverage']['type'],
-                language = language_object
-            )
-
-            beverage_object, _ = Beverage.objects.get_or_create(
-                name = recipe['beverage']['name'],
-                type = beverage_type_object,
-                language = language_object
-            )
-
             recipe_object = Recipe.objects.create(
                 title = recipe['title'],
                 description = recipe['description'],
                 difficulty = recipe['difficulty'],
                 default_servings = int(recipe.get('servings', 0)),
                 storage = recipe['storage'],
-                category = recipe_category_object,
                 cost = int(recipe.get('cost', 0)),
                 spiciness = int(recipe.get('spiciness', 0)),
-                beverage = beverage_object,
                 language = language_object
             )
 
@@ -247,13 +229,6 @@ def recipe_to_database(recipe):
                         recipe = recipe_object,
                         language = language_object
                     )
-
-            for cuisine_type in recipe['cuisine_type']:
-                type_object, _ = CuisineType.objects.get_or_create(
-                    name = cuisine_type,
-                    language = language_object
-                )
-                recipe_object.cuisine_types.add(type_object)
 
             for equipment in recipe['equipment']:
                 equipment_object, _ = Equipment.objects.get_or_create(
@@ -268,13 +243,6 @@ def recipe_to_database(recipe):
                     language = language_object
                 )
                 recipe_object.diets.add(diet_object)
-            
-            for cooking_method in recipe['cooking_method']:
-                cooking_method_object, _ = CookingMethod.objects.get_or_create(
-                    name = cooking_method,
-                    language = language_object
-                )
-                recipe_object.cooking_methods.add(cooking_method_object)
 
             for hashtag in recipe['hashtags']:
                 hashtag_object, _ = Hashtag.objects.get_or_create(
@@ -436,18 +404,11 @@ def create_recipe_prompt_for_image() -> str:
                     "tip2"
                 ]
                 "storage": "string",
-                "cuisine_type": ['cuisine_type_1', 'cuisine_type_2', ...],
                 "equipment": ['equipment_1', 'equipment_2', ...],
-                "category": "type of dish (e.g., 'Main course', 'Soup', or 'Dessert'),
                 "diet": ["diet restriction one (e.g. 'Vegetarian')", "diet restriction two (e.g., 'Gluten-Free')"],
-                "cooking_method": ["cooking method one (e.g. 'Grilling')", "cooking method two (e.g., 'Baking')"],
                 "cost": "cost of the dish (use the numbers of the following mapping: 'budget'->1, 'moderate'->2, 'premium'->3)",
                 "spiciness": "pungency level (use the numbers of the following mapping: 'not spicy'->0, 'mild'->1, 'medium'->2, 'hot'->3)",
-                "beverage": {{
-                    "name": string // name of the beverage (e.g., Chardonnay) // Beverage recommendation
-                    "type": string // type of beverage (e.g., White Wine)
-                }}
-                "hashtags": ["hashtag one (e.g., 'Winter')", "hashtag two (e.g., 'Classic')", "hashtag three (e.g. Super-Sweet)", "hashtag four (e.g., Party-Food)", "hashtag five (e.g. Birthday)],
+                "hashtags": ["hashtag one (e.g., 'Winter')", "hashtag two (e.g., 'Classic')", "hashtag three (e.g. Breakfast)", "hashtag four (e.g., Party-Food)", "hashtag five (e.g., Dessert)", "hashtag six (e.g., Pasta)", "hashtag seven (e.g., French)"],
             }}
         ]
     }}
@@ -553,18 +514,11 @@ def create_recipe_prompt_by_description(recipe_description: str) -> str:
                     "tip2"
                 ]
                 "storage": "string",
-                "cuisine_type": ['cuisine_type_1', 'cuisine_type_2', ...],
                 "equipment": ['equipment_1', 'equipment_2', ...],
-                "category": "type of dish (e.g., 'Main course', 'Soup', or 'Dessert'),
                 "diet": ["diet restriction one (e.g. 'Vegetarian')", "diet restriction two (e.g., 'Gluten-Free')"],
-                "cooking_method": ["cooking method one (e.g. 'Grilling')", "cooking method two (e.g., 'Baking')"],
                 "cost": "cost of the dish (use the numbers of the following mapping: 'budget'->1, 'moderate'->2, 'premium'->3)",
                 "spiciness": "pungency level (use the numbers of the following mapping: 'not spicy'->0, 'mild'->1, 'medium'->2, 'hot'->3)",
-                "beverage": {{
-                    "name": string // name of the beverage (e.g., Chardonnay) // Beverage recommendation
-                    "type": string // type of beverage (e.g., White Wine)
-                }}
-                "hashtags": ["hashtag one (e.g., 'Winter')", "hashtag two (e.g., 'Classic')", "hashtag three (e.g. Super-Sweet)", "hashtag four (e.g., Party-Food)", "hashtag five (e.g. Birthday)],
+                "hashtags": ["hashtag one (e.g., 'Winter')", "hashtag two (e.g., 'Classic')", "hashtag three (e.g. Breakfast)", "hashtag four (e.g., Party-Food)", "hashtag five (e.g., Dessert)", "hashtag six (e.g., Pasta)", "hashtag seven (e.g., French)"],
             }}
         ]
     }}

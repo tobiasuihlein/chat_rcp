@@ -15,22 +15,6 @@
 <div class="row-wrapper section-row" style="margin-top: 0; margin-bottom: 0">
     <div class="row-content">
         <div class="widget recipe-pad">
-            {% comment %} <div class="recipe-image-container">
-                {% if recipe.image %}
-                    <img class="recipe-image" src="{{ recipe.image.image.url }}" alt="{{ recipe.image.alt_text }}">
-                {% else %}
-                    <svg class="recipe-image" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-                        <rect width="100" height="100" fill="#F2F3EE"/>
-                        <g transform="translate(25, 30)" fill="none" stroke="#D5D6CF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="0" y="8" width="50" height="35" rx="4"/>
-                            <rect x="15" y="3" width="20" height="5" rx="1"/>
-                            <circle cx="25" cy="25" r="10"/>
-                            <circle cx="25" cy="25" r="6"/>
-                            <circle cx="42" cy="16" r="2" fill="#D5D6CF"/>
-                        </g>
-                    </svg>
-                {% endif %}
-            </div> {% endcomment %}
             <div class="recipe-top-panel">
                 <div class="stars" {% if user.is_authenticated %} id="rating-button" {% endif %} title="Rezept bewerten" >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -70,40 +54,60 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="recipe-title">
-                <span>{{ recipe.title }}</span>
-            </div>
-            <div style="font-size: 1.1rem; font-weight: 500; color: indianred; margin-top: 1.1rem; text-align: center;">
-                {{ recipe.get_difficulty_display }} • 
-                <span title="{% for time in recipe.times.all %}{{ time.value|time_converter }} {{ time.name }}&#13;&#10;{% endfor %}">{{ recipe.time_total|time_converter}}</span>
-            </div>
-            <div class="recipe-description">
-                <div style="max-width: 500px; text-align: center"><span>{{ recipe.description }}</span></div>
-            </div>
-            <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem; margin-top: 1.4rem;">
-                <div class="recipe-difficulty recipe-difficulty-X" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; background: none;">
-                    <span style="line-height: 1;">
-                        <span id="servings-display">
-                            {{ recipe.default_servings }}</span>
-                        {% if recipe.default_servings == 1%}
-                            Portion
-                        {% else %}
-                            Portionen
-                        {% endif %}
-                    </span>
-                    <div class="servings-buttons-container">
-                        <button class="servings-button" id="decrease-servings">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-minus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
-                        </button>
-                        <button class="servings-button" id="increase-servings">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
-                        </button>
+            <div style="display: flex; column-gap: 2rem; row-gap: 1rem; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 1.4rem;">
+                <div class="recipe-image-container" style="max-width: 240px; flex-grow: 1;">
+                    {% if recipe.image %}
+                        <img class="recipe-image" src="{{ recipe.image.image.url }}" alt="{{ recipe.image.alt_text }}">
+                    {% else %}
+                        <svg class="recipe-image" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                            <rect width="100" height="100" fill="#F2F3EE"/>
+                            <g transform="translate(25, 30)" fill="none" stroke="#D5D6CF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="0" y="8" width="50" height="35" rx="4"/>
+                                <rect x="15" y="3" width="20" height="5" rx="1"/>
+                                <circle cx="25" cy="25" r="10"/>
+                                <circle cx="25" cy="25" r="6"/>
+                                <circle cx="42" cy="16" r="2" fill="#D5D6CF"/>
+                            </g>
+                        </svg>
+                    {% endif %}
+                </div>
+                <div style="min-width: 280px; flex-grow: 3;">
+                    <div class="recipe-title">
+                        <span>{{ recipe.title }}</span>
+                    </div>
+                    <div style="font-size: 1.1rem; font-weight: 500; color: indianred; margin-top: 1.1rem; text-align: left;">
+                        {{ recipe.get_difficulty_display }} • 
+                        <span title="{% for time in recipe.times.all %}{{ time.value|time_converter }} {{ time.name }}&#13;&#10;{% endfor %}">{{ recipe.time_total|time_converter}}</span>
+                    </div>
+                    <div class="recipe-description">
+                        <div style="max-width: 500px; text-align: left"><span>{{ recipe.description }}</span></div>
                     </div>
                 </div>
             </div>
         
             <div class="recipe-pad-row">
                 <div class="recipe-pad-content">
+                    <div style="display: flex; justify-content: flex-start; align-items: center; gap: 0.4rem; margin-bottom: 0.8rem;">
+                        <div class="recipe-difficulty recipe-difficulty-X" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; background: none;">
+                            <span style="line-height: 1;">
+                                {% if recipe.default_servings == 1%}
+                                    Portion:
+                                {% else %}
+                                    Portionen:
+                                {% endif %}
+                            </span>
+                            <div class="servings-buttons-container">
+                                <button class="servings-button" id="decrease-servings">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-minus"><path d="M8 12h8"/></svg>
+                                </button>
+                                <div id="servings-display">
+                                    {{ recipe.default_servings }}</div>
+                                <button class="servings-button" id="increase-servings">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <div>
                         {% for component in recipe.components.all %}
                             <div class="main-ingredients"><span style="font-weight: 400">{{ component.name }}</span><br>
@@ -208,6 +212,42 @@
 </div>
 
 
+<div id="image-upload-overlay-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #F2F3EE;">
+    <div style="padding: 1rem; display: flex; width: 100%; flex-direction: column; align-items: center; gap: 1.4rem; justify-content: center;">
+        <div>
+            <button class="panel-icon" id="image-upload-overlay-close-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-x"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            </button>
+        </div>
+        <div style="font-size: 1.4rem;">
+            Foto hochladen
+        </div>
+        <form method="POST" action="{% url 'recipes:upload_recipe_image' recipe.slug %}" enctype="multipart/form-data" class="image-upload-form" id="image-upload">
+            {% csrf_token %}
+            
+            {% if image_form.errors %}
+            <div class="alert alert-danger">
+                {% for field in image_form %}
+                    {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="image-form-field">
+                <div><label for="{{ image_form.image.id_for_label }}">Recipe Image:</label></div>
+                <div>{{ image_form.image }}</div>
+            </div>
+
+            <button id="submit-image-upload-button" class="submit-button" style="padding-left: 1rem; padding-right: 1rem; margin-top: 0;">
+                ABSENDEN
+            </button>
+        </form>
+    </div>
+</div>
+
+
 <div id="recipe-panel-menu-overlay-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #F2F3EE;">
     <div style="padding: 1rem; display: flex; width: 100%; flex-direction: column; align-items: center; gap: 1.4rem; justify-content: center;">
         <div>
@@ -255,6 +295,12 @@
                     <a href="{% url 'chefs:profile' recipe.author %}" class="panel-icon-overlay" id="recipe-author-button" title="Chef aufrufen">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                         <div style="margin-left: 0.6rem;">Chef aufrufen</div>
+                    </a>
+                </div>
+                <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
+                    <a class="panel-icon-overlay" id="image-upload-button" title="Foto hochladen">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                        <div style="margin-left: 0.6rem;">Foto hochladen</div>
                     </a>
                 </div>
                 {% endif %}
@@ -415,6 +461,24 @@
 
     recipePanelMenuOverlayCloseButton.addEventListener('click', function() {
         recipePanelMenuOverlayContainer.style.display = 'none';
+    });
+
+
+    // Image upload overlay functionality
+
+    const imageUploadOverlay = document.getElementById('image-upload-overlay-container');
+    const imageUploadButton = document.getElementById('image-upload-button');
+    const imageUploadForm = document.getElementById('image-upload-form');
+    const submitImageUploadButton = document.getElementById('submit-image-upload-button');
+    const imageUploadOverlayCloseButton = document.getElementById('image-upload-overlay-close-button');
+
+    imageUploadButton.addEventListener('click', function() {
+        imageUploadOverlay.style.display = 'flex';
+        recipePanelMenuOverlayContainer.style.display = 'none';
+    });
+
+    imageUploadOverlayCloseButton.addEventListener('click', function() {
+        imageUploadOverlay.style.display = 'none';
     });
 
 

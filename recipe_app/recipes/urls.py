@@ -19,4 +19,6 @@ urlpatterns = [
     path('shopping-list', views.shopping_list, name='shopping_list'),
     path('add-recipe-to-shopping-list/<int:recipe_id>/', views.add_recipe_to_shopping_list, name='add_recipe_to_shopping_list'),
     path('remove-recipe-from-shopping-list/<int:shopping_recipe_id>/', views.remove_recipe_from_shopping_list, name='remove_recipe_from_shopping_list'),
+    path('recipe/<slug:slug>/upload-image/', views.upload_recipe_image, name='upload_recipe_image'),
+
 ]

@@ -104,7 +104,8 @@ def recipe_detail(request, slug):
         ),
         slug=slug
     )
-    return render(request, 'recipes/detail.html', {'recipe_id': recipe.id, 'recipe': recipe})
+    image_form = RecipeImageForm()
+    return render(request, 'recipes/detail.html', {'recipe_id': recipe.id, 'recipe': recipe, 'image_form': image_form})
 
 
 ### List views ###
@@ -393,3 +394,31 @@ def rate_recipe(request, recipe_id):
         return JsonResponse({'error': 'Recipe not found'}, status=404)
     except (ValueError, KeyError):
         return JsonResponse({'error': 'Invalid data'}, status=400)
+    
+
+@login_required
+def upload_recipe_image(request, slug):
+    recipe = get_object_or_404(Recipe, slug=slug)
+    
+    # Check if user has permission to modify this recipe
+    if recipe.author != request.user:
+        messages.error(request, "You don't have permission to modify this recipe.")
+        return redirect('recipes:detail',  slug=slug)
+    
+    if request.method == 'POST':
+        form = RecipeImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            image = form.save(commit=False)
+            image.recipe = recipe
+            image.alt_text = request.FILES['image'].name
+            image.save()
+            
+            messages.success(request, 'Image uploaded successfully!')
+            return redirect('recipes:detail', slug=slug)
+    else:
+        form = RecipeImageForm()
+    
+    return render(request, 'recipes/upload_image.html', {
+        'form': form,
+        'recipe': recipe
+    })

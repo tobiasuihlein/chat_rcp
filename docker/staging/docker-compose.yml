@@ -19,6 +19,7 @@ services:
     volumes:
       - ../../logs:/app/logs
       - ../../recipe_app/db.sqlite3:/app/recipe_app/db.sqlite3
+      - ../../recipe_app/recipe_images:/app/recipe_app/recipe_images
     networks:
       - chatrcp-network
 

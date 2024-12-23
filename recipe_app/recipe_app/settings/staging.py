@@ -35,6 +35,9 @@ STATIC_ROOT = '/app/staticfiles'
 STATIC_URL = 'static/'
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
+# Media files settings
+MEDIA_ROOT = os.path.join(BASE_DIR, 'recipe_images')
+MEDIA_URL = '/media/'
 
 LOGGING = {
     'version': 1,

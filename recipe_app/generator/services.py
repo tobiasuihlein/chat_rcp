@@ -423,7 +423,7 @@ def create_recipe_prompt_for_image() -> str:
     7. Notes for ingredients must be short
     8. For the list of cuisine types, include all relevant cuisines
     9. For the hashtags, try to use single words if possible, else user '-' to combine, always use capitalized words (e.g. Super-Sweet, Party-Food, Sharing-Plate)
-    10. For the hashtags, do not repeat other properties already provided (such as cuisine type or cost)
+    10. For the hashtags, provide any reasonable information (e.g., cuisine type, main ingredient, dish type etc.)
     11. For expert level dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
     12. Amount field for ingredients must be a digit number with max. 2 decimal places
     13. Use the same language for all output fields including ingredient category, hashtags, category, diet, cuisine_types, and cooking_method
@@ -432,7 +432,7 @@ def create_recipe_prompt_for_image() -> str:
     16. Make sure to include all igredients for each component (i.e. including salt, spices, herbs etc.)
     17. If no diet restriction applicable: provide empty list
 
-    Language: German
+    Language: If not explicitely specified otherwise, always create the recipes and the ingredients in German
 
     VALIDATION REQUIREMENTS:
     1. Response MUST be complete, valid JSON
@@ -533,7 +533,7 @@ def create_recipe_prompt_by_description(recipe_description: str) -> str:
     7. Notes for ingredients must be short
     8. For the list of cuisine types, include all relevant cuisines
     9. For the hashtags, try to use single words if possible, else user '-' to combine, always use capitalized words (e.g. Super-Sweet, Party-Food, Sharing-Plate)
-    10. For the hashtags, do not repeat other properties already provided (such as cuisine type or cost)
+    10. For the hashtags, provide any reasonable information (e.g., cuisine type, main ingredient, dish type etc.)
     11. For expert level dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
     12. Amount field for ingredients must be a digit number with max. 2 decimal places
     13. Use the same language for all output fields including ingredient category, hashtags, category, diet, cuisine_types, and cooking_method
@@ -542,7 +542,7 @@ def create_recipe_prompt_by_description(recipe_description: str) -> str:
     16. Make sure to include all igredients for each component (i.e. including salt, spices, herbs etc.)
     17. If no diet restriction applicable: provide empty list
 
-    Language: German
+    Language: If not explicitely specified otherwise, always create the recipes and the ingredients in German
 
     VALIDATION REQUIREMENTS:
     1. Response MUST be complete, valid JSON

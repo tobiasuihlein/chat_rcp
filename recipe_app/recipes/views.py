@@ -6,6 +6,7 @@ from generator.utils.helpers import sort_previews
 from generator.services import *
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
+from django.db.models import BooleanField, IntegerField
 from django.db.models import Avg, Count, Exists, OuterRef, Value, Subquery
 from .models import *
 from .forms import *
@@ -95,11 +96,11 @@ def recipe_detail(request, slug):
             rating_count=Count('ratings__rating'),
             is_favorite=Exists(
                 SavedRecipe.objects.filter(recipe=OuterRef('pk'), user=request.user)
-            ) if request.user.is_authenticated else Value(False),
+            ) if request.user and request.user.is_authenticated else Value(False, output_field=BooleanField()),
             user_rating=Subquery(RecipeRating.objects.filter(recipe=OuterRef('pk'), author=request.user).values('rating')[:1]
-            ) if request.user.is_authenticated else Value(None),
+            ) if request.user and request.user.is_authenticated else Value(None, output_field=IntegerField(null=True)),
             rating_id=Subquery(RecipeRating.objects.filter(recipe=OuterRef('pk'), author=request.user).values('id')[:1]
-            ) if request.user.is_authenticated else Value(None),
+            ) if request.user and request.user.is_authenticated else Value(None, output_field=IntegerField(null=True)),
         ),
         slug=slug
     )
@@ -108,11 +109,10 @@ def recipe_detail(request, slug):
 
 ### List views ###
 
-class RecipeListBaseView(LoginRequiredMixin, ListView):
+class RecipeListBaseView(ListView):
     model = Recipe
     template_name = 'recipes/list.html'
     context_object_name = 'recipes'
-    login_url = 'chefs:login'
     
     def get_base_queryset(self):
         raise NotImplementedError

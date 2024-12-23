@@ -32,7 +32,7 @@
                 {% endif %}
             </div> {% endcomment %}
             <div class="recipe-top-panel">
-                <div class="stars" id="rating-button" title="Rezept bewerten">
+                <div class="stars" {% if user.is_authenticated %} id="rating-button" {% endif %} title="Rezept bewerten" >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path
                             d="M12 1.726l2.338 7.196h7.566l-6.121 4.448 2.338 7.196L12 16.118l-6.121 4.448 2.338-7.196L2.096 8.922h7.566z"
@@ -43,7 +43,7 @@
                         />
                     </svg>
                         {% if recipe.avg_rating %}
-                            &thinsp;{{ recipe.avg_rating }}
+                            &thinsp;{{ recipe.avg_rating|floatformat:1  }}
                         {% endif %}
                         <span class="recipe-count-display">({{ recipe.rating_count }})</span>
                 </div>
@@ -225,12 +225,15 @@
                     <div style="margin-left: 0.6rem;">Teilen</div>
                 </button>
             </div>
+            {% if user.is_authenticated %}
             <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
                 <button class="panel-icon-overlay" id="add-to-shopping-list-button" title="Zu Einkaufsliste hinzufügen">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>    
                     <div style="margin-left: 0.6rem;">Zu Einkaufsliste hinzufügen</div>
                 </button>
             </div>
+            {% endif %}
+            {% if user.is_authenticated %}
             <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
                 <button class="panel-icon-overlay" id="rating-button-overlay-menu" title="Rezept bewerten">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -245,13 +248,16 @@
                     <div style="margin-left: 0.6rem;">Rezept bewerten</div>
                 </button>
             </div>
-            {% if recipe.author %}
-            <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
-                <a href="{% url 'chefs:profile' recipe.author %}" class="panel-icon-overlay" id="recipe-author-button" title="Chef aufrufen">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    <div style="margin-left: 0.6rem;">Chef aufrufen</div>
-                </a>
-            </div>
+            {% endif %}
+            {% if user.is_authenticated %}
+                {% if recipe.author %}
+                <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
+                    <a href="{% url 'chefs:profile' recipe.author %}" class="panel-icon-overlay" id="recipe-author-button" title="Chef aufrufen">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <div style="margin-left: 0.6rem;">Chef aufrufen</div>
+                    </a>
+                </div>
+                {% endif %}
             {% endif %}
             {% if request.user == recipe.author %}
             <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
@@ -429,6 +435,15 @@
 
     ratingButton.addEventListener('click', function() {
         ratingOverlay.style.display = 'flex';
+    });
+
+
+    const isAuthenticated = {{ is_authenticated|yesno:"true,false" }};
+    
+    ratingButton.addEventListener('click', function() {
+        if (isAuthenticated) {
+            ratingOverlay.style.display = 'flex';
+        }
     });
 
     ratingButtonOverlayMenu.addEventListener('click', function() {

@@ -31,12 +31,21 @@
             </a>
             <div>
                 {% if user.is_authenticated %}
-                <div style="display: flex; align-items: center; gap: 0.4rem; margin-right: 0.4rem;">
-                    <button class="navlink-mobile" id="profile-button" style="" title="Profil ansehen">
-                        <a href="{% url 'chefs:profile' user.username %}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        </a>
-                    </button>
+                <div style="display: flex; gap: 0.8rem;">
+                    <div style="display: flex; align-items: center; gap: 0.4rem; margin-right: 0.4rem;">
+                        <button class="navlink-mobile" id="profile-button" style="" title="Profil ansehen">
+                            <a href="{% url 'recipes:create_with_text' %}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                            </a>
+                        </button>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.4rem; margin-right: 0.4rem;">
+                        <button class="navlink-mobile" id="profile-button" style="" title="Profil ansehen">
+                            <a href="{% url 'chefs:profile' user.username %}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </a>
+                        </button>
+                    </div>
                 </div>
                 {% else %}
                 <a href="{% url 'chefs:login' %}">
@@ -82,12 +91,6 @@
                     <div class="navlink-mobile">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                         <span>Entdecken</span>
-                    </div>
-                </a>
-                <a href="{% url 'recipes:create_with_text' %}">
-                    <div class="navlink-mobile">                      
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                        Erstellen               
                     </div>
                 </a>
                 <a href="{% url 'recipes:generate' %}" style="display: none">

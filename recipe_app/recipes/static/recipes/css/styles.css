@@ -138,7 +138,7 @@ ul {
 }
 .navbar-list {
     display: inline-flex;
-    gap: clamp(0.5rem, 5vw, 5rem);
+    gap: clamp(2.5rem, 5vw, 5rem);
     list-style: none;
     font-weight: 400;
 }

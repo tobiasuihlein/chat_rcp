@@ -78,10 +78,19 @@
                 </div>
                 <a href="{{ preview.get_absolute_url }}" class="clickable-wrapper">
                     <div class="card-recipe-container">
-                        <div class="title" style="margin-bottom: 0.3rem;">{{ preview.title }}</div>
-                        <div style="font-size: 1rem; font-weight: 500; color: indianred; margin-bottom: 0.5rem;">
-                            {{ preview.get_difficulty_display }} • 
-                            {{ preview.time_total|time_converter}}
+                        <div style="display: flex; column-gap: 0.8rem; row-gap: 0.2rem; justify-content: left; align-items: center; margin-top: 0.4rem; margin-bottom: 0.2rem;">
+                            {% if preview.image %}
+                                <div class="recipe-image-container" style="width: 80px;">
+                                        <img class="recipe-image" src="{{ preview.image.image.url }}" alt="{{ preview.image.alt_text }}">
+                                </div>
+                            {% endif %}
+                            <div>
+                                <div class="title" style="margin-bottom: 0.3rem;">{{ preview.title }}</div>
+                                <div style="font-size: 1rem; font-weight: 500; color: indianred; line-height: 1.4rem;">
+                                    {{ preview.get_difficulty_display }} • {{ preview.time_total|time_converter}} 
+                                    
+                                </div>
+                            </div>
                         </div>
                         <div class="description">{{ preview.description }}</div>
                         <div class="preview-card-bottom-panel">

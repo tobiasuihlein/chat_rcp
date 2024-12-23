@@ -127,6 +127,9 @@ class RecipeListBaseView(ListView):
                     return queryset
             return FilteredSearchManager().advanced_search(search_input)
         return queryset
+    
+    def sort_recipes(self, queryset):
+        raise NotImplementedError
 
     def apply_annotations(self, queryset):
         return annotate_recipes(queryset, self.request.user)
@@ -139,17 +142,23 @@ class RecipeListBaseView(ListView):
         if search_input:
             queryset = queryset.order_by('-search_rank', 'title')
         else:
-            queryset = queryset.order_by('-created_at')
+            queryset = self.sort_recipes(queryset)
             
-        return self.apply_annotations(queryset)
+        return self.apply_annotations(queryset)[:25]
 
 class ExploreView(RecipeListBaseView):
     def get_base_queryset(self):
-        return Recipe.objects.all().order_by('-created_at')
+        return Recipe.objects.all()
+    
+    def sort_recipes(self, queryset):
+        return queryset.order_by('-created_at')
 
 class LibraryView(RecipeListBaseView):
     def get_base_queryset(self):
-        return Recipe.objects.filter(favorites__user=self.request.user).order_by('-created_at')
+        return Recipe.objects.filter(favorites__user=self.request.user)
+    
+    def sort_recipes(self, queryset):
+        return queryset.order_by('-favorites__saved_at')
     
 class AuthorRecipesView(RecipeListBaseView):
     def get_base_queryset(self):

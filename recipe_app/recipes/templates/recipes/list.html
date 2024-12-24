@@ -33,68 +33,74 @@
 
 <div class="row-wrapper section-row" style="margin-top: 0;">
     <div class="row-content">
-        {% for preview in recipes %}
-            <div class="card card-clickable preview-card" style="padding: 0.4rem;">
-                <a href="{{ preview.get_absolute_url }}" class="clickable-wrapper">
-                    <div class="card-recipe-container">
-                        <div style="display: flex; column-gap: 0.8rem; row-gap: 0.2rem; justify-content: left; align-items: center; {% if preview.image %} margin-bottom: 0.4rem; {% endif %}">
-                            {% if preview.image %}
-                                <div class="recipe-image-container" style="width: 60px;">
-                                        <img class="recipe-image" src="{{ preview.image.image.url }}" alt="{{ preview.image.alt_text }}">
-                                </div>
-                            {% endif %}
-                            <div>
-                                <div class="title" style="margin-bottom: 0.1rem;">{{ preview.title }}</div>
-                                <div style="font-size: 0.8rem; font-weight: 500; color: indianred; line-height: 1.4rem;">
-                                    {{ preview.get_difficulty_display }} • {{ preview.time_total|time_converter}} 
-                                    
+        {% if recipes %}
+            {% for preview in recipes %}
+                <div class="card card-clickable preview-card" style="padding: 0.4rem;">
+                    <a href="{{ preview.get_absolute_url }}" class="clickable-wrapper">
+                        <div class="card-recipe-container">
+                            <div style="display: flex; column-gap: 0.8rem; row-gap: 0.2rem; justify-content: left; align-items: center; {% if preview.image %} margin-bottom: 0.4rem; {% endif %}">
+                                {% if preview.image %}
+                                    <div class="recipe-image-container" style="width: 60px;">
+                                            <img class="recipe-image" src="{{ preview.image.image.url }}" alt="{{ preview.image.alt_text }}">
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <div class="title" style="margin-bottom: 0.1rem;">{{ preview.title }}</div>
+                                    <div style="font-size: 0.8rem; font-weight: 500; color: indianred; line-height: 1.4rem;">
+                                        {{ preview.get_difficulty_display }} • {{ preview.time_total|time_converter}} 
+                                        
+                                    </div>
                                 </div>
                             </div>
+                            <div class="description">{{ preview.description }}</div>
                         </div>
-                        <div class="description">{{ preview.description }}</div>
-                    </div>
-                </a>
-                <div class="recipe-properties-container">
-                    <div class="stars">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path
-                                d="M12 1.726l2.338 7.196h7.566l-6.121 4.448 2.338 7.196L12 16.118l-6.121 4.448 2.338-7.196L2.096 8.922h7.566z"
-                                fill="currentColor"
-                                stroke="currentColor"
-                                stroke-width="1"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
-                            {% if preview.avg_rating %}
-                                &thinsp;{{ preview.avg_rating|floatformat:1  }}
-                            {% else %}
-                                <span></span>
-                            {% endif %}
-                            <span class="recipe-count-display">({{ preview.rating_count }})</span>
-                    </div>
+                    </a>
+                    <div class="recipe-properties-container">
+                        <div class="stars">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 1.726l2.338 7.196h7.566l-6.121 4.448 2.338 7.196L12 16.118l-6.121 4.448 2.338-7.196L2.096 8.922h7.566z"
+                                    fill="currentColor"
+                                    stroke="currentColor"
+                                    stroke-width="1"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+                                {% if preview.avg_rating %}
+                                    &thinsp;{{ preview.avg_rating|floatformat:1  }}
+                                {% else %}
+                                    <span></span>
+                                {% endif %}
+                                <span class="recipe-count-display">({{ preview.rating_count }})</span>
+                        </div>
 
-                    <div class="recipe-user-panel">
-                        {% if request.user.is_authenticated %}
-                            {% if preview.is_favorite %}
-                                <button class="panel-icon" id="bookmark-icon-saved-{{ preview.id }}" style="display: flex">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="indianred" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-                                </button>
-                                <button class="panel-icon" id="bookmark-icon-unsaved-{{ preview.id }}" style="display: none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
-                                </button>
-                            {% else %}
-                                <button class="panel-icon" id="bookmark-icon-saved-{{ preview.id }}" style="display: none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="indianred" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-                                </button>
-                                <button class="panel-icon" id="bookmark-icon-unsaved-{{ preview.id }}" style="display: flex">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>    
-                                </button>
+                        <div class="recipe-user-panel">
+                            {% if request.user.is_authenticated %}
+                                {% if preview.is_favorite %}
+                                    <button class="panel-icon" id="bookmark-icon-saved-{{ preview.id }}" style="display: flex">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="indianred" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                                    </button>
+                                    <button class="panel-icon" id="bookmark-icon-unsaved-{{ preview.id }}" style="display: none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+                                    </button>
+                                {% else %}
+                                    <button class="panel-icon" id="bookmark-icon-saved-{{ preview.id }}" style="display: none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="indianred" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-check"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                                    </button>
+                                    <button class="panel-icon" id="bookmark-icon-unsaved-{{ preview.id }}" style="display: flex">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>    
+                                    </button>
+                                {% endif %}
                             {% endif %}
-                        {% endif %}
+                        </div>
                     </div>
                 </div>
+            {% endfor %}
+        {% else %}
+            <div>
+                <span>Keine Ergebnisse.</span>
             </div>
-        {% endfor %} 
+        {% endif %}
     </div>
 </div>
 

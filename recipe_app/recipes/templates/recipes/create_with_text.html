@@ -49,6 +49,7 @@
         <form method="post" action="{% url 'recipes:new_recipe_by_text' %}" id="recipe-text-form">
             {% csrf_token %}
             <div class="input-field-container" style="text-align: center; width: 100%;">
+                {% if recipe %}
                 <textarea name="recipe-description" style="width: 100%; min-height: 40vh; border-radius: 6px; padding: 1rem;">
 {{ recipe.title }}
 
@@ -89,6 +90,9 @@ KEYWORDS
 {% for keyword in recipe.hashtags.all %}-{{ keyword }}
 {% endfor %}
 </textarea>
+            {% else %}
+            <textarea name="recipe-description" style="width: 100%; min-height: 40vh; border-radius: 6px; padding: 1rem;"></textarea>
+            {% endif %}
             </div>
             {% if recipe %}
                 <input type="hidden" id="recipe_id_field" name="recipe_id" value="{{ recipe.id }}">

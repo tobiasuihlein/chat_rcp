@@ -203,101 +203,129 @@ class ClaudeRecipeGeneratorService:
             raise ValueError("JSON could not be decoded properly.")
 
 
-def recipe_to_database(recipe):
+def recipe_to_database(recipe, recipe_id):
     try:
         with transaction.atomic():
-
             language_object, _ = Language.objects.get_or_create(
-                code = recipe['language']
+                code=recipe['language']
             )
 
-            recipe_object = Recipe.objects.create(
-                title = recipe['title'],
-                description = recipe['description'],
-                difficulty = recipe['difficulty'],
-                default_servings = int(recipe.get('servings', 0)),
-                storage = recipe['storage'],
-                cost = int(recipe.get('cost', 0)),
-                spiciness = int(recipe.get('spiciness', 0)),
-                language = language_object
-            )
+            if recipe_id:
+                # Get existing recipe
+                recipe_object = Recipe.objects.get(id=recipe_id)
+                
+                # Update basic fields
+                recipe_object.title = recipe['title']
+                recipe_object.description = recipe['description']
+                recipe_object.difficulty = recipe['difficulty']
+                recipe_object.default_servings = int(recipe.get('servings', 0))
+                recipe_object.storage = recipe['storage']
+                recipe_object.cost = int(recipe.get('cost', 0))
+                recipe_object.spiciness = int(recipe.get('spiciness', 0))
+                recipe_object.language = language_object
+                recipe_object.save()
 
+                # Clear existing relationships
+                recipe_object.equipments.clear()
+                recipe_object.diets.clear()
+                recipe_object.hashtags.clear()
+                
+                # Delete related objects
+                RecipeTime.objects.filter(recipe=recipe_object).delete()
+                RecipeComponent.objects.filter(recipe=recipe_object).delete()
+                RecipeInstruction.objects.filter(recipe=recipe_object).delete()
+                RecipeTip.objects.filter(recipe=recipe_object).delete()
+            
+            else:
+                # Create new recipe
+                recipe_object = Recipe.objects.create(
+                    title=recipe['title'],
+                    description=recipe['description'],
+                    difficulty=recipe['difficulty'],
+                    default_servings=int(recipe.get('servings', 0)),
+                    storage=recipe['storage'],
+                    cost=int(recipe.get('cost', 0)),
+                    spiciness=int(recipe.get('spiciness', 0)),
+                    language=language_object
+                )
+
+            # The rest of the code remains the same for both create and edit
             for time in recipe['times']:
                 RecipeTime.objects.create(
-                        name = time['name'],
-                        value = time['value'],
-                        recipe = recipe_object,
-                        language = language_object
-                    )
+                    name=time['name'],
+                    value=time['value'],
+                    recipe=recipe_object,
+                    language=language_object
+                )
 
             for equipment in recipe['equipment']:
                 equipment_object, _ = Equipment.objects.get_or_create(
-                    name = equipment,
-                    language = language_object
+                    name=equipment,
+                    language=language_object
                 )
                 recipe_object.equipments.add(equipment_object)
             
             for diet in recipe['diet']:
                 diet_object, _ = Diet.objects.get_or_create(
-                    name = diet,
-                    language = language_object
+                    name=diet,
+                    language=language_object
                 )
                 recipe_object.diets.add(diet_object)
 
             for hashtag in recipe['hashtags']:
                 hashtag_object, _ = Hashtag.objects.get_or_create(
-                    name = hashtag,
-                    language = language_object
+                    name=hashtag,
+                    language=language_object
                 )
                 recipe_object.hashtags.add(hashtag_object)
 
             for component in recipe['components']:
                 component_object = RecipeComponent.objects.create(
-                    name = component['name'],
-                    recipe = recipe_object,
+                    name=component['name'],
+                    recipe=recipe_object,
                 )
             
                 for component_ingredient in component['ingredients']:
                     ingredient_category_object, _ = IngredientCategory.objects.get_or_create(
-                        name = component_ingredient['category'],
-                        language = language_object
+                        name=component_ingredient['category'],
+                        language=language_object
                     )
                     ingredient_object, _ = Ingredient.objects.get_or_create(
-                        name = component_ingredient['name'],
-                        category = ingredient_category_object,
-                        language = language_object
+                        name=component_ingredient['name'],
+                        category=ingredient_category_object,
+                        language=language_object
                     )
                     ComponentIngredient.objects.create(
-                        ingredient = ingredient_object,
-                        amount = component_ingredient['amount'],
-                        unit = component_ingredient['unit'],
-                        note = component_ingredient['notes'],
-                        recipe_component = component_object,
-                        language = language_object
+                        ingredient=ingredient_object,
+                        amount=component_ingredient['amount'],
+                        unit=component_ingredient['unit'],
+                        note=component_ingredient['notes'],
+                        recipe_component=component_object,
+                        language=language_object
                     )
 
             step_counter = 1
             for instruction_headline, instruction_description in recipe['instructions'].items():
                 RecipeInstruction.objects.create(
-                    number = step_counter,
-                    headline = instruction_headline,
-                    description = instruction_description,
-                    recipe = recipe_object,
-                    language = language_object
+                    number=step_counter,
+                    headline=instruction_headline,
+                    description=instruction_description,
+                    recipe=recipe_object,
+                    language=language_object
                 )
                 step_counter += 1
 
             for tip in recipe['tips']:
                 RecipeTip.objects.create(
-                    tip = tip,
-                    recipe = recipe_object,
-                    language = language_object
+                    tip=tip,
+                    recipe=recipe_object,
+                    language=language_object
                 )
 
-        return recipe_object
+            return recipe_object
     
     except Exception as e:
-        print(f"Error occured; {str(e)}")
+        print(f"Error occurred: {str(e)}")
         raise
 
 

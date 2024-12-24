@@ -90,6 +90,9 @@ KEYWORDS
 {% endfor %}
 </textarea>
             </div>
+            {% if recipe %}
+                <input type="hidden" id="recipe_id_field" name="recipe_id" value="{{ recipe.id }}">
+            {% endif %}
             <div class="input-field-container" style="text-align: center">
                 <button type="submit" class="submit-button">Absenden</button>
             </div>

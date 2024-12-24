@@ -167,7 +167,7 @@ class AuthorRecipesView(RecipeListBaseView):
         return Recipe.objects.filter(author=author)
     
     def sort_recipes(self, queryset):
-        return queryset.order_by('-created_at')
+        return queryset.order_by('-updated_at')
 
 
 ### Generate views ###
@@ -233,7 +233,7 @@ def create_recipe_with_image(request):
             print(recipe)
 
             logger.info("Starting database save")
-            recipe_object = recipe_to_database(recipe["recipe"][0])
+            recipe_object = recipe_to_database(recipe["recipe"][0], recipe_id=None)
             recipe_object.author = request.user
             recipe_object.save()
             logger.info(f"Recipe saved with ID: {recipe_object.pk}")
@@ -279,6 +279,8 @@ def new_recipe_by_text(request):
         try:
             logger.info("Starting recipe generation process by description")
             user_input = request.POST.get("recipe-description")
+            recipe_id = request.POST.get("recipe_id")
+            print(recipe_id)
 
             recipe_generator = MistralRecipeGeneratorService()
             
@@ -294,7 +296,7 @@ def new_recipe_by_text(request):
                 raise
 
             logger.info("Starting database save")
-            recipe_object = recipe_to_database(recipe["recipe"][0])
+            recipe_object = recipe_to_database(recipe["recipe"][0], recipe_id = recipe_id)
             recipe_object.author = request.user
             recipe_object.save()
             logger.info(f"Recipe saved with ID: {recipe_object.pk}")

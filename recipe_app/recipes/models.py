@@ -121,6 +121,7 @@ class Recipe(models.Model):
     language = models.ForeignKey(verbose_name="Sprache", to=Language, on_delete=models.SET_NULL, null=True)
     author = models.ForeignKey(verbose_name="Autor", to=User, on_delete=models.SET_NULL, related_name="recipes", null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
     objects = models.Manager()
     search = RecipeSearchManager()
     

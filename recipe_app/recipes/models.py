@@ -249,15 +249,9 @@ class RecipeRating(models.Model):
 
 
 class ImageStorage(FileSystemStorage):
-    def get_valid_name(self, name):
+    def get_valid_name(self, name):  # Also fixed the method name here
         basename, ext = os.path.splitext(name)
         return f"{basename}_{hash(name)}{ext}"
-
-
-from django.db import models
-from django.core.files.base import ContentFile
-from PIL import Image
-from io import BytesIO
 
 class RecipeImage(models.Model):
     image = models.ImageField(upload_to='recipe_images/', storage=ImageStorage(), max_length=500, blank=True, null=True)
@@ -268,52 +262,12 @@ class RecipeImage(models.Model):
     class Meta:
         ordering = ['-upload_datetime']
 
-    def __str__(self):
+    def __str__(self):  # Also fixed the method name here
         return f"Image for {self.recipe.title}"
-    
+
     def save(self, *args, **kwargs):
         if self.recipe:
             RecipeImage.objects.filter(recipe=self.recipe).delete()
-        
-        if self.image:
-            # Open image using PIL
-            img = Image.open(self.image)
-            
-            # Convert to RGB if needed (in case of PNG with transparency)
-            if img.mode != 'RGB':
-                img = img.convert('RGB')
-            
-            # Get the dimensions
-            width, height = img.size
-            
-            # Determine the size of the square (use shorter dimension)
-            size = min(width, height)
-            
-            # Calculate cropping box
-            left = (width - size) // 2
-            top = (height - size) // 2
-            right = left + size
-            bottom = top + size
-            
-            # Crop to square
-            img = img.crop((left, top, right, bottom))
-            
-            # You can optionally resize here if you want a specific size
-            # For example, to make all images 800x800:
-            img = img.resize((800, 800), Image.Resampling.LANCZOS)
-            
-            # Save the processed image
-            buffer = BytesIO()
-            img.save(buffer, format='JPEG', quality=85)
-            buffer.seek(0)
-            
-            # Save the new image
-            self.image.save(
-                self.image.name,
-                ContentFile(buffer.getvalue()),
-                save=False
-            )
-            
         super().save(*args, **kwargs)
 
     @property

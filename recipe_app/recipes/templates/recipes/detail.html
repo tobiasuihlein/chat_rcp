@@ -55,7 +55,7 @@
                 </div>
             </div>
             <div style="display: flex; column-gap: 2rem; row-gap: 1rem; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 1.4rem;">
-                <div class="recipe-image-container" style="max-width: 240px; flex-grow: 1;">
+                <div class="recipe-image-container" style="max-width: 240px; max-height: 240px; flex-grow: 1;">
                     {% if recipe.image %}
                         <img class="recipe-image" src="{{ recipe.image.image.url }}" alt="{{ recipe.image.alt_text }}">
                     {% else %}

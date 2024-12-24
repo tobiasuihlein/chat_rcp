@@ -54,7 +54,9 @@
 {{ recipe.title }}
 
 {{ recipe.description }}
-
+{% for diet in recipe.diets.all %}
+- {{ diet.name }}
+{% endfor %}
 {{ recipe.default_servings }} Portionen
 
 {{ recipe.get_difficulty_display }}
@@ -88,6 +90,11 @@ AUFBEWAHRUNG
 KEYWORDS
 
 {% for keyword in recipe.hashtags.all %}-{{ keyword }}
+{% endfor %}
+
+EQUIPMENT
+
+{% for equipment in recipe.equipments.all %}-{{ equipment.name }}
 {% endfor %}
 </textarea>
             {% else %}

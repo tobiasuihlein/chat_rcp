@@ -10,23 +10,27 @@
 {% block main-content %}
 
 <div class="row-wrapper section-row card" style="margin-top: 0;">
-    <div class="row-content" style="margin-top: 1rem; margin-bottom: 1rem; flex-direction: column; align-items: center;">
-        <div class="form-header">
-            {{ username }}
+    <div class="row-content" style="margin-top: 1rem; margin-bottom: 1rem; align-items: center; justify-content: center; width: 100%; gap: 1.2rem">
+        <div class="profile-image-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40%" height="40%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
         </div>
         <div>
-            {{ chef_level }}
-        </div>
-        <div>
-            <div style="font-weight: 500;">
-                <a href="{% url 'recipes:author_recipes' username %}">Rezepte ansehen</a>
+            <div class="form-header">
+                {{ username }}
+            </div>
+            <div style="margin-top: 0.2rem;">
+                {{ chef_level }}
             </div>
         </div>
     </div>
     <div class="row-content" style="width: 100%; padding: 1rem; flex-direction: column;">
+        {% if follower.all %}
         <div>
             <div style="font-weight: 500; margin-bottom: 0.2rem;">
-                Follower:
+                Follower
             </div>
             <div>
                 <ul style="overflow-wrap: break-word; padding-left: 1rem;">
@@ -36,9 +40,11 @@
                 </ul>
             </div>
         </div>
+        {% endif %}
+        {% if following.all %}
         <div>
             <div style="font-weight: 500; margin-bottom: 0.2rem;">
-                Following:
+                Following
             </div>
             <div>
                 <ul style="overflow-wrap: break-word; padding-left: 1rem;">
@@ -48,8 +54,14 @@
                 </ul>
             </div>
         </div>
+        {% endif %}
     </div>
-    <div class="row-content" style="margin-top: 1rem; margin-bottom: 1rem; flex-direction: column; align-items: center;">
+    <div class="row-content" style="margin-top: 1.2rem; margin-bottom: 1rem; flex-direction: column; align-items: center;">
+        <div>
+            <div style="font-weight: 500; font-size: 1rem;">
+                <a href="{% url 'recipes:author_recipes' username %}">Rezepte ansehen</a>
+            </div>
+        </div>
         {% if user.username != username %}
         <div>
             <button class="submit-button" id="follow-button" title="Chef folgen / entfolgen">

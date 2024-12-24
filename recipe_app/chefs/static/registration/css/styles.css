@@ -59,3 +59,16 @@ form {
 .submit-button:hover {
     background-color: var(--accent-color-hover);
 }
+
+
+.profile-image-container {
+    width: 90px;
+    height: 90px;
+    background-color: var(--element-color-2);
+    color: var(--icon-color);
+    border-radius: 999px;
+    display: flex;
+    align-items:
+    center;
+    justify-content: center;
+}

@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Profile
+from .forms import ProfileImageForm
 from django.contrib.auth.models import User
 from django.template.defaultfilters import date
 
@@ -72,14 +73,42 @@ def follow_toggle(request, user_id):
 @login_required
 def profile_view(request, username):
     user = User.objects.get(username=username)
+    image_form = ProfileImageForm()
     context = {
+        'chef': user.profile,
         'username': user.username,
         'user_id': user.id,
         'date_joined': date(request.user.date_joined, 'd.m.Y'),
         'chef_level': user.profile.get_chef_level_display(),
         'following': user.profile.following.all(),
         'follower': user.follower.all(),
-        'is_following': user.follower.filter(id=request.user.id).exists()
+        'is_following': user.follower.filter(id=request.user.id).exists(),
+        'image_form': image_form,
     }
     print(context)
     return render(request, 'chefs/profile.html', context=context)
+
+
+@login_required
+def upload_profile_image(request, username):
+    profile = get_object_or_404(Profile, user__username=username)
+    
+    # Check if user has permission to modify this profile
+    if profile.user != request.user:
+        messages.error(request, "You don't have permission to modify this profile.")
+        return redirect('chefs:profile',  username=profile.user.username)
+    
+    if request.method == 'POST':
+        form = ProfileImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            image = form.save(commit=False)
+            image.chef = profile
+            image.alt_text = request.FILES['image'].name
+            image.save()
+            
+            messages.success(request, 'Image uploaded successfully!')
+            return redirect('chefs:profile',  username=profile.user.username)
+    else:
+        form = ProfileImageForm()
+    
+    return redirect('chefs:profile',  username=profile.user.username)

@@ -249,7 +249,7 @@ class RecipeRating(models.Model):
 
 
 class ImageStorage(FileSystemStorage):
-    def get_valid_name(self, name):  # Also fixed the method name here
+    def get_valid_name(self, name):
         basename, ext = os.path.splitext(name)
         return f"{basename}_{hash(name)}{ext}"
 
@@ -262,7 +262,7 @@ class RecipeImage(models.Model):
     class Meta:
         ordering = ['-upload_datetime']
 
-    def __str__(self):  # Also fixed the method name here
+    def __str__(self):
         return f"Image for {self.recipe.title}"
 
     def save(self, *args, **kwargs):

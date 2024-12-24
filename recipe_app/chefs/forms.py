@@ -6,6 +6,13 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
 from django.contrib.auth import password_validation
+from .models import ProfileImage
+
+
+class ProfileImageForm(forms.ModelForm):
+    class Meta:
+        model = ProfileImage
+        fields = ['image']
 
 
 class EmailSignUpForm(UserCreationForm):

@@ -11,11 +11,15 @@
 
 <div class="row-wrapper section-row card" style="margin-top: 0;">
     <div class="row-content" style="margin-top: 1rem; margin-bottom: 1rem; align-items: center; justify-content: center; width: 100%; gap: 1.2rem">
-        <div class="profile-image-container">
+        <div class="profile-image-container" style="max-width: 90px;">
+            {% if chef.image %}
+                <img class="profile-image" src="{{ chef.image.image.url }}" alt="{{ chef.image.alt_text }}">
+            {% else %}
             <svg xmlns="http://www.w3.org/2000/svg" width="40%" height="40%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user">
                 <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
                 <circle cx="12" cy="7" r="4"/>
             </svg>
+            {% endif %}
         </div>
         <div>
             <div class="form-header">
@@ -26,6 +30,15 @@
             </div>
         </div>
     </div>
+    {% if request.user.id == user_id %}
+        <button class="panel-icon-overlay" id="image-upload-button">
+            {% if chef.image %}
+                Profilbild ändern
+            {% else %}
+                Profilbild hochladen
+            {% endif %}
+        </button>
+    {% endif %}
     <div class="row-content" style="width: 100%; padding: 1rem; flex-direction: column;">
         {% if follower.all %}
         <div>
@@ -83,9 +96,60 @@
 
 </div>
 
+<div id="image-upload-overlay-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #F2F3EE;">
+    <div style="padding: 1rem; display: flex; width: 100%; flex-direction: column; align-items: center; gap: 1.4rem; justify-content: center;">
+        <div>
+            <button class="panel-icon" id="image-upload-overlay-close-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-x"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+            </button>
+        </div>
+        <div style="font-size: 1.4rem;">
+            Foto hochladen
+        </div>
+        <form method="POST" action="{% url 'chefs:upload_profile_image' chef.user.username %}" enctype="multipart/form-data" class="image-upload-form" id="image-upload">
+            {% csrf_token %}
+            
+            {% if image_form.errors %}
+            <div class="alert alert-danger">
+                {% for field in image_form %}
+                    {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="image-form-field">
+                <div><label for="{{ image_form.image.id_for_label }}">Profilbild:</label></div>
+                <div>{{ image_form.image }}</div>
+            </div>
+
+            <button id="submit-image-upload-button" class="submit-button" style="padding-left: 1rem; padding-right: 1rem; margin-top: 0;">
+                ABSENDEN
+            </button>
+        </form>
+    </div>
+</div>
+
 {% block javascript %}
 
 <script>
+
+    // Image upload overlay functionality
+
+    const imageUploadOverlay = document.getElementById('image-upload-overlay-container');
+    const imageUploadButton = document.getElementById('image-upload-button');
+    const imageUploadForm = document.getElementById('image-upload');
+    const submitImageUploadButton = document.getElementById('submit-image-upload-button');
+    const imageUploadOverlayCloseButton = document.getElementById('image-upload-overlay-close-button');
+
+    imageUploadButton.addEventListener('click', function() {
+        imageUploadOverlay.style.display = 'flex';
+    });
+
+    imageUploadOverlayCloseButton.addEventListener('click', function() {
+        imageUploadOverlay.style.display = 'none';
+    });
 
     const userId = {{ user_id }};
 
@@ -114,6 +178,7 @@
     }
 
     followButton.addEventListener('click', toggleFollow);
+
 
 </script>
 

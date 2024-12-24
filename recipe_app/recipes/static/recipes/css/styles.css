@@ -702,8 +702,7 @@ main {
     height: 100%;
     object-fit: cover;
     width: 100%;
-    border-radius: 5px;
-    
+    border-radius: 5px; 
 }
 
 .stars {

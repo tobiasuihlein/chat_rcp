@@ -46,7 +46,7 @@
                                 {% endif %}
                                 <div>
                                     <div class="title" style="margin-bottom: 0.1rem;">{{ preview.title }}</div>
-                                    <div style="font-size: 0.8rem; font-weight: 500; color: indianred; line-height: 1.4rem;">
+                                    <div style="font-size: 0.9rem; font-weight: 500; color: indianred; line-height: 1.4rem;">
                                         {{ preview.get_difficulty_display }} • {{ preview.time_total|time_converter}} 
                                         
                                     </div>
@@ -56,7 +56,15 @@
                         </div>
                     </a>
                     <div class="recipe-properties-container">
-                        <div class="stars">
+                        <div class="author" style="font-size: 1rem;">
+                            {% if preview.author %}
+                                <a href="{% url 'chefs:profile' preview.author %}"> {{preview.author }} </a>
+                            {% else %}
+                                <span>Unbekannt</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="stars" style="display: none;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                 <path
                                     d="M12 1.726l2.338 7.196h7.566l-6.121 4.448 2.338 7.196L12 16.118l-6.121 4.448 2.338-7.196L2.096 8.922h7.566z"

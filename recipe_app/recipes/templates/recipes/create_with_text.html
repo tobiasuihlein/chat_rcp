@@ -39,6 +39,9 @@
 <div class="row-wrapper section-row card" style="margin-top: 0; margin-bottom: 0;">
     <div class="row-content" style="margin-top: 0rem; margin-bottom: 0rem;">
         <div class="form-header">
+            {% if recipe %}
+            EDIT
+            {% endif %}
             PROMPT
         </div>
     </div>
@@ -46,7 +49,46 @@
         <form method="post" action="{% url 'recipes:new_recipe_by_text' %}" id="recipe-text-form">
             {% csrf_token %}
             <div class="input-field-container" style="text-align: center; width: 100%;">
-                <textarea name="recipe-description" style="width: 100%; min-height: 40vh; border-radius: 6px; padding: 1rem;"></textarea>
+                <textarea name="recipe-description" style="width: 100%; min-height: 40vh; border-radius: 6px; padding: 1rem;">
+{{ recipe.title }}
+
+{{ recipe.description }}
+
+{{ recipe.default_servings }} Portionen
+
+{{ recipe.get_difficulty_display }}
+{% for time in recipe.times.all %}
+{{ time.name }}: {{ time.value }} Minuten
+{% endfor %}
+
+ZUTATEN
+{% for component in recipe.components.all %}
+{{ component.name }}
+{% for ingredient in component.ingredients.all %}
+- {{ ingredient.amount }} {{ ingredient.unit }} {{ ingredient.ingredient.name }} ({{ ingredient.note }})
+{% endfor %}{% endfor %}
+
+ZUBEREITUNG
+{% for instruction_step in recipe.instruction_steps.all %}
+{{ instruction_step.headline }}:
+{{ instruction_step.description }}
+{% endfor %}
+
+TIPPS
+{% for tip in recipe.tips.all %}
+- {{ tip.tip }}
+{% endfor %}
+
+AUFBEWAHRUNG
+
+{{ recipe.storage }}
+
+
+KEYWORDS
+
+{% for keyword in recipe.hashtags.all %}-{{ keyword }}
+{% endfor %}
+</textarea>
             </div>
             <div class="input-field-container" style="text-align: center">
                 <button type="submit" class="submit-button">Absenden</button>

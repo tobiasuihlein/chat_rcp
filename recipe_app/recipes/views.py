@@ -196,6 +196,18 @@ def create_recipe_with_text(request):
 
 
 @login_required(login_url='chefs:login')
+def edit_recipe(request, slug):
+    if request.method == 'POST':
+        recipe_form = RecipeForm()
+        recipe_to_edit = get_object_or_404(Recipe, slug=slug)
+        return render(request, 'recipes/create_with_text.html', {'recipe_form': recipe_form, 'recipe': recipe_to_edit})
+    else:
+        return redirect('recipes:library')
+
+
+
+
+@login_required(login_url='chefs:login')
 def create_recipe_with_image(request):
     if request.method == 'POST':
         try:

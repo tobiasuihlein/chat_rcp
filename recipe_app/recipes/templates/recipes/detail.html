@@ -307,6 +307,15 @@
             {% endif %}
             {% if request.user == recipe.author %}
             <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
+                <form id="edit-recipe-form" action="{% url 'recipes:edit_recipe' recipe.slug %}" method="POST" style="display: flex; justify-content: center;">
+                    {% csrf_token %}
+                    <button type="submit" class="panel-icon-overlay" id="edit-recipe-button" style="transform: scale(0.9)" title="Rezept bearbeiten">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pencil"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+                        <div style="margin-left: 0.6rem;">Rezept bearbeiten</div>
+                    </button>
+                </form>
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
                 <button class="panel-icon-overlay" id="delete-button" style="transform: scale(0.9)" title="Rezept löschen">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                     <div style="margin-left: 0.6rem;">Löschen</div>

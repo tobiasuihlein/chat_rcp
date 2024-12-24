@@ -23,7 +23,7 @@
             <div class="form-header">
                 <div style="margin-bottom: 0.6rem;"><span>Einkaufsliste für</span></div>
             </div>
-            <div style="width: 100%; display: flex; justify-content: center; font-size: 1.2rem; font-weight: 300;">
+            <div style="width: 100%; display: flex; justify-content: center; font-size: 1.1rem; font-weight: 300;">
                 <ul style="text-align: center">
                     {% for recipe in recipes %}
                         <li style="margin-bottom: 0.4rem; display: flex; justify-content: center; align-items: flex-end; gap: 0.4rem;">
@@ -37,7 +37,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="main-ingredients" style="width: 100%; align-items: flex-start; margin-top: 0.4rem; padding-left: 0.4rem;">
+            <div class="main-ingredients" style="width: 100%; align-items: flex-start; margin-top: 0.4rem; padding-left: 0.4rem; font-size: 1.1rem;">
                 {% regroup items by category_name as items_list %}
                 {% for category in items_list %}
                     <div style="margin-top: 0.4rem;"><span style="font-weight: 400"> {{ category.grouper }} </span></div>

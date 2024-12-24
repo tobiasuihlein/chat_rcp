@@ -164,7 +164,10 @@ class LibraryView(RecipeListBaseView):
 class AuthorRecipesView(RecipeListBaseView):
     def get_base_queryset(self):
         author = get_object_or_404(User, username=self.kwargs['author'])
-        return Recipe.objects.filter(author=author).order_by('-created_at')
+        return Recipe.objects.filter(author=author)
+    
+    def sort_recipes(self, queryset):
+        return queryset.order_by('-created_at')
 
 
 ### Generate views ###

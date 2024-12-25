@@ -16,7 +16,7 @@
     <div class="row-content">
         <div class="widget recipe-pad">
             <div class="recipe-top-panel">
-                <div class="stars" {% if user.is_authenticated %} id="rating-button" {% endif %} title="Rezept bewerten" >
+                <div class="stars" {% if request.user.is_authenticated %} id="rating-button" {% endif %} title="Rezept bewerten" >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path
                             d="M12 1.726l2.338 7.196h7.566l-6.121 4.448 2.338 7.196L12 16.118l-6.121 4.448 2.338-7.196L2.096 8.922h7.566z"
@@ -254,7 +254,7 @@
                     <div style="margin-left: 0.6rem;">Teilen</div>
                 </button>
             </div>
-            {% if user.is_authenticated %}
+            {% if request.user.is_authenticated %}
             <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
                 <button class="panel-icon-overlay" id="add-to-shopping-list-button" title="Zu Einkaufsliste hinzufügen">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-plus"><path d="M11 12H3"/><path d="M16 6H3"/><path d="M16 18H3"/><path d="M18 9v6"/><path d="M21 12h-6"/></svg>    
@@ -262,7 +262,7 @@
                 </button>
             </div>
             {% endif %}
-            {% if user.is_authenticated %}
+            {% if request.user.is_authenticated %}
             <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
                 <button class="panel-icon-overlay" id="rating-button-overlay-menu" title="Rezept bewerten">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -278,7 +278,7 @@
                 </button>
             </div>
             {% endif %}
-            {% if user.is_authenticated %}
+            {% if request.user.is_authenticated %}
                 {% if request.user == recipe.author %}
                 <div style="display: flex; justify-content: center; align-items: center; gap: 0.4rem;">
                     <a href="{% url 'chefs:profile' recipe.author %}" class="panel-icon-overlay" id="recipe-author-button" title="Chef aufrufen">
@@ -470,18 +470,21 @@
     const submitImageUploadButton = document.getElementById('submit-image-upload-button');
     const imageUploadOverlayCloseButton = document.getElementById('image-upload-overlay-close-button');
 
-    imageUploadButton.addEventListener('click', function() {
-        imageUploadOverlay.style.display = 'flex';
-        recipePanelMenuOverlayContainer.style.display = 'none';
-    });
-
-    imageUploadOverlayCloseButton.addEventListener('click', function() {
-        imageUploadOverlay.style.display = 'none';
-    });
+    if (imageUploadButton) {
+        imageUploadButton.addEventListener('click', function() {
+            imageUploadOverlay.style.display = 'flex';
+            recipePanelMenuOverlayContainer.style.display = 'none';
+        });
+    }
+    
+    if (imageUploadOverlayCloseButton) {
+        imageUploadOverlayCloseButton.addEventListener('click', function() {
+            imageUploadOverlay.style.display = 'none';
+        });
+    }
 
 
     // Rating overlay functionality
-
     const ratingButton = document.getElementById('rating-button');
     const ratingButtonOverlayMenu = document.getElementById('rating-button-overlay-menu');
     const ratingForm = document.getElementById('rating-form');
@@ -489,34 +492,36 @@
     const submitRatingButton = document.getElementById('submit-rating-button');
     const ratingOverlayCloseButton = document.getElementById('rating-overlay-close-button');
 
+    // Add form submit handler
     ratingForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         await submitRating(ratingId, newUserRating);
         ratingOverlay.style.display = 'none';
     });
 
-    ratingButton.addEventListener('click', function() {
-        ratingOverlay.style.display = 'flex';
-    });
-
-
-    const isAuthenticated = {{ is_authenticated|yesno:"true,false" }};
-    
-    ratingButton.addEventListener('click', function() {
-        if (isAuthenticated) {
+    // Handle main rating button click
+    if (ratingButton) {
+        ratingButton.addEventListener('click', () => {
             ratingOverlay.style.display = 'flex';
-        }
-    });
+        });
+    }
 
-    ratingButtonOverlayMenu.addEventListener('click', function() {
-        ratingOverlay.style.display = 'flex';
-        recipePanelMenuOverlayContainer.style.display = 'none';
-    });
+    // Handle menu rating button click
+    if (ratingButtonOverlayMenu) {
+        ratingButtonOverlayMenu.addEventListener('click', () => {
+            ratingOverlay.style.display = 'flex';
+            recipePanelMenuOverlayContainer.style.display = 'none';
+        });
+    }
 
-    ratingOverlayCloseButton.addEventListener('click', function() {
-        ratingOverlay.style.display = 'none';
-    });
+    // Handle close button click
+    if (ratingOverlayCloseButton) {
+        ratingOverlayCloseButton.addEventListener('click', () => {
+            ratingOverlay.style.display = 'none';
+        });
+    }
 
+    // Star rating functionality
     const starsContainer = document.querySelector('.overlay-stars');
     let currentUserRating = parseFloat(starsContainer.dataset.userrating) || 0;
     let newUserRating = currentUserRating;
@@ -524,7 +529,6 @@
 
     updateStarDisplay(currentUserRating);
 
-    // Add hover effects
     starButtons.forEach(button => {
         button.addEventListener('mouseenter', function() {
             const value = parseInt(this.dataset.value);

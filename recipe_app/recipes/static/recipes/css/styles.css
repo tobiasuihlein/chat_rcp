@@ -479,10 +479,8 @@ main {
 .author {
     display: flex;
     align-items: center;
-    gap: 0.2rem;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 400;
-    border-radius: 99px;
     color: var(--icon-color);
 }
 
@@ -915,4 +913,18 @@ textarea {
     flex-direction: column;
     align-items: center;
     gap: 0.4rem;
+}
+
+.line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }

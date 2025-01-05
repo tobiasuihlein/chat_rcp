@@ -132,6 +132,7 @@ class MistralRecipeGeneratorService:
         return recipe
 
 
+
 class ClaudeRecipeGeneratorService:
     def __init__(self):
         load_dotenv()
@@ -358,14 +359,10 @@ def create_previews_prompt(user_input) -> str:
     2. Each recipe must be realistic, cookable, and tasty (use proven cooking techniques and flavor combinations)
     3. Keep descriptions under 200 characters
     4. Time should be in the format "X Min." and refer to the total time necessary
-    5. Difficulties should be one of these: "Easy", "Medium", or "Hard"
-    6. Try to provide one very basic, one relatively common, and one more extravagant dish
+    6. If not specified otherwise, try to provide one very basic, one relatively common, and one more extravagant dish
     7. Only create recipes that you would expect to receive the best ratings
     8. For expert level dishes, follow Michelin-star quality standards for: ingredient balance, texture combinations, flavor layering, presentation
-    9. If you use dashes, make sure to use them properly (not '-', but '–')
-    10. Make sure to include also spices and seasoning in the ingredients lists
-    11. Explain complex steps in more detail than easier ones
-    12. For difficulty, provide a number
+    9. Make sure to include also spices and seasoning in the ingredients lists
 
     Language: German
 
@@ -444,7 +441,7 @@ def create_recipe_prompt_for_image() -> str:
     Requirements:
     1. Response must be valid JSON
     2. Use only the provided ingredients
-    3. Each recipe must be realistic and cookable
+    3. Each recipe must be realistic and cookable, only create recipes that you would expect to receive the best ratings
     4. Time specifications in number minutes; time values should add up to total time necessary (e.g. cutting ingredients during cooking time should not be accounted for)
     5. Use the metric system and Celcius
     6. For each instruction step create an appropriate headline and a short paragraph
@@ -459,6 +456,7 @@ def create_recipe_prompt_for_image() -> str:
     15. Provide ingredients for all components (e.g. 'Pasta' --> 250 g pasta, 1 tsp salt)
     16. Make sure to include all igredients for each component (i.e. including salt, spices, herbs etc.)
     17. If no diet restriction applicable: provide empty list
+    18. Use ingredient categories as where to find them in the supermarket (and use plural, not singular expression always)
 
     Language: If not explicitely specified otherwise, always create the recipes and the ingredients in German
 
@@ -554,7 +552,7 @@ def create_recipe_prompt_by_description(recipe_description: str) -> str:
     Requirements:
     1. Response must be valid JSON
     2. Use only the provided ingredients
-    3. Each recipe must be realistic and cookable
+    3. Each recipe must be realistic and cookable, only create recipes that you would expect to receive the best ratings
     4. Time specifications in number minutes; time values should add up to total time necessary (e.g. cutting ingredients during cooking time should not be accounted for)
     5. Use the metric system and Celcius
     6. For each instruction step create an appropriate headline and a short paragraph
@@ -569,6 +567,7 @@ def create_recipe_prompt_by_description(recipe_description: str) -> str:
     15. Provide ingredients for all components (e.g. 'Pasta' --> 250 g pasta, 1 tsp salt)
     16. Make sure to include all igredients for each component (i.e. including salt, spices, herbs etc.)
     17. If no diet restriction applicable: provide empty list
+    18. Use ingredient categories as where to find them in the supermarket (and use plural, not singular expression always)
 
     Language: If not explicitely specified otherwise, always create the recipes and the ingredients in German
 
@@ -676,7 +675,7 @@ def create_recipe_prompt_by_preview(recipe_dict: dict) -> str:
     Requirements:
     1. Response must be valid JSON
     2. Use only the provided ingredients
-    3. Each recipe must be realistic and cookable
+    3. Each recipe must be realistic and cookable, only create recipes that you would expect to receive the best ratings
     4. Time specifications in number minutes; time values should add up to total time necessary (e.g. cutting ingredients during cooking time should not be accounted for)
     5. Use the metric system and Celcius
     6. For each instruction step create an appropriate headline and a short paragraph
@@ -691,6 +690,7 @@ def create_recipe_prompt_by_preview(recipe_dict: dict) -> str:
     15. Provide ingredients for all components (e.g. 'Pasta' --> 250 g pasta, 1 tsp salt)
     16. Make sure to include all igredients for each component (i.e. including salt, spices, herbs etc.)
     17. If no diet restriction applicable: provide empty list
+    18. Use ingredient categories as where to find them in the supermarket (and use plural, not singular expression always)
 
     Language: German
 

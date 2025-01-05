@@ -60,6 +60,21 @@ form {
     background-color: var(--accent-color-hover);
 }
 
+.submit-button-alternative {
+    background-color: None;
+    border: solid 2px var(--icon-color);
+    color: var(--icon-color);
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-weight: 500;
+    margin-top: 1rem;
+}
+
+.submit-button-alternative:hover {
+    border: solid 2px var(--accent-color);
+    color: var(--accent-color);
+}
+
 
 .profile-image-container {
     width: 100%;

@@ -11,7 +11,7 @@
 <div class="spinner-background" id="loading-spinner-bg" style="display: none;"></div>
     <div class="spinner-overlay" id="loading-spinner-card" style="display: none;">
         <div class="card">
-            <p style="font-weight: 600; font-size: 2rem;">Erstelle Rezept ...</p>
+            <p style="font-weight: 600; font-size: 2rem;" id="loading-spinner-text">Erstelle Rezept ...</p>
             <div class="spinner"></div>
         </div>
     </div>
@@ -40,9 +40,9 @@
     <div class="row-content" style="margin-top: 0rem; margin-bottom: 0rem;">
         <div class="form-header">
             {% if recipe %}
-            EDIT
+            Rezept bearbeiten
             {% endif %}
-            PROMPT
+            Neues Rezept
         </div>
     </div>
     <div class="row-content" style="margin-top: 1rem; margin-bottom: 1rem; width: 100%">
@@ -50,9 +50,9 @@
             {% csrf_token %}
             <div class="input-field-container" style="text-align: center; width: 100%;">
                 {% if request.session.prompt %}
-                    <textarea name="recipe-description" style="width: 100%; min-height: 40vh; border-radius: 6px; padding: 1rem;">{{ request.session.prompt }}</textarea>
+                    <textarea name="recipe-description" style="width: 100%; min-height: 30vh; border-radius: 6px; padding: 1rem;">{{ request.session.prompt }}</textarea>
                 {% elif recipe %}
-                    <textarea name="recipe-description" style="width: 100%; min-height: 40vh; border-radius: 6px; padding: 1rem;">
+                    <textarea name="recipe-description" style="width: 100%; min-height: 30vh; border-radius: 6px; padding: 1rem;">
 {{ recipe.title }}
 
 {{ recipe.description }}
@@ -100,14 +100,15 @@ EQUIPMENT
 {% endfor %}
 </textarea>
             {% else %}
-            <textarea name="recipe-description" style="width: 100%; min-height: 40vh; border-radius: 6px; padding: 1rem;"></textarea>
+            <textarea name="recipe-description" style="width: 100%; min-height: 30vh; border-radius: 6px; padding: 1rem;"></textarea>
             {% endif %}
             </div>
             {% if recipe %}
                 <input type="hidden" id="recipe_id_field" name="recipe_id" value="{{ recipe.id }}">
             {% endif %}
             <div class="input-field-container" style="text-align: center">
-                <button type="submit" class="submit-button">Absenden</button>
+                <button type="submit" name="action" value="create-recipe" class="submit-button">Rezept erstellen</button>
+                <button type="submit" name="action" value="create-previews" class="submit-button-alternative">Vorschläge generieren</button>
             </div>
         </form>
     </div>
@@ -118,8 +119,16 @@ EQUIPMENT
 <script>
     // activate loading spinner overlay on submit
     document.getElementById('recipe-text-form').addEventListener('submit', function(e) {
+        const actionValue = e.submitter.value;
+
         document.getElementById('loading-spinner-bg').style.display = 'flex';
         document.getElementById('loading-spinner-card').style.display = 'flex';
+        
+        if (actionValue === 'create-recipe') {
+            document.getElementById('loading-spinner-text').textContent = 'Erstelle Rezept ...';
+        } else if (actionValue === 'create-previews') {
+            document.getElementById('loading-spinner-text').textContent = 'Erstelle Vorschläge ...';
+        }
     });
 </script>
 

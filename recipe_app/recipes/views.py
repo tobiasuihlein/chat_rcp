@@ -174,7 +174,6 @@ class AuthorRecipesView(RecipeListBaseView):
 def generate(request):
     return render(request, 'recipes/generate.html')
 
-
 @login_required(login_url='chefs:login')
 def create_recipe_with_text(request):
     if request.method == 'POST':
@@ -192,7 +191,6 @@ def create_recipe_with_text(request):
     recipe_form = RecipeForm()
     return render(request, 'recipes/create_with_text.html', {'recipe_form': recipe_form})
 
-
 @login_required(login_url='chefs:login')
 def edit_recipe(request, slug):
     if request.method == 'POST':
@@ -201,9 +199,6 @@ def edit_recipe(request, slug):
         return render(request, 'recipes/create_with_text.html', {'recipe_form': recipe_form, 'recipe': recipe_to_edit})
     else:
         return redirect('recipes:library')
-
-
-
 
 @login_required(login_url='chefs:login')
 def create_recipe_with_image(request):
@@ -244,7 +239,6 @@ def create_recipe_with_image(request):
             
     return render(request, 'recipes/create_with_image.html')
 
-
 @login_required(login_url='chefs:login')
 def previews(request):
 
@@ -264,50 +258,79 @@ def previews(request):
     
     return render(request, 'recipes/index.html')
 
-
 @login_required(login_url='chefs:login')
 def new_recipe_by_text(request):
 
     if request.method == "POST":
         request.session['prompt'] = request.POST.get("recipe-description")
+        request.session.set_expiry(600)
         print(request.session['prompt'])
 
-        try:
-            logger.info("Starting recipe generation process by description")
-            user_input = request.POST.get("recipe-description")
-            recipe_id = request.POST.get("recipe_id")
-
-            recipe_generator = MistralRecipeGeneratorService()
-            
-            prompt = create_recipe_prompt_by_description(user_input)
-            logger.info(f"User input:\n{user_input}")
-            logger.info("Prompt created successfully")
-
+        if request.POST.get('action') == 'create-previews':
+            print('create previews')
             try:
-                recipe = recipe_generator.get_recipe_from_Mistral(prompt)
-                logger.info("Recipe generation completed")
+                logger.info("Starting previews generation process by description")
+                user_input = request.POST.get("recipe-description")
+
+                recipe_generator = MistralRecipeGeneratorService()
+    
+                prompt = create_previews_prompt(user_input)
+                logger.info(f"User input:\n{user_input}")
+                logger.info("Prompt created successfully")
+
+                try:
+                    previews = recipe_generator.get_recipe_from_Mistral(prompt)
+                    logger.info("Previews generation completed")
+                except Exception as e:
+                    logger.error(f"Preview generation failed: {str(e)}")
+                    raise
+            
+                previews["recipes"] = sort_previews(previews["recipes"])
+
+                context = {"recipe_previews": previews["recipes"], "difficulty_choices": Recipe.Difficulty.choices}
+
+                return render(request, 'recipes/previews.html', context=context)
+            except:
+                logger.error(f"Detailed error in previews generation: {str(e)}", exc_info=True)
+                messages.error(request, "Das hat leider nicht geklappt. Bitte versuche es erneut!")
+                return redirect('recipes:create_with_text')
+        else:
+            try:
+                logger.info("Starting recipe generation process by description")
+                user_input = request.POST.get("recipe-description")
+                recipe_id = request.POST.get("recipe_id")
+                print(recipe_id)
+
+                recipe_generator = MistralRecipeGeneratorService()
+                
+                prompt = create_recipe_prompt_by_description(user_input)
+                logger.info(f"User input:\n{user_input}")
+                logger.info("Prompt created successfully")
+
+                try:
+                    recipe = recipe_generator.get_recipe_from_Mistral(prompt)
+                    logger.info("Recipe generation completed")
+                except Exception as e:
+                    logger.error(f"Recipe generation failed: {str(e)}")
+                    raise
+
+                logger.info("Starting database save")
+                recipe_object = recipe_to_database(recipe["recipe"][0], recipe_id = recipe_id)
+                recipe_object.author = request.user
+                recipe_object.save()
+                logger.info(f"Recipe saved with ID: {recipe_object.pk}")
+
+                request.session.pop('prompt', None)
+                messages.info(request, "Rezept erstellt!")
+
+                return redirect('recipes:detail', slug=recipe_object.slug)
+            
             except Exception as e:
-                logger.error(f"Recipe generation failed: {str(e)}")
-                raise
-
-            logger.info("Starting database save")
-            recipe_object = recipe_to_database(recipe["recipe"][0], recipe_id = recipe_id)
-            recipe_object.author = request.user
-            recipe_object.save()
-            logger.info(f"Recipe saved with ID: {recipe_object.pk}")
-
-            del request.session['prompt']
-            messages.info(request, "Rezept erstellt!")
-
-            return redirect('recipes:detail', slug=recipe_object.slug)
-        
-        except Exception as e:
-            logger.error(f"Detailed error in recipe generation: {str(e)}", exc_info=True)
-            messages.error(request, "Das hat leider nicht geklappt. Bitte versuche es erneut!")
-            return redirect('recipes:create_with_text')
+                logger.error(f"Detailed error in recipe generation: {str(e)}", exc_info=True)
+                messages.error(request, "Das hat leider nicht geklappt. Bitte versuche es erneut!")
+                return redirect('recipes:create_with_text')
         
     return redirect('recipes:create_with_text')
-
 
 @login_required(login_url='chefs:login')
 def recipe_generated(request):
@@ -329,19 +352,21 @@ def recipe_generated(request):
                 raise
 
             logger.info("Starting database save")
-            recipe_object = recipe_to_database(recipe["recipe"][0])
-            recipe_object.author = User.objects.get(username="MistralAI")
+            recipe_object = recipe_to_database(recipe["recipe"][0], recipe_id=None)
+            recipe_object.author = request.user
             recipe_object.save()
             logger.info(f"Recipe saved with ID: {recipe_object.pk}")
+
+            request.session.pop('prompt', None)
 
             return redirect('recipes:detail', slug=recipe_object.slug)
             
         except Exception as e:
             logger.error(f"Detailed error in recipe generation: {str(e)}", exc_info=True)
             messages.error(request, "Sorry, something went wrong while generating your recipe. Please try again.")
-            return redirect('recipes:generate')
+            return redirect('recipes:create_with_text')
     
-    return redirect('recipes:generate')
+    return redirect('recipes:create_with_text')
 
 
 ### Service views

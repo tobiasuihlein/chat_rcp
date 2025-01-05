@@ -371,7 +371,7 @@ main {
     gap: 1rem;
 }
 
-.recipe-time, .recipe-servings {
+.recipe-time{
     font-size: 1.2rem;
     display: inline-flex;
     justify-content: center;
@@ -384,19 +384,14 @@ main {
     margin-right: 0.3rem;
 }
 
-.recipe-servings svg{
-    width: 2rem;
-    height: 2rem;
-    margin-left: 0.3rem;
-    padding-bottom: 0.35rem;
-}
-
 .recipe-difficulty {
     font-size: 1.2rem;
     display: inline-flex;
     justify-content: center;
     align-items: center;
     border-radius: 999px;
+    padding: 0.2rem 0.8rem 0.3rem 0.8rem;
+    margin-bottom: 0.4rem;
 }
 
 .recipe-difficulty-1 {
@@ -405,26 +400,36 @@ main {
 }
 
 .recipe-difficulty-2 {
-    background-color: rgb(219 234 254);
-    color: rgb(30 58 138);
-}
-
-.recipe-difficulty-3 {
-    background-color: rgb(243 232 255);
-    color: rgb(59 7 100);
-}
-
-.recipe-difficulty-4 {
     background-color: rgb(254 249 195);
     color: rgb(133 77 14);
 }
 
-.recipe-difficulty-5 {
+.recipe-difficulty-3 {
     background-color: rgb(254 226 226);
     color: rgb(153 27 27);
 }
 
+.recipe-difficulty-4 {
+    background-color: rgb(219 234 254);
+    color: rgb(30 58 138);
+}
+
+.recipe-difficulty-5 {
+    background-color: rgb(243 232 255);
+    color: rgb(59 7 100);
+}
+
 .recipe-difficulty-X {
+    background-color: var(--element-color-2);
+    color: var(--icon-color);
+}
+
+.recipe-servings {
+    font-size: 1.2rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 999px;
     background-color: var(--element-color-2);
     color: var(--icon-color);
 }
@@ -489,10 +494,16 @@ main {
     width: 1.2rem;
 }
 
-.main-ingredients, .additional-ingredients, .tips-container, .storage-container, .recipe-times-container {
+.main-ingredients, .tips-container, .storage-container, .recipe-times-container {
     font-size: 1.2rem;
     font-weight: 300;
     margin-bottom: 1.5rem;
+}
+
+.additional-ingredients  {
+    font-size: 1.2rem;
+    font-weight: 300;
+    margin-top: 0.8rem;
 }
 
 .recipe-times-container {

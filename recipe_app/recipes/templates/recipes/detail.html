@@ -85,13 +85,9 @@
             <div class="recipe-pad-row">
                 <div class="recipe-pad-content">
                     <div style="display: flex; justify-content: flex-start; align-items: center; gap: 0.4rem; margin-bottom: 0.8rem;">
-                        <div class="recipe-difficulty recipe-difficulty-X" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; background: none;">
+                        <div class="recipe-servings" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; background: none;">
                             <span style="line-height: 1;">
-                                {% if recipe.default_servings == 1%}
-                                    Portion:
-                                {% else %}
-                                    Portionen:
-                                {% endif %}
+                                Portionen:
                             </span>
                             <div class="servings-buttons-container">
                                 <button class="servings-button" id="decrease-servings">

@@ -134,6 +134,24 @@
     </div>
 </div>
 
+<div style="padding: 1rem; display: flex; justify-content: center; gap: 1.5rem;">
+    <a href="{% url 'impressum' %}" style="display: flex; flex-direction: column; justify-content: center;">
+        <div class="navlink-mobile">
+            <span style="font-size: 1rem;">Impressum</span>
+        </div>
+    </a>
+    <a href="{% url 'agb' %}" style="display: flex; flex-direction: column; justify-content: center;">
+        <div class="navlink-mobile">
+            <span style="font-size: 1rem;">AGB</span>
+        </div>
+    </a>
+    <a href="{% url 'privacy' %}" style="display: flex; flex-direction: column; justify-content: center;">
+        <div class="navlink-mobile">
+            <span style="font-size: 1rem;">Datenschutz</span>
+        </div>
+    </a>
+</div>
+
 {% block javascript %}
 
 <script>

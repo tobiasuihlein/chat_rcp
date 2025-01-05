@@ -77,10 +77,9 @@
 
     <main>
         <!-- Main content -->
-         {% block main-content %}
-         {% endblock main-content %}
+        {% block main-content %}
+        {% endblock main-content %}
     </main>
-
 
     <footer>
         <!-- Footer content -->
@@ -114,9 +113,25 @@
             </div>
         </nav>
         {% else %}
-        <div>
-            <a>Impressum</a>
-        </div>
+        <nav class="navbar">
+            <div class="navbar-list">
+                <a href="{% url 'impressum' %}" style="display: flex; flex-direction: column; justify-content: center;">
+                    <div class="navlink-mobile">
+                        <span style="font-size: 1rem;">Impressum</span>
+                    </div>
+                </a>
+                <a href="{% url 'agb' %}" style="display: flex; flex-direction: column; justify-content: center;">
+                    <div class="navlink-mobile">
+                        <span style="font-size: 1rem;">AGB</span>
+                    </div>
+                </a>
+                <a href="{% url 'privacy' %}" style="display: flex; flex-direction: column; justify-content: center;">
+                    <div class="navlink-mobile">
+                        <span style="font-size: 1rem;">Datenschutz</span>
+                    </div>
+                </a>
+            </div>
+        </nav>
         {% endif %}
     </footer>
 

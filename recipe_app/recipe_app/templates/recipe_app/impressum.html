@@ -1,0 +1,60 @@
+{% extends "./layout.html" %}
+
+{% load static %}
+
+{% block header-middle %}
+    <span style="font-size: 2rem; font-weight: 500; margin-bottom: 2rem; margin-top: 1.5rem; text-align: center;">
+        Impressum
+    </span>
+{% endblock header-middle %}
+
+{% block main-content %}
+
+
+<div class="row-wrapper" style="margin-top: 2rem;">
+    <div class="row-content">
+        <div class="widget">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;">
+                <div id="name">Loading</div>
+                <div id="address">...</div>
+                <div id="code-and-city"></div>
+                <div id="email"></div>
+                <div id="phone"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block javascript %}
+
+<script>
+    // Obfuscate the data
+    const decode = (str) => {
+        return atob(str).split('').map(char => 
+            String.fromCharCode(char.charCodeAt(0) ^ 42)
+        ).join('');
+    };
+
+    // Encoded strings (example - you would need to encode your actual data)
+    const data = {
+        name: 'fkVIQ0tZCn9DQkZPQ0Q=',      // Encoded version of your name
+        address: 'Zk9CTk9YWV5YBAobGx0=',   // Encoded version of your address
+        city: 'GxkaEhwKaE9YRkNE',          // Encoded version of your city
+        email: 'XgRfQ0JGT0NEakdLQ0ZIRVIERVhN', // Encoded version of your email
+        phone: 'AR4TCgIaAwobHxgKGBwYGB4cHhI='  // Encoded version of your phone
+    };
+
+    // Decode and display with delay to prevent instant scraping
+    setTimeout(() => {
+        document.getElementById('name').textContent = decode(data.name);
+        document.getElementById('address').textContent = decode(data.address);
+        document.getElementById('code-and-city').textContent = decode(data.city);
+        document.getElementById('email').textContent = decode(data.email);
+        document.getElementById('phone').textContent = decode(data.phone);
+    }, 1200);
+</script>
+
+{% endblock javascript %}
+
+
+{% endblock main-content %}

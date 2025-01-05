@@ -16,6 +16,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('chefs/', include("chefs.urls")),
     path('chefs/', include('django.contrib.auth.urls')),
+    path('impressum/', views.impressum, name="impressum"),
+    path('agb/', views.agb, name="agb"),
+    path('privacy/', views.privacy, name="privacy"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 from django.conf import settings

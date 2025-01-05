@@ -146,13 +146,17 @@
     const submitImageUploadButton = document.getElementById('submit-image-upload-button');
     const imageUploadOverlayCloseButton = document.getElementById('image-upload-overlay-close-button');
 
-    imageUploadButton.addEventListener('click', function() {
-        imageUploadOverlay.style.display = 'flex';
-    });
+    if (imageUploadButton) {
+        imageUploadButton.addEventListener('click', function() {
+            imageUploadOverlay.style.display = 'flex';
+        });
+    }
 
-    imageUploadOverlayCloseButton.addEventListener('click', function() {
-        imageUploadOverlay.style.display = 'none';
-    });
+    if (imageUploadOverlayCloseButton) {
+        imageUploadOverlayCloseButton.addEventListener('click', function() {
+            imageUploadOverlay.style.display = 'none';
+        });
+    }
 
     const userId = {{ user_id }};
 

@@ -31,8 +31,6 @@ def shopping_list(request):
     shopping_list = ShoppingRecipe.objects.filter(user=request.user)
     recipe_ids = shopping_list.values_list('recipe', flat=True)
 
-    print(recipe_ids)
-
     all_items = []
     for recipe_id in recipe_ids:
         items = ComponentIngredient.objects.filter(
@@ -230,8 +228,6 @@ def create_recipe_with_image(request):
                 logger.error(f"Recipe generation failed: {str(e)}")
                 raise
 
-            print(recipe)
-
             logger.info("Starting database save")
             recipe_object = recipe_to_database(recipe["recipe"][0], recipe_id=None)
             recipe_object.author = request.user
@@ -263,9 +259,6 @@ def previews(request):
     
         previews["recipes"] = sort_previews(previews["recipes"])
 
-        for recipe in previews["recipes"]:
-            print(recipe)
-
         context = {"recipe_previews": previews["recipes"], "difficulty_choices": Recipe.Difficulty.choices}
         return render(request, 'recipes/previews.html', context=context)
     
@@ -280,7 +273,6 @@ def new_recipe_by_text(request):
             logger.info("Starting recipe generation process by description")
             user_input = request.POST.get("recipe-description")
             recipe_id = request.POST.get("recipe_id")
-            print(recipe_id)
 
             recipe_generator = MistralRecipeGeneratorService()
             

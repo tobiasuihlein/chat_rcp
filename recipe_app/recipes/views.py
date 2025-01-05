@@ -263,7 +263,6 @@ def new_recipe_by_text(request):
 
     if request.method == "POST":
         request.session['prompt'] = request.POST.get("recipe-description")
-        request.session.set_expiry(600)
         print(request.session['prompt'])
 
         if request.POST.get('action') == 'create-previews':

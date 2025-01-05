@@ -552,51 +552,6 @@ main {
     color: indianred;
 }
 
-.initial-prompt-heading {
-    font-size: 2rem;
-    font-weight: 500;
-    max-width: 90vw;
-    text-align: center;
-    color: #191918;
-}
-
-.typewriter {
-    overflow: hidden;
-    animation:
-        typing 1.5s steps(1, end),
-        blink-caret 1s step-end infinite;
-    width: fit-content;
-    white-space: nowrap;
-    margin: 0 auto;
-    border-right: .1em solid #191918;
-}
-
-@keyframes typing {
-    0%  { width: 0em;}
-    8%  { width: 0.8em; }
-    9%  { width: 1.6em;}
-    10% { width: 2.8em; }
-    16% { width: 3.5em;}
-    20% { width: 4.8em; }
-    26% { width: 5.5em; }
-    28% { width: 6.0em; }
-    30% { width: 6.6em; }
-    34% { width: 7.8em; }
-    40% { width: 8.2em; }
-    47% { width: 9.0em; }
-    50% { width: 9.8em; }
-    80% { width: 10.8em; }
-    84% { width: 11.3em; }
-    88% { width: 11.9em; }
-    92% { width: 12.3em; }
-    96% { width: 12.8em;}
-}
-
-@keyframes blink-caret {
-    from, to { border-color: transparent }
-    50% { border-color: #191918; }
-}
-
 .searchbar-container {
     display: inline-flex;
     justify-content: center;

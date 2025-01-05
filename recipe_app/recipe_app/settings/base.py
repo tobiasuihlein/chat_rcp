@@ -132,8 +132,6 @@ LANGUAGE_CODE = 'de'
 
 STATIC_URL = 'static/'
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
-
 
 
 # Default primary key field type

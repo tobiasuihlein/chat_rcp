@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'registration/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'registration/css/styles.css' %}?v=1.1">
 {% endblock extra_css %}
 
 {% block main-content %}
@@ -123,7 +123,7 @@ EQUIPMENT
 
         document.getElementById('loading-spinner-bg').style.display = 'flex';
         document.getElementById('loading-spinner-card').style.display = 'flex';
-        
+
         if (actionValue === 'create-recipe') {
             document.getElementById('loading-spinner-text').textContent = 'Erstelle Rezept ...';
         } else if (actionValue === 'create-previews') {

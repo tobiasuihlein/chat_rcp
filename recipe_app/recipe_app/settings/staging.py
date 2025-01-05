@@ -33,7 +33,7 @@ SESSION_COOKIE_AGE = 86400  # 24 hours
 # Static files settings
 STATIC_ROOT = '/app/staticfiles'
 STATIC_URL = 'static/'
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # Media files settings
 MEDIA_ROOT = os.path.join(BASE_DIR.parent, 'recipe_images')

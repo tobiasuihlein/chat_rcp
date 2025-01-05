@@ -185,7 +185,7 @@ def create_recipe_with_text(request):
             language_object, _ = Language.objects.get_or_create(code='de')
             recipe_object.language = language_object
             recipe_object.save()
-            messages.info(request, "Rezept gespeichert!")
+            messages.success(request, "Rezept gespeichert!")
             return render(request, 'recipes/detail.html', {'recipe_id': recipe_object.id, 'recipe': recipe_object, 'recipe_saved_by_user': False})
         return redirect('recipes:create_with_text')
 
@@ -269,6 +269,9 @@ def previews(request):
 def new_recipe_by_text(request):
 
     if request.method == "POST":
+        request.session['prompt'] = request.POST.get("recipe-description")
+        print(request.session['prompt'])
+
         try:
             logger.info("Starting recipe generation process by description")
             user_input = request.POST.get("recipe-description")
@@ -277,7 +280,7 @@ def new_recipe_by_text(request):
             recipe_generator = MistralRecipeGeneratorService()
             
             prompt = create_recipe_prompt_by_description(user_input)
-            print(prompt)
+            logger.info(f"User input:\n{user_input}")
             logger.info("Prompt created successfully")
 
             try:
@@ -293,11 +296,14 @@ def new_recipe_by_text(request):
             recipe_object.save()
             logger.info(f"Recipe saved with ID: {recipe_object.pk}")
 
+            del request.session['prompt']
+            messages.info(request, "Rezept erstellt!")
+
             return redirect('recipes:detail', slug=recipe_object.slug)
         
         except Exception as e:
             logger.error(f"Detailed error in recipe generation: {str(e)}", exc_info=True)
-            messages.error(request, "Sorry, something went wrong while generating your recipe. Please try again.")
+            messages.error(request, "Das hat leider nicht geklappt. Bitte versuche es erneut!")
             return redirect('recipes:create_with_text')
         
     return redirect('recipes:create_with_text')
@@ -411,7 +417,7 @@ def upload_recipe_image(request, slug):
     
     # Check if user has permission to modify this recipe
     if recipe.author != request.user:
-        messages.error(request, "You don't have permission to modify this recipe.")
+        messages.error(request, "Dies ist nicht dein Rezept!")
         return redirect('recipes:detail',  slug=slug)
     
     if request.method == 'POST':
@@ -422,7 +428,7 @@ def upload_recipe_image(request, slug):
             image.alt_text = request.FILES['image'].name
             image.save()
             
-            messages.success(request, 'Image uploaded successfully!')
+            messages.success(request, 'Bild erfolgreich hochgeladen!')
             return redirect('recipes:detail', slug=slug)
     else:
         form = RecipeImageForm()

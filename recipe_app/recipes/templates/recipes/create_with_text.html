@@ -49,8 +49,10 @@
         <form method="post" action="{% url 'recipes:new_recipe_by_text' %}" id="recipe-text-form">
             {% csrf_token %}
             <div class="input-field-container" style="text-align: center; width: 100%;">
-                {% if recipe %}
-                <textarea name="recipe-description" style="width: 100%; min-height: 40vh; border-radius: 6px; padding: 1rem;">
+                {% if request.session.prompt %}
+                    <textarea name="recipe-description" style="width: 100%; min-height: 40vh; border-radius: 6px; padding: 1rem;">{{ request.session.prompt }}</textarea>
+                {% elif recipe %}
+                    <textarea name="recipe-description" style="width: 100%; min-height: 40vh; border-radius: 6px; padding: 1rem;">
 {{ recipe.title }}
 
 {{ recipe.description }}

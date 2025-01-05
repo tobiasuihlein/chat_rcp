@@ -85,7 +85,6 @@ def profile_view(request, username):
         'is_following': user.follower.filter(id=request.user.id).exists(),
         'image_form': image_form,
     }
-    print(context)
     return render(request, 'chefs/profile.html', context=context)
 
 

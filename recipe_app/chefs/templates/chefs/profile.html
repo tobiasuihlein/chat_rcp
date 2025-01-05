@@ -184,8 +184,9 @@
             });
     }
 
-    followButton.addEventListener('click', toggleFollow);
-
+    if (followButton) {
+        followButton.addEventListener('click', toggleFollow);
+    }
 
 </script>
 

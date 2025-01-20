@@ -4,9 +4,8 @@ ChatRCP is a mobile-first web application that combines AI-powered recipe genera
 
 **[Try ChatRCP Alpha](https://chatrcp.de)** – German version live!
 
-[//]: #
-![Image Title](./images/filename.png)
-*Description*
+![Image Title](./demo_images/ChatRCP_screenshot_recipe_detail_view_desktop.png)
+*Detail view of a recipe on desktop screen*
 
 ## Current Release
 
@@ -36,6 +35,16 @@ ChatRCP is currently in alpha release and actively being used. The platform offe
 ### Shopping & Organization
 - Add recipes to your shopping list
 - Automatic ingredient type sorting
+
+<table>
+  <tr>
+    <td><img src="./demo_images/ChatRCP_screenshot_library_view_mobile.png" width="200"/></td>
+    <td><img src="./demo_images/ChatRCP_screenshot_recipe_creation_text_prompt_mobile.png" width="200"/></td>
+    <td><img src="./demo_images/ChatRCP_screenshot_recipe_detail_view_mobile.png" width="200"/></td>
+    <td><img src="./demo_images/ChatRCP_screenshot_shopping_list_mobile.png" width="200"/></td>
+  </tr>
+</table>
+*Different pages on mobile screen*
 
 ## Technical Implementation
 

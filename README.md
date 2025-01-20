@@ -7,8 +7,8 @@ ChatRCP is a mobile-first web application that combines AI-powered recipe genera
 <table>
   <tr>
     <td><img src="./demo_images/ChatRCP_screenshot_library_view_mobile.png" width="200"/></td>
-    <td><img src="./demo_images/ChatRCP_screenshot_recipe_creation_text_prompt_mobile.png" width="200"/></td>
     <td><img src="./demo_images/ChatRCP_screenshot_recipe_detail_view_mobile.png" width="200"/></td>
+    <td><img src="./demo_images/ChatRCP_screenshot_recipe_creation_text_prompt_mobile.png" width="200"/></td>
     <td><img src="./demo_images/ChatRCP_screenshot_shopping_list_mobile.png" width="200"/></td>
   </tr>
 </table>

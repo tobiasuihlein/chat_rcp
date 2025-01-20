@@ -1,6 +1,6 @@
 # ChatRCP: AI-Powered Recipe Platform
 
-ChatRCP is a mobile-first web application that combines AI-powered recipe generation with social features, allowing users to create, share, and discover recipes. The app leverages the Mistral Large Language Model to generate personalized recipes and provides a rich set of features for recipe management and social interaction.
+[ChatRCP](https://chatrcp.de) is a mobile-first web application that combines AI-powered recipe generation with social features, allowing users to create, share, and discover recipes. The app leverages the Mistral Large Language Model to generate personalized recipes and provides a rich set of features for recipe management and social interaction.
 
 <br>
 
@@ -20,7 +20,7 @@ ChatRCP is a mobile-first web application that combines AI-powered recipe genera
 ![Image Title](./demo_images/ChatRCP_screenshot_recipe_detail_view_desktop.png)
 *Detail view of a recipe on desktop screen*
 
-**[Try ChatRCP Beta](https://chatrcp.de)** – German beta version live!
+<br>
 
 ## Current Release
 
@@ -30,6 +30,7 @@ ChatRCP is currently in beta release and actively being used. The platform offer
 - Mobile-optimized interface
 - Recipe sharing and rating system
 - Shopping list management
+<br>
 
 ## Key Features
 
@@ -50,6 +51,7 @@ ChatRCP is currently in beta release and actively being used. The platform offer
 ### Shopping & Organization
 - Add recipes to your shopping list
 - Automatic ingredient type sorting
+<br>
 
 ## Technical Implementation
 
@@ -62,7 +64,7 @@ ChatRCP is currently in beta release and actively being used. The platform offer
 
 ### Key Technical Features
 - Mobile-first responsive design
-  - RESTful API architecture
+- RESTful API architecture
 - Containerized deployment
 - Efficient database queries
 - Secure user authentication
@@ -74,6 +76,7 @@ The application is containerized using Docker, enabling:
 - Simple deployment process
 - Easy updates via repository pulls
 - Consistent environment across deployments
+<br>
 
 ## Future Development
 
@@ -84,6 +87,7 @@ While ChatRCP is already serving users in its alpha release, planned improvement
 - Add menu creation (collection of recipes)
 - Community features based on user feedback
 - Create native mobile app to further improve user experience
+<br>
 
 ## About the Developer
 
@@ -94,6 +98,7 @@ This project was imaginated, developed and conducted by me, Tobias Uihlein, as a
 - Database design
 - Docker containerization
 - Production deployment
+<br>
 
 ## Contact & Contributing
 

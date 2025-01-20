@@ -20,11 +20,11 @@ ChatRCP is a mobile-first web application that combines AI-powered recipe genera
 ![Image Title](./demo_images/ChatRCP_screenshot_recipe_detail_view_desktop.png)
 *Detail view of a recipe on desktop screen*
 
-**[Try ChatRCP Alpha](https://chatrcp.de)** – German version live!
+**[Try ChatRCP Beta](https://chatrcp.de)** – German beta version live!
 
 ## Current Release
 
-ChatRCP is currently in alpha release and actively being used. The platform offers:
+ChatRCP is currently in beta release and actively being used. The platform offers:
 - Full recipe generation capabilities
 - User accounts and social features
 - Mobile-optimized interface

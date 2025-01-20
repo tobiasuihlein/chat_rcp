@@ -2,10 +2,25 @@
 
 ChatRCP is a mobile-first web application that combines AI-powered recipe generation with social features, allowing users to create, share, and discover recipes. The app leverages the Mistral Large Language Model to generate personalized recipes and provides a rich set of features for recipe management and social interaction.
 
-**[Try ChatRCP Alpha](https://chatrcp.de)** – German version live!
+<br>
+
+<table>
+  <tr>
+    <td><img src="./demo_images/ChatRCP_screenshot_library_view_mobile.png" width="200"/></td>
+    <td><img src="./demo_images/ChatRCP_screenshot_recipe_creation_text_prompt_mobile.png" width="200"/></td>
+    <td><img src="./demo_images/ChatRCP_screenshot_recipe_detail_view_mobile.png" width="200"/></td>
+    <td><img src="./demo_images/ChatRCP_screenshot_shopping_list_mobile.png" width="200"/></td>
+  </tr>
+</table>
+
+*Library view, detail view, recipe creation, and shopping list*
+
+<br>
 
 ![Image Title](./demo_images/ChatRCP_screenshot_recipe_detail_view_desktop.png)
 *Detail view of a recipe on desktop screen*
+
+**[Try ChatRCP Alpha](https://chatrcp.de)** – German version live!
 
 ## Current Release
 
@@ -35,16 +50,6 @@ ChatRCP is currently in alpha release and actively being used. The platform offe
 ### Shopping & Organization
 - Add recipes to your shopping list
 - Automatic ingredient type sorting
-
-<table>
-  <tr>
-    <td><img src="./demo_images/ChatRCP_screenshot_library_view_mobile.png" width="200"/></td>
-    <td><img src="./demo_images/ChatRCP_screenshot_recipe_creation_text_prompt_mobile.png" width="200"/></td>
-    <td><img src="./demo_images/ChatRCP_screenshot_recipe_detail_view_mobile.png" width="200"/></td>
-    <td><img src="./demo_images/ChatRCP_screenshot_shopping_list_mobile.png" width="200"/></td>
-  </tr>
-</table>
-*Different pages on mobile screen*
 
 ## Technical Implementation
 

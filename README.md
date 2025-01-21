@@ -91,7 +91,7 @@ While ChatRCP is already serving users in its alpha release, planned improvement
 
 ## About the Developer
 
-This project was imaginated, developed and conducted by me, Tobias Uihlein, as a demonstration of my full-stack development capabilities, including:
+This project was contrived, developed and conducted by me, Tobias Uihlein, as a demonstration of my full-stack development capabilities, including:
 - Web application architecture
 - AI integration
 - User experience design

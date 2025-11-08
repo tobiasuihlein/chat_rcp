@@ -1,24 +1,36 @@
-from rest_framework import viewsets, generics
+# views.py
+from rest_framework import viewsets, filters
+from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
 from recipes.models import Recipe
-from .serializers import *
-from recipes.models import *
+from .serializers import RecipeSerializer
 
-class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
+
+class RecipePagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+class RecipeViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint für Rezepte.
+    
+    list: Alle Rezepte abrufen
+    retrieve: Ein einzelnes Rezept abrufen
+    """
+    queryset = Recipe.objects.select_related(
+        'author', 'language', 'image'
+    ).prefetch_related(
+        'equipments', 'diets', 'hashtags', 'times',
+        'components__ingredients__ingredient',
+        'instruction_steps', 'tips', 'ratings__author'
+    ).all()
     serializer_class = RecipeSerializer
-
-class ComponentViewSet(viewsets.ModelViewSet):
-    queryset = RecipeComponent.objects.all()
-    serializer_class = ComponentSerializer
-
-class InstructionViewSet(viewsets.ModelViewSet):
-    queryset = RecipeInstruction.objects.all()
-    serializer_class = InstructionSerializer
-
-class SavedRecipeViewSet(viewsets.ModelViewSet):
-    queryset = SavedRecipe.objects.all()
-    serializer_class = SavedRecipeSerializer
-
-class RecipeRatingViewSet(viewsets.ModelViewSet):
-    queryset = RecipeRating.objects.all()
-    serializer_class = RecipeRatingSerializer
+    pagination_class = RecipePagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['difficulty', 'spiciness', 'cost', 'diets', 'author']
+    search_fields = ['title', 'description']
+    ordering_fields = ['created_at', 'title']
+    ordering = ['-created_at']
+    lookup_field = 'slug'

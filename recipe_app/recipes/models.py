@@ -194,7 +194,7 @@ class RecipeComponent(models.Model):
 
 
 class ComponentIngredient(models.Model):
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name="commponents")
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name="components")
     amount = models.DecimalField(max_digits=7, decimal_places=2)
     unit = models.CharField(max_length=25)
     note = models.CharField(max_length=50)
